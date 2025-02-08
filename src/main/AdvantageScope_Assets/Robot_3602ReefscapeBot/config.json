@@ -1,0 +1,45 @@
+{
+    "name": "3602ReefscapeBot",
+    "sourceUrl": "https://cad.onshape.com/documents/b1ec11a4ee1bd501b3c1356d/w/0714a27419dbc4050e70cf4f/e/16a316d8a3a815ee04e70598",
+    "disableSimplification" : true,
+    "rotations": [
+      {
+        "axis":  "x",
+        "degrees": 90
+      },
+      {
+        "axis":  "y",
+        "degrees": 0
+      },
+        {
+        "axis":  "z",
+        "degrees": 90
+      }
+    ],
+
+    "position": [0, 0, 0],
+    "cameras": [
+      {
+        "name": "Front Camera",
+        "rotations": [
+          {
+            "axis": "x",
+            "degrees": 0
+          },
+          {
+            "axis": "y",
+            "degrees": 20
+          },
+          {
+            "axis": "z",
+            "degrees": 0
+          }
+        ],
+        "position": [0.2, 0, 0.8],
+        "resolution": [4656, 3496],
+        "fov": 100
+      }
+  
+    ],
+    "components": []
+}
