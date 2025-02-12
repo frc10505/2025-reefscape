@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team10505.robot.Constants.ElevatorConstants;
-import frc.team10505.robot.Constants.PivotConstants;
+
 
 public class ElevatorSubsystem extends SubsystemBase {
 

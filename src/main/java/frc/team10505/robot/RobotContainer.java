@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.team10505.robot.generated.TunerConstants;
 import frc.team10505.robot.subsystems.DrivetrainSubsystem;
 import frc.team10505.robot.subsystems.ElevatorSubsystem;
+import frc.team10505.robot.subsystems.AlgeaSubsystem;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
@@ -50,6 +51,7 @@ public class RobotContainer {
     /* Subsystems */
     private final DrivetrainSubsystem drivetrainSubsys = TunerConstants.createDrivetrain();
     private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
+    private final AlgeaSubsystem algeaSubsys = new AlgeaSubsystem();
 
     /* Camerae */
     private static final Camera mod0Camera = new Camera(kMod0CameraName, kRobotToMod0CameraTransform);
