@@ -99,9 +99,17 @@ public final class Constants {
 
     
 
-    public final class AlgeaConstants {
-      public final static int kAlgeaPivotMotorId = 8;
-      public final static int kAlgeaIntakeMotorID = 7;
+    public final class AlgaeConstants {
+      public final static int kAlgaePivotMotorId = 8;
+      public final static int kPivotMotorCurrentLimit = 15;
+      public final static int kAlgaeIntakeMotorID = 7;
+      public final static int kIntakeMotorCurrentLimit = 15;
+
+      //Intake speed
+      public final static double intakeSpeed = 0.2;   //TODO tune with algae
+
+      public final static double pivotEncoderOffset = 0;
+      public final static double pivotEncoderScale = 360;
 
       // PID Constants
       public final static double KP = 1.0;
@@ -124,5 +132,17 @@ public final class Constants {
       public final static double simPivotKV = 0.4;
       public final static double simPivotKA = 0.1;
     }
+    public final class CoralConstants {
+      public final static int kLeftMotorId = 2;
+      public final static int kLeftMotorCurrentLimit = 15;
+      public final static int kRightMotorID = 3;
+      public final static int kRightMotorCurrentLimit = 15;
+      public final static int kIntakeInId = 60;
+      public final static int kIntakeOutId = 61;
+      public final static double kIntakeSpeed = 0.4;
+      public final static double kOutakeSpeed = 0.4;
+      public final static double kTroughSpeed = 0.2;
+    }
+
   
 }
