@@ -23,6 +23,8 @@ import frc.team10505.robot.generated.TunerConstants;
 import frc.team10505.robot.subsystems.DrivetrainSubsystem;
 import frc.team10505.robot.subsystems.ElevatorSubsystem;
 import frc.team10505.robot.subsystems.AlgaeSubsystem;
+import frc.team10505.robot.subsystems.CoralSubsystem;
+import frc.team10505.robot.Superstructure;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
@@ -52,6 +54,10 @@ public class RobotContainer {
     private final DrivetrainSubsystem drivetrainSubsys = TunerConstants.createDrivetrain();
     private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
     private final AlgaeSubsystem algaeSubsys = new AlgaeSubsystem();
+    private final CoralSubsystem coralSubsys = new CoralSubsystem();
+
+    /* Superstructure */
+    private final Superstructure superStructure = new Superstructure(coralSubsys,algaeSubsys,elevatorSubsys,drivetrainSubsys);
 
     /* Camerae */
     private static final Camera mod0Camera = new Camera(kMod0CameraName, kRobotToMod0CameraTransform);
@@ -60,7 +66,7 @@ public class RobotContainer {
     private static final Camera mod3Camera = new Camera(kMod3CameraName, kRobotToMod3CameraTransform);
 
     /* Simulation */
-    private final Vision visionSimulation = new Vision(() -> drivetrainSubsys.getState().Pose, drivetrainSubsys);
+    // private final Vision visionSimulation = new Vision(() -> drivetrainSubsys.getState().Pose, drivetrainSubsys);
     //   .addCamera(mod0Camera)
     //   .addCamera(mod1Camera)
     //   .addCamera(mod2Camera)
@@ -154,11 +160,11 @@ public class RobotContainer {
     }
 
     public void resetSimulation() {
-        visionSimulation.reset();
+        // visionSimulation.reset();
     }
 
     public void updateSimulation() {
-      visionSimulation.update(getPose());
+    //   visionSimulation.update(getPose());
     }
 
 }

@@ -15,5 +15,24 @@ import frc.team10505.robot.subsystems.AlgaeSubsystem;
 import frc.team10505.robot.subsystems.CoralSubsystem;
 
 public class Superstructure {
+
+    private CoralSubsystem coralSubsystem;
+    private AlgaeSubsystem algaeSubsystem;
+    private ElevatorSubsystem elevatorSubsystem;
+    private DrivetrainSubsystem drivetrainSubsystem;
+
+    public Superstructure(CoralSubsystem coralSubsystem, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys){
+        this.coralSubsystem = coralSubsystem;
+        this.algaeSubsystem = algaeSubsystem;
+        this.elevatorSubsystem = elevatorSubsystem;
+        this.drivetrainSubsystem = drivetrainSubsystem;
+    }  
+
+
+    public Command intakeCoral(){
+        return Commands.sequence(
+            coralSubsystem.intake().until(()-> (coralSubsystem.outSensor() && !coralSubsystem.inSensor()))
+        );
+    } 
     
 }

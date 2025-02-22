@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Team 3602 All rights reserved. This work is
+ * Copyright (C) 2025 Team 10505 All rights reserved. This work is
  * licensed under the terms of the MIT license which can be found
  * in the root directory of this project.
  */
@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team10505.robot.Constants;
 import frc.team10505.robot.Constants.ElevatorConstants;
 
 
@@ -55,7 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double totalEffort = 0.0;
 
     // Motors
-    public final TalonFX elevatorMotor = new TalonFX(0);
+    public final TalonFX elevatorMotor = new TalonFX(Constants.ElevatorConstants.kElevatorMotorId);
+    public final TalonFX elevatorFollowerMotor = new TalonFX(Constants.ElevatorConstants.kElevatorFollowerMotorId);
     private final TalonFXSimState simElevatorMotor = new TalonFXSimState(elevatorMotor);
     //public final TalonFX elevatorFollower = new TalonFX(1);
 
@@ -94,30 +96,30 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Elevator Motor Output", elevatorMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Sim Elevator Motor Output", simElevatorMotor.getMotorVoltage());
-        SmartDashboard.putNumber("Sim Elevator Encoder Inches", simElevatorEncoder);
-        SmartDashboard.putNumber("Elevator Height", height);
-        SmartDashboard.putNumber("ElevatorSim.getPosiitonMeters()", elevatorSim.getPositionMeters());
-        SmartDashboard.putNumber("Sim Elevator total Effort", simTotalEffort);
-        SmartDashboard.putNumber("Sim Elevator PID Effort", simElevatorController.calculate(simElevatorEncoder, height));
+        // SmartDashboard.putNumber("Elevator Motor Output", elevatorMotor.getMotorVoltage().getValueAsDouble());
+        // SmartDashboard.putNumber("Sim Elevator Motor Output", simElevatorMotor.getMotorVoltage());
+        // SmartDashboard.putNumber("Sim Elevator Encoder Inches", simElevatorEncoder);
+        // SmartDashboard.putNumber("Elevator Height", height);
+        // SmartDashboard.putNumber("ElevatorSim.getPosiitonMeters()", elevatorSim.getPositionMeters());
+        // SmartDashboard.putNumber("Sim Elevator total Effort", simTotalEffort);
+        // SmartDashboard.putNumber("Sim Elevator PID Effort", simElevatorController.calculate(simElevatorEncoder, height));
 
-        simElevatorEncoder = elevatorViz.getLength();
-        elevatorEncoder = elevatorMotor.getPosition().getValueAsDouble(); // TODO <- figure out when using real robot
-        simTotalEffort = simGetEffort();
-        totalEffort = getEffort();
+        // simElevatorEncoder = elevatorViz.getLength();
+        // elevatorEncoder = elevatorMotor.getPosition().getValueAsDouble(); // TODO <- figure out when using real robot
+        // simTotalEffort = simGetEffort();
+        // totalEffort = getEffort();
 
-        if(Utils.isSimulation()){
-                elevatorMotor.setVoltage(simTotalEffort);
-        }else{
-            elevatorMotor.setVoltage(totalEffort);
-        }
+        // if(Utils.isSimulation()){
+        //         elevatorMotor.setVoltage(simTotalEffort);
+        // }else{
+        //     elevatorMotor.setVoltage(totalEffort);
+        // }
     
-        // Update Simulation
-        elevatorSim.setInput(simElevatorMotor.getMotorVoltage());
-        elevatorSim.update(TimedRobot.kDefaultPeriod);
+        // // Update Simulation
+        // elevatorSim.setInput(simElevatorMotor.getMotorVoltage());
+        // elevatorSim.update(TimedRobot.kDefaultPeriod);
         
-        elevatorViz.setLength(elevatorViz.getLength() + (elevatorMotor.getMotorVoltage().getValueAsDouble() * 0.2));
+        // elevatorViz.setLength(elevatorViz.getLength() + (elevatorMotor.getMotorVoltage().getValueAsDouble() * 0.2));
     
         
     }
