@@ -110,13 +110,13 @@ public final class Constants {
       public final static int kIntakeMotorCurrentLimit = 15;
 
       //Intake speed
-      public final static double intakeSpeed = 0.2;   //TODO tune with algae
+      public final static double intakeSpeed = 0.5;   //TODO tune with algae
 
       public final static double pivotEncoderOffset = 0;
       public final static double pivotEncoderScale = 360;
 
       // PID Constants
-      public final static double KP = 1.0;
+      public final static double KP = 0.1;
       public final static double KI = 0.0;
       public final static double KD = 0.0;
 

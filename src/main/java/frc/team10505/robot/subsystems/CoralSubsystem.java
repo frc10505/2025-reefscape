@@ -1,7 +1,9 @@
 package frc.team10505.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team10505.robot.Robot;
 import frc.team10505.robot.Constants.CoralConstants;
 
 import com.revrobotics.spark.*;
@@ -29,11 +31,14 @@ public class CoralSubsystem extends SubsystemBase {
     }
     public boolean inSensor(){
         LaserCan.Measurement inMeas =inLaser.getMeasurement();
-        return (inMeas != null && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return (inMeas.distance_mm < 30.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
     public boolean outSensor(){
         LaserCan.Measurement outMeas =outLaser.getMeasurement();
-        return (outMeas != null && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return (outMeas.distance_mm < 30.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    }
+    public Robot() {
+        intakeRightConfig.inverted(true);
     }
     public Command intake(){
         return run(() -> {
@@ -57,7 +62,13 @@ public class CoralSubsystem extends SubsystemBase {
             intakeLeft.set(0);
             intakeRight.set(0);
          });
-    }   
+    }
+    
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("inSensor", inSensor());
+        SmartDashboard.putBoolean("outSensor", outSensor());
+    }
 
     private void configCoralSubsys(){
         //Left intake config

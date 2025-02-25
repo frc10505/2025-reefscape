@@ -7,6 +7,8 @@
 package frc.team10505.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team10505.robot.Constants.AlgaeConstants;
@@ -21,76 +23,98 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
-    //motor controllers
+    // motor controllers
 
-    private final SparkMax intakeMotor = new SparkMax(AlgaeConstants.kAlgaeIntakeMotorID,MotorType.kBrushless);
+    private final SparkMax intakeMotor = new SparkMax(AlgaeConstants.kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.kAlgaePivotMotorId, MotorType.kBrushless);
     private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
-    //Encoder
-    private final SparkAbsoluteEncoder pivotEncoder = pivotMotor.getAbsoluteEncoder() ;
+    // Encoder
+    private final SparkAbsoluteEncoder pivotEncoder = pivotMotor.getAbsoluteEncoder();
+    private double encoderValue;
+    private double absoluteOffset = 240.0;
 
-    //Controller
-    private final PIDController pivotController = new PIDController(AlgaeConstants.KP, AlgaeConstants.KI, AlgaeConstants.KD);
+    // Controller
+    private final PIDController pivotController = new PIDController(AlgaeConstants.KP, AlgaeConstants.KI,
+            AlgaeConstants.KD);
 
     private double pivotSetpoint = -90;
 
-    //Get encoder
-    public double getPivotAngle(){
-        return pivotEncoder.getPosition();
+    // Get encoder
+    public double getPivotEncoder() {
+        return (pivotEncoder.getPosition() - absoluteOffset) * -1.0;// TODO adjust
     }
 
-    //Calc PID
-    public double PIDEffort(){
-        return pivotController.calculate(getPivotAngle(),pivotSetpoint);
+    // Calc PID
+    public double PIDEffort() {
+        return pivotController.calculate(getPivotEncoder(), pivotSetpoint);
     }
 
     public AlgaeSubsystem() {
         configAlgaeSubsys();
+        SmartDashboard.putNumber("pivotEncoder", encoderValue);
     }
 
-    public Command setAngle(double angle){
-        return runOnce(() ->{
-        pivotSetpoint = angle;
+    public Command setAngle(double angle) {
+        return runOnce(() -> {
+            pivotSetpoint = angle;
         });
-    } 
-    public Command holdAngle(){
-        return run(() ->{
+    }
+
+    public Command holdAngle() {
+        return run(() -> {
             pivotMotor.setVoltage(PIDEffort());
         });
     }
-    public Command intakeForward(){
-        return runOnce(() ->{
+
+    public Command intakeForward() {
+        return runOnce(() -> {
             intakeMotor.set(AlgaeConstants.intakeSpeed);
         });
     }
-    public Command intakeReverse(){
-        return runOnce(() ->{
+
+    public Command intakeReverse() {
+        return runOnce(() -> {
             intakeMotor.set(-AlgaeConstants.intakeSpeed);
         });
     }
-    public Command intakeStop(){
-        return runOnce(() ->{
+
+    public Command intakeStop() {
+        return runOnce(() -> {
             intakeMotor.set(0);
         });
     }
-    
 
+    public Command stopPivot() {
+        return runOnce(() -> {
+            pivotMotor.stopMotor();
+        });
+    }
 
-    private void configAlgaeSubsys(){
-        //Pivot motor config
+    @Override
+    public void periodic() {
+        encoderValue = getPivotEncoder();
+        SmartDashboard.putNumber(" Pivot Encoder", encoderValue);
+        SmartDashboard.putNumber("Intake Motor Output", intakeMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.getAppliedOutput());
+    }
+
+    private void configAlgaeSubsys() {
+        // Pivot motor config
         pivotMotorConfig.idleMode(IdleMode.kBrake);
-        pivotMotorConfig.smartCurrentLimit(AlgaeConstants.kPivotMotorCurrentLimit,AlgaeConstants.kPivotMotorCurrentLimit);
-        pivotMotorConfig.absoluteEncoder.positionConversionFactor(AlgaeConstants.pivotEncoderScale);                        //Angle encoder scale
-        pivotMotorConfig.absoluteEncoder.zeroOffset(AlgaeConstants.pivotEncoderOffset);                                     //Angle encoder offset
+        pivotMotorConfig.smartCurrentLimit(AlgaeConstants.kPivotMotorCurrentLimit,
+                AlgaeConstants.kPivotMotorCurrentLimit);
+        pivotMotorConfig.absoluteEncoder.positionConversionFactor(AlgaeConstants.pivotEncoderScale); // Angle encoder
+                                                                                                     // scale
+        pivotMotorConfig.absoluteEncoder.zeroOffset(AlgaeConstants.pivotEncoderOffset); // Angle encoder offset
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        //Intake motor config
+        // Intake motor config
         intakeMotorConfig.idleMode(IdleMode.kBrake);
-        intakeMotorConfig.smartCurrentLimit(AlgaeConstants.kIntakeMotorCurrentLimit,AlgaeConstants.kIntakeMotorCurrentLimit);
+        intakeMotorConfig.smartCurrentLimit(AlgaeConstants.kIntakeMotorCurrentLimit,
+                AlgaeConstants.kIntakeMotorCurrentLimit);
         intakeMotor.configure(intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
     }
 
 }

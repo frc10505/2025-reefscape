@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -32,11 +34,22 @@ import frc.team10505.robot.Constants.ElevatorConstants;
 
 
 public class ElevatorSubsystem extends SubsystemBase {
+ // Motors
+ public final TalonFX elevatorMotor = new TalonFX(Constants.ElevatorConstants.kElevatorMotorId);
+ public final TalonFX elevatorFollowerMotor = new TalonFX(Constants.ElevatorConstants.kElevatorFollowerMotorId);
+ 
+ // Encoders, Real and Simulated
+ private double simElevatorEncoder;
+      private final DutyCycleEncoder elevatorEncoder = new DutyCycleEncoder(0);
 
+ private double simTotalEffort = 0.0;
+ private double totalEffort;
+//Operator interface
+public final SendableChooser<Double> elevaterHeight = new SendableChooser<>();
     private double height = 0.0;
 
     // Controls, Actual
-    private final PIDController elevatorController = new PIDController(ElevatorConstants.KD, ElevatorConstants.KI,
+    private final PIDController elevatorController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI,
             ElevatorConstants.KD);
     private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS,
             ElevatorConstants.KG, ElevatorConstants.KV, ElevatorConstants.KA);
@@ -47,19 +60,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final ElevatorFeedforward simElevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.simKS,
             ElevatorConstants.simKG, ElevatorConstants.simKV, ElevatorConstants.simKA);
 
-    // Encoders, Real and Simulated
-    // private double pivotEncoder;
-    private double simElevatorEncoder;
-    private double elevatorEncoder;
-
-    private double simTotalEffort = 0.0;
-    private double totalEffort = 0.0;
-
-    // Motors
-    public final TalonFX elevatorMotor = new TalonFX(Constants.ElevatorConstants.kElevatorMotorId);
-    public final TalonFX elevatorFollowerMotor = new TalonFX(Constants.ElevatorConstants.kElevatorFollowerMotorId);
-    private final TalonFXSimState simElevatorMotor = new TalonFXSimState(elevatorMotor);
-    //public final TalonFX elevatorFollower = new TalonFX(1);
+   
+   
 
     // Simulation
     private final ElevatorSim elevatorSim = new ElevatorSim(ElevatorConstants.simKV, ElevatorConstants.simKA, DCMotor.getKrakenX60(2), 0, ElevatorConstants.kMaxHeightMeters, true, 0.1);
@@ -80,11 +82,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
     }
 
+    public double getElevatorEncoder(){
+        return elevatorEncoder.get();//TODO adjust
+    }
+
     public double simGetEffort() {
         return simTotalEffort = ((simElevatorFeedforward.calculate(0, 0)) + (simElevatorController.calculate(simElevatorEncoder, height)));
     }
     public double getEffort() {
-        return totalEffort = ((elevatorFeedforward.calculate(0,0))+(elevatorController.calculate(elevatorEncoder, height)));
+        return totalEffort = ((elevatorFeedforward.calculate(0,0))+(elevatorController.calculate(getElevatorEncoder(), height)));
     }
     // public Command testElevator(double voltage){
     // return runEnd(() -> {

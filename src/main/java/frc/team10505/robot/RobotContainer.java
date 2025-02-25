@@ -25,10 +25,9 @@ import frc.team10505.robot.subsystems.ElevatorSubsystem;
 import frc.team10505.robot.subsystems.AlgaeSubsystem;
 import frc.team10505.robot.subsystems.CoralSubsystem;
 import frc.team10505.robot.Superstructure;
-
+import frc.team10505.robot.Vision;
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
-import static frc.team10505.robot.Constants.VisionConstants.*;
 
 public class RobotContainer {
 
@@ -56,22 +55,12 @@ public class RobotContainer {
     private final AlgaeSubsystem algaeSubsys = new AlgaeSubsystem();
     private final CoralSubsystem coralSubsys = new CoralSubsystem();
 
+   // private final Vision vision = new Vision(drivetrainSubsys);
     /* Superstructure */
     private final Superstructure superStructure = new Superstructure(coralSubsys,algaeSubsys,elevatorSubsys,drivetrainSubsys);
 
-    /* Camerae */
-    private static final Camera mod0Camera = new Camera(kMod0CameraName, kRobotToMod0CameraTransform);
-    private static final Camera mod1Camera = new Camera(kMod1CameraName, kRobotToMod1CameraTransform);
-    private static final Camera mod2Camera = new Camera(kMod2CameraName, kRobotToMod2CameraTransform);
-    private static final Camera mod3Camera = new Camera(kMod3CameraName, kRobotToMod3CameraTransform);
-
-    /* Simulation */
-    // private final Vision visionSimulation = new Vision(() -> drivetrainSubsys.getState().Pose, drivetrainSubsys);
-    //   .addCamera(mod0Camera)
-    //   .addCamera(mod1Camera)
-    //   .addCamera(mod2Camera)
-    //   .addCamera(mod3Camera);
-
+ 
+   
     /* Autonomous */
     private  final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
     
@@ -122,17 +111,27 @@ public class RobotContainer {
             joystick.button(3).whileTrue(elevatorSubsys.setHeight(2.5));
             joystick.button(4).whileTrue(elevatorSubsys.setHeight(4.0));
         } else {
-            xboxController.a().whileTrue(drivetrainSubsys.applyRequest(() -> brake));
-            xboxController.b().whileTrue(drivetrainSubsys.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))
-        ));
+        //     xboxController.a().whileTrue(drivetrainSubsys.applyRequest(() -> brake));
+        //     xboxController.b().whileTrue(drivetrainSubsys.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))
+        // ));
+         xboxController.povRight().onTrue(algaeSubsys.intakeForward());
+         xboxController.povLeft().onTrue(algaeSubsys.intakeReverse());
+         xboxController.povDown().onTrue(algaeSubsys.intakeStop());
+
+            xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
+            xboxController.b().onTrue(algaeSubsys.stopPivot());
+            xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+
+           // xboxController.povUp().whileTrue(superStructure.intakeCoral());
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        xboxController.back().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kForward));
-        xboxController.back().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kReverse));
-        xboxController.start().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kForward));
-        xboxController.start().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kReverse));
+        // xboxController.back().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kForward));
+        // xboxController.back().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kReverse));
+        // xboxController.start().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kForward));
+        // xboxController.start().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kReverse));
+         xboxController.y().whileTrue(superStructure.intakeCoral());
 
         // reset the field-centric heading on left bumper press
         xboxController.leftBumper().onTrue(drivetrainSubsys.runOnce(() -> drivetrainSubsys.seedFieldCentric()));
@@ -160,11 +159,11 @@ public class RobotContainer {
     }
 
     public void resetSimulation() {
-        // visionSimulation.reset();
+  //       vision.reset();
     }
 
     public void updateSimulation() {
-    //   visionSimulation.update(getPose());
+   //   vision.update(getPose());
     }
 
 }
