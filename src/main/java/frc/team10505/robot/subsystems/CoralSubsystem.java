@@ -37,9 +37,6 @@ public class CoralSubsystem extends SubsystemBase {
         LaserCan.Measurement outMeas =outLaser.getMeasurement();
         return (outMeas.distance_mm < 30.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
-    public Robot() {
-        intakeRightConfig.inverted(true);
-    }
     public Command intake(){
         return run(() -> {
             intakeLeft.set(CoralConstants.kIntakeSpeed);
@@ -54,7 +51,7 @@ public class CoralSubsystem extends SubsystemBase {
      public Command trough(){
         return run(() -> {
             intakeLeft.set(CoralConstants.kTroughSpeed);
-            intakeRight.set(CoralConstants.kTroughSpeed*0.9);
+            intakeRight.set(CoralConstants.kTroughSpeed*CoralConstants.kTroughRightMotorPercentage);
         });
     }
      public Command stop(){
@@ -79,6 +76,7 @@ public class CoralSubsystem extends SubsystemBase {
         //Right intake config
         intakeRightConfig.idleMode(IdleMode.kBrake);
         intakeRightConfig.smartCurrentLimit(CoralConstants.kRightMotorCurrentLimit, CoralConstants.kRightMotorCurrentLimit);
+      intakeRightConfig.inverted(true);
         intakeRight.configure(intakeRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

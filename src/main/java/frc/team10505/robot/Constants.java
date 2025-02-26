@@ -72,7 +72,7 @@ public final class Constants {
     
     public final class ElevatorConstants {
             // PID Constants
-            public final static double KP = 1.0;
+            public final static double KP = 0.3;
             public final static double KI = 0.0;
             public final static double KD = 0.0;
 
@@ -143,9 +143,10 @@ public final class Constants {
       public final static int kRightMotorCurrentLimit = 15;
       public final static int kIntakeInId = 60;
       public final static int kIntakeOutId = 61;
-      public final static double kIntakeSpeed = 0.4;
-      public final static double kOutakeSpeed = 0.4;
-      public final static double kTroughSpeed = 0.2;
+      public final static double kIntakeSpeed = 0.25;
+      public final static double kOutakeSpeed = 1.0;
+      public final static double kTroughSpeed = 1.0;
+      public final static double kTroughRightMotorPercentage = 0.9;
     }
 
   

@@ -32,8 +32,9 @@ import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
 public class RobotContainer {
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
- 
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
+
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -45,26 +46,26 @@ public class RobotContainer {
 
     /* Operator interfaces */
     private final CommandXboxController xboxController = new CommandXboxController(kXboxControllerPort);
-    // private final CommandXboxController controlPanel = new CommandXboxController(kControlPanelPort);
+    // private final CommandXboxController controlPanel = new
+    // CommandXboxController(kControlPanelPort);
     private final CommandJoystick joystick = new CommandJoystick(0);
     private final CommandJoystick joystick2 = new CommandJoystick(1);
 
     /* Subsystems */
     private final DrivetrainSubsystem drivetrainSubsys = TunerConstants.createDrivetrain();
-    private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
     private final AlgaeSubsystem algaeSubsys = new AlgaeSubsystem();
     private final CoralSubsystem coralSubsys = new CoralSubsystem();
+    private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
 
-   // private final Vision vision = new Vision(drivetrainSubsys);
+    // private final Vision vision = new Vision(drivetrainSubsys);
     /* Superstructure */
-    private final Superstructure superStructure = new Superstructure(coralSubsys,algaeSubsys,elevatorSubsys,drivetrainSubsys);
+    private final Superstructure superStructure = new Superstructure(coralSubsys, algaeSubsys, elevatorSubsys,
+            drivetrainSubsys);
 
- 
-   
     /* Autonomous */
-    private  final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
-    
-        public RobotContainer() {
+    private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+
+    public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser();
 
         configDefaultCommands();
@@ -81,19 +82,28 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         if (Utils.isSimulation()) {
             drivetrainSubsys.setDefaultCommand(
-                drivetrainSubsys.applyRequest(() ->
-                drive.withVelocityX(-joystick.getRawAxis(0) * MaxSpeed) // Drive forward with negative Y (forward)
-                .withVelocityY(joystick.getRawAxis(1) * MaxSpeed) // Drive left with negative X (left)
-                .withRotationalRate(-joystick2.getRawAxis(1) * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getRawAxis(0) * MaxSpeed) // Drive
+                                                                                                                // forward
+                                                                                                                // with
+                                                                                                                // negative
+                                                                                                                // Y
+                                                                                                                // (forward)
+                            .withVelocityY(joystick.getRawAxis(1) * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-joystick2.getRawAxis(1) * MaxAngularRate)) // Drive counterclockwise
+                                                                                            // with negative X (left)
             );
         } else {
             drivetrainSubsys.setDefaultCommand(
-                drivetrainSubsys.applyRequest(() ->
-                    drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                )
-            );
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive
+                                                                                                                   // forward
+                                                                                                                   // with
+                                                                                                                   // negative
+                                                                                                                   // Y
+                                                                                                                   // (forward)
+                            .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                                                                              // with negative X (left)
+                    ));
         }
 
         algaeSubsys.setDefaultCommand(algaeSubsys.holdAngle());
@@ -104,39 +114,39 @@ public class RobotContainer {
      * interface button bindings.
      */
     private void configButtonBindings() {
-        if (Utils.isSimulation()) {         
-       
+        if (Utils.isSimulation()) {
+
             joystick.button(1).whileTrue(elevatorSubsys.setHeight(0.0));
             joystick.button(2).whileTrue(elevatorSubsys.setHeight(1.0));
             joystick.button(3).whileTrue(elevatorSubsys.setHeight(2.5));
             joystick.button(4).whileTrue(elevatorSubsys.setHeight(4.0));
         } else {
-        //     xboxController.a().whileTrue(drivetrainSubsys.applyRequest(() -> brake));
-        //     xboxController.b().whileTrue(drivetrainSubsys.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))
-        // ));
-         xboxController.povRight().onTrue(algaeSubsys.intakeForward());
-         xboxController.povLeft().onTrue(algaeSubsys.intakeReverse());
-         xboxController.povDown().onTrue(algaeSubsys.intakeStop());
+            // xboxController.a().whileTrue(drivetrainSubsys.applyRequest(() -> brake));
+            // xboxController.b().whileTrue(drivetrainSubsys.applyRequest(() ->
+            // point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(),
+            // -xboxController.getLeftX()))
+            // ));
 
-            xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
-            xboxController.b().onTrue(algaeSubsys.stopPivot());
-            xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+            // xboxController.povRight().onTrue(algaeSubsys.intakeForward());
+            // xboxController.povLeft().onTrue(algaeSubsys.intakeReverse());
+            // xboxController.povDown().onTrue(algaeSubsys.intakeStop());
 
-           // xboxController.povUp().whileTrue(superStructure.intakeCoral());
+            // xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
+            // xboxController.b().onTrue(algaeSubsys.stopPivot());
+            // xboxController.x().onTrue(algaeSubsys.setAngle(-90));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        // xboxController.back().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kForward));
-        // xboxController.back().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdDynamic(Direction.kReverse));
-        // xboxController.start().and(xboxController.y()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kForward));
-        // xboxController.start().and(xboxController.x()).whileTrue(drivetrainSubsys.sysIdQuasistatic(Direction.kReverse));
-         xboxController.y().whileTrue(superStructure.intakeCoral());
+            // xboxController.povUp().whileTrue(superStructure.intakeCoral());
 
-        // reset the field-centric heading on left bumper press
-        xboxController.leftBumper().onTrue(drivetrainSubsys.runOnce(() -> drivetrainSubsys.seedFieldCentric()));
+            // xboxController.y().whileTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
+            // xboxController.rightTrigger().whileTrue(superStructure.outputCoral());
+            // xboxController.rightBumper().whileTrue(superStructure.outputCoralTrough());
 
-        drivetrainSubsys.registerTelemetry(logger::telemeterize);
+            xboxController.a().onTrue(elevatorSubsys.setHeight(10.0));
+            xboxController.b().onTrue(elevatorSubsys.setHeight(15.0));
+            xboxController.x().onTrue(elevatorSubsys.setHeight(0.0));
+
+
+            drivetrainSubsys.registerTelemetry(logger::telemeterize);
         }
     }
 
@@ -159,11 +169,11 @@ public class RobotContainer {
     }
 
     public void resetSimulation() {
-  //       vision.reset();
+        // vision.reset();
     }
 
     public void updateSimulation() {
-   //   vision.update(getPose());
+        // vision.update(getPose());
     }
 
 }

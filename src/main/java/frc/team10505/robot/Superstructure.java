@@ -31,9 +31,20 @@ public class Superstructure {
 
     public Command intakeCoral(){
         return Commands.sequence(
-            coralSubsystem.intake().until(()-> (coralSubsystem.outSensor())),
+            coralSubsystem.intake().until(()-> (coralSubsystem.outSensor() && !coralSubsystem.inSensor())),
             coralSubsystem.stop()
         );
     } 
-    
+    public Command outputCoral() {
+        return Commands.sequence(
+            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor())),
+            coralSubsystem.stop()
+        );
+    }
+    public Command outputCoralTrough() {
+        return Commands.sequence(
+            coralSubsystem.trough().until(()-> (!coralSubsystem.outSensor())),
+            coralSubsystem.stop()
+        );
+    }
 }

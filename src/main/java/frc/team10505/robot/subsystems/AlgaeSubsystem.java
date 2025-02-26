@@ -25,7 +25,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     // motor controllers
 
-    private final SparkMax intakeMotor = new SparkMax(AlgaeConstants.kAlgaeIntakeMotorID, MotorType.kBrushless);
+    public final static SparkMax intakeMotor = new SparkMax(AlgaeConstants.kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.kAlgaePivotMotorId, MotorType.kBrushless);
     private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
