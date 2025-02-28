@@ -8,6 +8,7 @@ package frc.team10505.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -88,10 +89,26 @@ public class ElevatorSubsystem extends SubsystemBase {
         var motorConfig = new MotorOutputConfigs();
 
         motorConfig.NeutralMode = NeutralModeValue.Brake;
+        
         elevatorMotor.getConfigurator().apply(motorConfig);
 
         motorConfig.NeutralMode = NeutralModeValue.Brake;
         elevatorFollowerMotor.getConfigurator().apply(motorConfig);
+        elevatorFollowerMotor.setControl(new Follower(elevatorMotor.getDeviceID(), false));
+    }
+
+
+    public Command testElevator(double Voltage){
+        return run(() -> {
+            elevatorMotor.setVoltage(Voltage);
+        });
+    }
+
+    public Command stopElevator(){
+        return run(() ->{
+            elevatorMotor.stopMotor();
+            elevatorFollowerMotor.stopMotor();
+        });
     }
 
     public Command setHeight(double newHeight) {
@@ -137,13 +154,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorEncoderValue = getElevatorEncoder();
         SmartDashboard.putNumber("ElevatorHeight", elevatorEncoderValue);
+        SmartDashboard.putNumber("Elev motor output", elevatorMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Elev follow motor output", elevatorFollowerMotor.getMotorVoltage().getValueAsDouble());
+
         // simElevatorEncoder = elevatorViz.getLength();
         // elevatorEncoder = elevatorMotor.getPosition().getValueAsDouble(); // TODO <-
         // figure out when using real robot
         // simTotalEffort = simGetEffort();
         totalEffort = getEffort();
 
-        elevatorMotor.setVoltage(totalEffort * -1.0);
+        //elevatorMotor.setVoltage(totalEffort * -1.0);
         SmartDashboard.putNumber("Control Effort", totalEffort);
     }
 

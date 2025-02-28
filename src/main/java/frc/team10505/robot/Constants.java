@@ -71,14 +71,14 @@ public final class Constants {
     }
     
     public final class ElevatorConstants {
+                  //Motor IDs
+                  public final static int kElevatorMotorId = 10;
+                  public final static int kElevatorFollowerMotorId = 11;
+                  
             // PID Constants
-            public final static double KP = 0.3;
+            public final static double KP = 0.0;
             public final static double KI = 0.0;
             public final static double KD = 0.0;
-
-            //Motor IDs
-            public final static int kElevatorMotorId = 10;
-            public final static int kElevatorFollowerMotorId = 11;
       
             //  ffe Constants
             public final static double KS = 5.0;
