@@ -71,22 +71,23 @@ public final class Constants {
     }
     
     public final class ElevatorConstants {
-                  //Motor IDs
-                  public final static int kElevatorMotorId = 10;
-                  public final static int kElevatorFollowerMotorId = 11;
-                  
             // PID Constants
-            public final static double KP = 0.0;
+            public final static double KP = 0.28;
             public final static double KI = 0.0;
             public final static double KD = 0.0;
+
+            //Motor IDs
+            public final static int kElevatorMotorId = 10;
+            public final static int kElevatorMotorCurrentLimit = 40;
+            public final static int kElevatorFollowerMotorId = 11;
       
             //  ffe Constants
-            public final static double KS = 5.0;
-            public final static double KG = 2.0;
-            public final static double KV = 0.9;
-            public final static double KA = 0.1;
+            public final static double KS = 0.0;
+            public final static double KG = 0.4;
+            public final static double KV = 8.49;
+            public final static double KA = 0.03;
       
-        // simulation constants
+        // simulation constant
             public final static double kMaxHeightMeters = 1.5;
             // sim elevator PID constants
             public final static double simKP = 2; 

@@ -59,8 +59,8 @@ public class RobotContainer {
 
     // private final Vision vision = new Vision(drivetrainSubsys);
     /* Superstructure */
-    // private final Superstructure superStructure = new Superstructure(coralSubsys, algaeSubsys, elevatorSubsys, 
-    //        drivetrainSubsys);
+    private final Superstructure superStructure = new Superstructure(coralSubsys, algaeSubsys, elevatorSubsys,
+            drivetrainSubsys);
 
     /* Autonomous */
     private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
@@ -79,34 +79,34 @@ public class RobotContainer {
      */
     private void configDefaultCommands() {
         // Note that X is defined as forward according to WPILib convention,
-        // // and Y is defined as to the left according to WPILib convention.
-        // if (Utils.isSimulation()) {
-        //     drivetrainSubsys.setDefaultCommand(
-        //             drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getRawAxis(0) * MaxSpeed) // Drive
-        //                                                                                                         // forward
-        //                                                                                                         // with
-        //                                                                                                         // negative
-        //                                                                                                         // Y
-        //                                                                                                         // (forward)
-        //                     .withVelocityY(joystick.getRawAxis(1) * MaxSpeed) // Drive left with negative X (left)
-        //                     .withRotationalRate(-joystick2.getRawAxis(1) * MaxAngularRate)) // Drive counterclockwise
-        //                                                                                     // with negative X (left)
-        //     );
-        // } else {
-        //     drivetrainSubsys.setDefaultCommand(
-        //             drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive
-        //                                                                                                            // forward
-        //                                                                                                            // with
-        //                                                                                                            // negative
-        //                                                                                                            // Y
-        //                                                                                                            // (forward)
-        //                     .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //                     .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise
-        //                                                                                       // with negative X (left)
-        //             ));
-        // }
+        // and Y is defined as to the left according to WPILib convention.
+        if (Utils.isSimulation()) {
+            drivetrainSubsys.setDefaultCommand(
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getRawAxis(0) * MaxSpeed) // Drive
+                                                                                                                // forward
+                                                                                                                // with
+                                                                                                                // negative
+                                                                                                                // Y
+                                                                                                                // (forward)
+                            .withVelocityY(joystick.getRawAxis(1) * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-joystick2.getRawAxis(1) * MaxAngularRate)) // Drive counterclockwise
+                                                                                            // with negative X (left)
+            );
+        } else {
+            drivetrainSubsys.setDefaultCommand(
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive
+                                                                                                                   // forward
+                                                                                                                   // with
+                                                                                                                   // negative
+                                                                                                                   // Y
+                                                                                                                   // (forward)
+                            .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                                                                              // with negative X (left)
+                    ));
+        }
 
-       // algaeSubsys.setDefaultCommand(algaeSubsys.holdAngle());
+        algaeSubsys.setDefaultCommand(algaeSubsys.holdAngle());
     }
 
     /**
@@ -114,6 +114,13 @@ public class RobotContainer {
      * interface button bindings.
      */
     private void configButtonBindings() {
+        if (Utils.isSimulation()) {
+
+            joystick.button(1).whileTrue(elevatorSubsys.setHeight(0.0));
+            joystick.button(2).whileTrue(elevatorSubsys.setHeight(1.0));
+            joystick.button(3).whileTrue(elevatorSubsys.setHeight(2.5));
+            joystick.button(4).whileTrue(elevatorSubsys.setHeight(4.0));
+        } else {
             // xboxController.a().whileTrue(drivetrainSubsys.applyRequest(() -> brake));
             // xboxController.b().whileTrue(drivetrainSubsys.applyRequest(() ->
             // point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(),
@@ -128,22 +135,19 @@ public class RobotContainer {
             // xboxController.b().onTrue(algaeSubsys.stopPivot());
             // xboxController.x().onTrue(algaeSubsys.setAngle(-90));
 
-                xboxController.a().onTrue(elevatorSubsys.setHeight(0.0));
-                xboxController.b().onTrue(elevatorSubsys.setHeight(1.0));
-                xboxController.x().onTrue(elevatorSubsys.stopElevator());
-
             // xboxController.povUp().whileTrue(superStructure.intakeCoral());
 
             // xboxController.y().whileTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
             // xboxController.rightTrigger().whileTrue(superStructure.outputCoral());
             // xboxController.rightBumper().whileTrue(superStructure.outputCoralTrough());
 
-            // xboxController.a().onTrue(elevatorSubsys.setHeight(10.0));
-            // xboxController.b().onTrue(elevatorSubsys.setHeight(15.0));
-            // xboxController.x().onTrue(elevatorSubsys.setHeight(0.0));
+            xboxController.a().onTrue(elevatorSubsys.setHeight(10.0));
+            xboxController.b().onTrue(elevatorSubsys.setHeight(32.0));
+            xboxController.x().onTrue(elevatorSubsys.setHeight(0.0));
 
 
             drivetrainSubsys.registerTelemetry(logger::telemeterize);
+        }
     }
 
     /**
