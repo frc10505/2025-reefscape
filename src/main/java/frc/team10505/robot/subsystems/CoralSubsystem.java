@@ -31,22 +31,33 @@ public class CoralSubsystem extends SubsystemBase {
     }
     public boolean inSensor(){
         LaserCan.Measurement inMeas =inLaser.getMeasurement();
-        return (inMeas.distance_mm < 30.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return (inMeas.distance_mm < 50.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
     public boolean outSensor(){
         LaserCan.Measurement outMeas =outLaser.getMeasurement();
-        return (outMeas.distance_mm < 30.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
     public Command intake(){
-        return run(() -> {
+        return runEnd(() -> {
             intakeLeft.set(CoralConstants.kIntakeSpeed);
             intakeRight.set(CoralConstants.kIntakeSpeed);
+        },
+        () -> {
+            intakeLeft.set(0);
+            intakeRight.set(0);
         });
-    }public Command output(){
+    }
+    public Command output(){
         return run(() -> {
             intakeLeft.set(CoralConstants.kOutakeSpeed);
             intakeRight.set(CoralConstants.kOutakeSpeed);
         });
+    }
+    public Command outputTop(){
+        return run(() -> {
+            intakeLeft.set(CoralConstants.kOutakeTopSpeed);
+            intakeRight.set(CoralConstants.kOutakeTopSpeed);
+    });
     }
      public Command trough(){
         return run(() -> {

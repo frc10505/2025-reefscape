@@ -72,7 +72,7 @@ public final class Constants {
     
     public final class ElevatorConstants {
             // PID Constants
-            public final static double KP = 0.28;
+            public final static double KP = 0.32;
             public final static double KI = 0.0;
             public final static double KD = 0.0;
 
@@ -84,8 +84,8 @@ public final class Constants {
             //  ffe Constants
             public final static double KS = 0.0;
             public final static double KG = 0.4;
-            public final static double KV = 8.49;
-            public final static double KA = 0.03;
+            public final static double KV = 19.38;
+            public final static double KA = 0.01;
       
         // simulation constant
             public final static double kMaxHeightMeters = 1.5;
@@ -108,7 +108,7 @@ public final class Constants {
       public final static int kAlgaePivotMotorId = 8;
       public final static int kPivotMotorCurrentLimit = 15;
       public final static int kAlgaeIntakeMotorID = 7;
-      public final static int kIntakeMotorCurrentLimit = 15;
+      public final static int kIntakeMotorCurrentLimit = 25;
 
       //Intake speed
       public final static double intakeSpeed = 0.5;   //TODO tune with algae
@@ -145,8 +145,9 @@ public final class Constants {
       public final static int kIntakeInId = 60;
       public final static int kIntakeOutId = 61;
       public final static double kIntakeSpeed = 0.25;
-      public final static double kOutakeSpeed = 1.0;
-      public final static double kTroughSpeed = 1.0;
+      public final static double kOutakeSpeed = 0.25;
+      public final static double kOutakeTopSpeed = 0.1;
+      public final static double kTroughSpeed = 0.25;
       public final static double kTroughRightMotorPercentage = 0.9;
     }
 

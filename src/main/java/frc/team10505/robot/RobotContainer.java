@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,6 +47,7 @@ public class RobotContainer {
 
     /* Operator interfaces */
     private final CommandXboxController xboxController = new CommandXboxController(kXboxControllerPort);
+    private final CommandXboxController xboxController2 = new CommandXboxController(kControlPanelPort);
     // private final CommandXboxController controlPanel = new
     // CommandXboxController(kControlPanelPort);
     private final CommandJoystick joystick = new CommandJoystick(0);
@@ -127,23 +129,25 @@ public class RobotContainer {
             // -xboxController.getLeftX()))
             // ));
 
-            // xboxController.povRight().onTrue(algaeSubsys.intakeForward());
-            // xboxController.povLeft().onTrue(algaeSubsys.intakeReverse());
-            // xboxController.povDown().onTrue(algaeSubsys.intakeStop());
+             xboxController.povRight().onTrue(algaeSubsys.intakeForward()).onFalse(algaeSubsys.intakeStop());
+             xboxController.povLeft().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+             xboxController.povDown().onTrue(algaeSubsys.intakeStop());
 
-            // xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
-            // xboxController.b().onTrue(algaeSubsys.stopPivot());
-            // xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+             xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
+             xboxController.b().onTrue(algaeSubsys.stopPivot());
+             xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+             xboxController.y().onTrue(algaeSubsys.setAngle(0.0));
 
-            // xboxController.povUp().whileTrue(superStructure.intakeCoral());
+             xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
 
-            // xboxController.y().whileTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
-            // xboxController.rightTrigger().whileTrue(superStructure.outputCoral());
-            // xboxController.rightBumper().whileTrue(superStructure.outputCoralTrough());
+             xboxController2.povDown().whileTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
+             xboxController2.povLeft().whileTrue(superStructure.outputCoral());
+             xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
-            xboxController.a().onTrue(elevatorSubsys.setHeight(10.0));
-            xboxController.b().onTrue(elevatorSubsys.setHeight(32.0));
-            xboxController.x().onTrue(elevatorSubsys.setHeight(0.0));
+            xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
+            xboxController2.b().onTrue(elevatorSubsys.setHeight(23.0));
+            xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
+            xboxController2.y().onTrue(elevatorSubsys.setHeight(49.5));
 
 
             drivetrainSubsys.registerTelemetry(logger::telemeterize);

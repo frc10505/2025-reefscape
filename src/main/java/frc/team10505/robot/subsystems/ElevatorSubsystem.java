@@ -111,7 +111,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public double getElevatorEncoder() {
-        return (elevatorMotor.getRotorPosition().getValueAsDouble() * (Math.PI * 2.15) / 12.0 ) * -1.0;
+        return (elevatorMotor.getRotorPosition().getValueAsDouble() * (Math.PI * 1.751*2) / 12.0 ) * -1.0;
     }
 
     public double simGetEffort() {
