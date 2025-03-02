@@ -7,6 +7,7 @@
 package frc.team10505.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -88,11 +89,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         var motorConfig = new MotorOutputConfigs();
 
+        //set current limits
+        var limitConfigs = new CurrentLimitsConfigs();
+        limitConfigs.StatorCurrentLimit = Constants.ElevatorConstants.kElevatorMotorCurrentLimit;
+        limitConfigs.StatorCurrentLimitEnable=true;
+
         motorConfig.NeutralMode = NeutralModeValue.Brake;
         elevatorMotor.getConfigurator().apply(motorConfig);
+        elevatorMotor.getConfigurator().apply(limitConfigs);
 
         motorConfig.NeutralMode = NeutralModeValue.Brake;
         elevatorFollowerMotor.getConfigurator().apply(motorConfig);
+        elevatorFollowerMotor.getConfigurator().apply(limitConfigs);
         elevatorFollowerMotor.setControl(new Follower(elevatorMotor.getDeviceID(), false));
     }
 
