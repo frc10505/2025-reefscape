@@ -131,7 +131,7 @@ public class RobotContainer {
 
              xboxController.povRight().onTrue(algaeSubsys.intakeForward()).onFalse(algaeSubsys.intakeStop());
              xboxController.povLeft().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-             xboxController.povDown().onTrue(algaeSubsys.intakeStop());
+             xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae().unless(()->(algaeSubsys.coasting)));
 
              xboxController.a().onTrue(algaeSubsys.setAngle(-45.0));
              xboxController.b().onTrue(algaeSubsys.stopPivot());

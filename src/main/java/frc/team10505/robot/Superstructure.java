@@ -52,4 +52,16 @@ public class Superstructure {
             coralSubsystem.stop()
         );
     }
+    public Command grabAlgae() {
+        return Commands.sequence(
+            algaeSubsystem.intakeReverse(),
+            algaeSubsystem.coastPivot()  
+        );
+    }
+    public Command holdAlgae(){
+        return Commands.sequence(
+            algaeSubsystem.intakeStop(),
+            algaeSubsystem.brakePivot()
+        );
+    }
 }

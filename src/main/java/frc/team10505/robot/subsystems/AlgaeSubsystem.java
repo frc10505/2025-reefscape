@@ -62,9 +62,26 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
     }
 
+   public boolean coasting = false;
+
     public Command holdAngle() {
         return run(() -> {
+            if (!coasting) {
             pivotMotor.setVoltage(PIDEffort());
+            }
+        });
+    }
+    public Command coastPivot(){
+        return runOnce(() ->{
+            pivotMotorConfig.idleMode(IdleMode.kCoast);
+            coasting = true;
+        });
+    }
+    public Command brakePivot(){
+        return runOnce(() ->{
+            pivotMotorConfig.idleMode(IdleMode.kBrake);
+            pivotSetpoint = getPivotEncoder();
+            coasting = false;
         });
     }
 
