@@ -7,7 +7,10 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -292,6 +295,22 @@ public PathPlannerPath FlyPathTest = new PathPlannerPath(
 
 
     private void configDrivetrainSubsys() {
+        // var neutralConfigs = new MotorOutputConfigs();
+        // neutralConfigs.NeutralMode = NeutralModeValue.Brake;
+
+        // this.getModule(0).getDriveMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(0).getSteerMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(1).getDriveMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(1).getSteerMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(2).getDriveMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(2).getSteerMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(3).getDriveMotor().getConfigurator().apply(neutralConfigs);
+        // this.getModule(3).getSteerMotor().getConfigurator().apply(neutralConfigs);
+
+
+
+
+
         try {
             var config = RobotConfig.fromGUISettings();
 

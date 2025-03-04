@@ -71,6 +71,16 @@ public class CoralSubsystem extends SubsystemBase {
             intakeRight.set(0);
          });
     }
+    public Command slow(){
+        return runEnd(() -> {
+            intakeLeft.set(0.05);
+            intakeRight.set(0.05);
+        },
+        () -> {
+            intakeLeft.set(0);
+            intakeRight.set(0);
+        });
+    }
     
     @Override
     public void periodic() {

@@ -72,13 +72,13 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
     }
     public Command coastPivot(){
-        return runOnce(() ->{
+        return run(() ->{
             pivotMotorConfig.idleMode(IdleMode.kCoast);
             coasting = true;
         });
     }
     public Command brakePivot(){
-        return runOnce(() ->{
+        return run(() ->{
             pivotMotorConfig.idleMode(IdleMode.kBrake);
             pivotSetpoint = getPivotEncoder();
             coasting = false;
