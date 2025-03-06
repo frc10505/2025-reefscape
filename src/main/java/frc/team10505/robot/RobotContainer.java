@@ -144,7 +144,7 @@ public class RobotContainer {
              xboxController2.povLeft().whileTrue(superStructure.outputCoral());
              xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
-            xboxController2.a().onTrue(elevatorSubsys.setHeight(9.0));
+            xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
             xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
             xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
             xboxController2.y().onTrue(elevatorSubsys.setHeight(49.5));
