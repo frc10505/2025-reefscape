@@ -140,7 +140,6 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configDrivetrainSubsys();
     }
 
     /**
@@ -165,7 +164,6 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configDrivetrainSubsys();
     }
 
     /**
@@ -198,7 +196,6 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configDrivetrainSubsys();
     }
 
     /**
@@ -294,26 +291,10 @@ public PathPlannerPath FlyPathTest = new PathPlannerPath(
 
 
 
-    private void configDrivetrainSubsys() {
-        // var neutralConfigs = new MotorOutputConfigs();
-        // neutralConfigs.NeutralMode = NeutralModeValue.Brake;
-
-        // this.getModule(0).getDriveMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(0).getSteerMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(1).getDriveMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(1).getSteerMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(2).getDriveMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(2).getSteerMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(3).getDriveMotor().getConfigurator().apply(neutralConfigs);
-        // this.getModule(3).getSteerMotor().getConfigurator().apply(neutralConfigs);
-
-
-
-
-
+    public void configDrivetrainSubsys() {
         try {
             var config = RobotConfig.fromGUISettings();
-
+            
             AutoBuilder.configure(
                 () -> getState().Pose,
                 this::resetPose,

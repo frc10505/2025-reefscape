@@ -18,6 +18,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -112,6 +113,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getElevatorEncoder() {
         return (elevatorMotor.getRotorPosition().getValueAsDouble() * (Math.PI * 1.751*2) / 12.0 ) * -1.0;
+    }
+
+       public boolean isNearGoal(){
+        return MathUtil.isNear(height, getElevatorEncoder(), 2);
     }
 
     public double simGetEffort() {

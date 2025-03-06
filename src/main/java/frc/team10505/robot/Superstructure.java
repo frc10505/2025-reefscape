@@ -37,8 +37,7 @@ public class Superstructure {
     } 
     public Command outputCoral() {
         return Commands.sequence(
-            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor())),
-            coralSubsystem.stop()
+            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
     }
     public Command outputCoralTrough() {
@@ -64,5 +63,62 @@ public class Superstructure {
             algaeSubsystem.intakeStop(),
             algaeSubsystem.brakePivot()
         );
+    }
+
+    //COMMANDS FOR AUTONS
+    public Command autoIntakeCoral(){
+        return coralSubsystem.autoIntake().until(()-> (coralSubsystem.outSensor() && coralSubsystem.inSensor()));
+    } 
+    public Command autoOutputCoral() {
+        return coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()));
+       
+    }
+    public Command autoOutputCoralTrough() {
+        return coralSubsystem.trough().until(()-> (!coralSubsystem.outSensor()));
+    }
+    public Command autoOutputTopCoral() {
+        return coralSubsystem.outputTop().until(()-> (!coralSubsystem.outSensor()));
+    }
+    public Command autoGrabAlgae() {
+        return Commands.sequence(
+            algaeSubsystem.intakeReverse(),
+            algaeSubsystem.coastPivot()  
+        );
+    }
+    public Command autoHoldAlgae(){
+        return algaeSubsystem.intakeStop();
+    }
+
+    public Command autoScoreCoralL4(){
+        return Commands.sequence(
+          elevatorSubsystem.setHeight(49.5),
+          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
+        );
+    }
+    public Command autoScoreCoralL3(){
+        return Commands.sequence(
+          elevatorSubsystem.setHeight(24.0),
+          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
+        );
+        
+    }   public Command autoScoreCoralL2(){
+        return Commands.sequence(
+          elevatorSubsystem.setHeight(9.0),
+          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
+        );
+    }  
+     public Command autoScoreCoralL1(){
+        return Commands.sequence(
+          elevatorSubsystem.setHeight(0.0),
+            Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
+        );
+    }
+
+    public Command autoElevDown(){
+        return elevatorSubsystem.setHeight(0.0);
     }
 }

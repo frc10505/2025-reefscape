@@ -8,6 +8,7 @@ package frc.team10505.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -68,6 +69,21 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
 
     public RobotContainer() {
+        NamedCommands.registerCommand("setElevToZero", elevatorSubsys.setHeight(0.0));
+        NamedCommands.registerCommand("setElevToNine", elevatorSubsys.setHeight(9.0));
+        NamedCommands.registerCommand("setElevTo24", elevatorSubsys.setHeight(24.0));
+        NamedCommands.registerCommand("setElevTo49/5", elevatorSubsys.setHeight(49.5));
+        
+        NamedCommands.registerCommand("intakeCoral", superStructure.intakeCoral());
+
+        NamedCommands.registerCommand("autoElevDown", superStructure.autoElevDown());
+        NamedCommands.registerCommand("autoScoreCoralL3", superStructure.autoScoreCoralL3());
+        NamedCommands.registerCommand("autoScoreCoralL4", superStructure.autoScoreCoralL4());
+        NamedCommands.registerCommand("autoScoreCoralL2", superStructure.autoScoreCoralL2());
+        NamedCommands.registerCommand("autoScoreCoralL1", superStructure.autoScoreCoralL1());
+
+        drivetrainSubsys.configDrivetrainSubsys();
+
         autoChooser = AutoBuilder.buildAutoChooser();
 
         configDefaultCommands();

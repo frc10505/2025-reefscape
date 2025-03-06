@@ -37,34 +37,46 @@ public class CoralSubsystem extends SubsystemBase {
         LaserCan.Measurement outMeas =outLaser.getMeasurement();
         return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
-    public Command intake(){
-        return runEnd(() -> {
-            intakeLeft.set(CoralConstants.kIntakeSpeed);
-            intakeRight.set(CoralConstants.kIntakeSpeed);
+        public Command intake(){
+            return runEnd(() -> {
+                intakeLeft.set(CoralConstants.kIntakeSpeed);
+                intakeRight.set(CoralConstants.kIntakeSpeed);
+            },
+            () -> {
+                intakeLeft.set(0);
+                intakeRight.set(0);
+            });
+        }
+        public Command output(){
+            return runEnd(() -> {
+                intakeLeft.set(CoralConstants.kOutakeSpeed);
+                intakeRight.set(CoralConstants.kOutakeSpeed);
+            },
+            () -> {
+                intakeLeft.set(0);
+                intakeRight.set(0);
+            });
+        }
+        public Command outputTop(){
+            return runEnd(() -> {
+                intakeLeft.set(CoralConstants.kOutakeTopSpeed);
+                intakeRight.set(CoralConstants.kOutakeTopSpeed);
         },
         () -> {
             intakeLeft.set(0);
             intakeRight.set(0);
         });
-    }
-    public Command output(){
-        return run(() -> {
-            intakeLeft.set(CoralConstants.kOutakeSpeed);
-            intakeRight.set(CoralConstants.kOutakeSpeed);
-        });
-    }
-    public Command outputTop(){
-        return run(() -> {
-            intakeLeft.set(CoralConstants.kOutakeTopSpeed);
-            intakeRight.set(CoralConstants.kOutakeTopSpeed);
-    });
-    }
-     public Command trough(){
-        return run(() -> {
-            intakeLeft.set(CoralConstants.kTroughSpeed);
-            intakeRight.set(CoralConstants.kTroughSpeed*CoralConstants.kTroughRightMotorPercentage);
-        });
-    }
+        }
+         public Command trough(){
+            return runEnd(() -> {
+                intakeLeft.set(CoralConstants.kTroughSpeed);
+                intakeRight.set(CoralConstants.kTroughSpeed*CoralConstants.kTroughRightMotorPercentage);
+            },
+            () -> {
+                intakeLeft.set(0);
+                intakeRight.set(0);
+            });
+        }
      public Command stop(){
         return run(() -> {
             intakeLeft.set(0);
@@ -80,6 +92,16 @@ public class CoralSubsystem extends SubsystemBase {
             intakeLeft.set(0);
             intakeRight.set(0);
         });
+    }
+
+    public Command autoIntake(){
+        return runEnd(() -> {
+            intakeLeft.set(CoralConstants.kIntakeSpeed);
+            intakeRight.set(CoralConstants.kIntakeSpeed);
+        },
+        () -> {
+            slow().until(() ->(outSensor() && !inSensor()));
+        }); 
     }
     
     @Override
