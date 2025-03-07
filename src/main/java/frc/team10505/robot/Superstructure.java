@@ -21,11 +21,11 @@ public class Superstructure {
     private ElevatorSubsystem elevatorSubsystem;
     private DrivetrainSubsystem drivetrainSubsystem;
 
-    public Superstructure(CoralSubsystem coralSubsystem, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys){
-        this.coralSubsystem = coralSubsystem;
-        this.algaeSubsystem = algaeSubsystem;
-        this.elevatorSubsystem = elevatorSubsystem;
-        this.drivetrainSubsystem = drivetrainSubsystem;
+    public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys){
+        this.coralSubsystem = coralSubsys;
+        this.algaeSubsystem = algaeSubsys;
+        this.elevatorSubsystem = elevatorSubsys;
+        this.drivetrainSubsystem = drivetrainSubsys;
     }  
 
 
@@ -37,8 +37,10 @@ public class Superstructure {
     } 
     public Command outputCoral() {
         return Commands.sequence(
-            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
-        );
+            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor())),
+            elevatorSubsystem.setHeight(0.0)//setHeightRun( 0.0).until(() -> (elevatorSubsystem.isNearGoal()))
+            );            
+        
     }
     public Command outputCoralTrough() {
         return Commands.sequence(
@@ -49,7 +51,9 @@ public class Superstructure {
     public Command outputTopCoral() {
         return Commands.sequence(
             coralSubsystem.outputTop().until(()-> (!coralSubsystem.outSensor())),
-            coralSubsystem.stop()
+            elevatorSubsystem.setHeight(52.0),
+            Commands.waitUntil(()-> (elevatorSubsystem.isNearGoal())),
+            elevatorSubsystem.setHeight(0.0)
         );
     }
     public Command grabAlgae() {
@@ -61,7 +65,7 @@ public class Superstructure {
     public Command holdAlgae(){
         return Commands.sequence(
             algaeSubsystem.intakeStop(),
-            algaeSubsystem.brakePivot()
+            algaeSubsystem.setAngle(-15)
         );
     }
 
@@ -92,14 +96,15 @@ public class Superstructure {
     public Command autoScoreCoralL4(){
         return Commands.sequence(
           elevatorSubsystem.setHeight(49.5),
-          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
     }
     public Command autoScoreCoralL3(){
         return Commands.sequence(
           elevatorSubsystem.setHeight(24.0),
-          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+          Commands.waitSeconds(0.5),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
         

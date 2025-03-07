@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.*;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -23,8 +26,10 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,8 +37,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.team10505.robot.Vision;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -41,6 +49,9 @@ import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
+     private final PhotonCamera frontCam = new PhotonCamera("frontCam");
+  private final PhotonCamera backCam = new PhotonCamera("backCam");
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -266,35 +277,59 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-//NEW
-//Pathplanner - create paths on the fly
-//TODO - is not functional
 
-private List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(3.0, 6.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.8, 7.0, Rotation2d.fromDegrees(45.0))
-);
+private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+private final PIDController strafeController = new PIDController(0.1, 0, 0.01);
 
-private PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-
-public PathPlannerPath FlyPathTest = new PathPlannerPath(
-        waypoints,
-        constraints,
-        null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-        new GoalEndState(0.0, Rotation2d.fromDegrees(45)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-);
-
+public Command alignToLeftSide(){
+    return run(() ->{
+        PhotonPipelineResult result = frontCam.getLatestResult();
+        double strafeError;
+        double targetSkew = 5;
+               if (result.hasTargets()){
+                    strafeError = result.getBestTarget().getSkew() - targetSkew;
+                    double strafeDistance = strafeController.calculate(strafeError);
+                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
+               } else{
+                Commands.print("I don't see an april tag, WOMP WOMP");   
+               }
 
 
+              //  double otherDistance = strafeController.calculate(
+                // if(result.hasTargets()) {
+                //     result.getBestTarget().getPitch() - targetSkew;
+                //  this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
+    });
+}
 
 
+public Command alignToRightSide(){
+    return run(() ->{
+        PhotonPipelineResult result = frontCam.getLatestResult();
+        double strafeError;
+        double targetSkew = -5;
+               if (result.hasTargets()){
+                    strafeError = result.getBestTarget().getSkew() - targetSkew;
+                    double strafeDistance = strafeController.calculate(strafeError);
+                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
+               } else{
+                Commands.print("I don't see an april tag, WOMP WOMP");   
+               }
+
+
+              //  double otherDistance = strafeController.calculate(
+                // if(result.hasTargets()) {
+                //     result.getBestTarget().getPitch() - targetSkew;
+                //  this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
+    });
+}
 
 
 
     public void configDrivetrainSubsys() {
         try {
             var config = RobotConfig.fromGUISettings();
-            
+
             AutoBuilder.configure(
                 () -> getState().Pose,
                 this::resetPose,

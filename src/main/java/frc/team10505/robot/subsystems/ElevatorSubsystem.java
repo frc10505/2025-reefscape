@@ -6,6 +6,8 @@
 
 package frc.team10505.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -110,13 +112,18 @@ public class ElevatorSubsystem extends SubsystemBase {
             height = newHeight;
         });
     }
+    // public Command setHeightRun(double newHeight) {
+    //     return run(() -> {
+    //         height = newHeight;
+    //     });
+    // }
 
     public double getElevatorEncoder() {
         return (elevatorMotor.getRotorPosition().getValueAsDouble() * (Math.PI * 1.751*2) / 12.0 ) * -1.0;
     }
 
        public boolean isNearGoal(){
-        return MathUtil.isNear(height, getElevatorEncoder(), 2);
+        return MathUtil.isNear(height, getElevatorEncoder(), 1);
     }
 
     public double simGetEffort() {

@@ -33,7 +33,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     // Encoder
     private final SparkAbsoluteEncoder pivotEncoder = pivotMotor.getAbsoluteEncoder();
     private double encoderValue;
-    private double absoluteOffset = 0.0;
+    private double absoluteOffset = 180.0;
 
     // Controller
     private final PIDController pivotController = new PIDController(AlgaeConstants.KP, AlgaeConstants.KI,
@@ -43,7 +43,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     // Get encoder
     public double getPivotEncoder() {
-        return (pivotEncoder.getPosition() - absoluteOffset) * -1.0;// TODO adjust
+        return (-pivotEncoder.getPosition() + absoluteOffset) ;// TODO adjust
     }
 
     // Calc PID

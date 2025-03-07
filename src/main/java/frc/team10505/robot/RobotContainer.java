@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -67,12 +68,14 @@ public class RobotContainer {
 
     /* Autonomous */
     private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+    private final SendableChooser<Double> polarityChooser = new SendableChooser<>();
+
 
     public RobotContainer() {
-        NamedCommands.registerCommand("setElevToZero", elevatorSubsys.setHeight(0.0));
-        NamedCommands.registerCommand("setElevToNine", elevatorSubsys.setHeight(9.0));
-        NamedCommands.registerCommand("setElevTo24", elevatorSubsys.setHeight(24.0));
-        NamedCommands.registerCommand("setElevTo49/5", elevatorSubsys.setHeight(49.5));
+       NamedCommands.registerCommand("setElevToZero", elevatorSubsys.setHeight(0.0));
+       NamedCommands.registerCommand("setElevToNine", elevatorSubsys.setHeight(9.0));
+       NamedCommands.registerCommand("setElevTo24", elevatorSubsys.setHeight(24.0));
+       NamedCommands.registerCommand("setElevTo49/5", elevatorSubsys.setHeight(49.5));
         
         NamedCommands.registerCommand("intakeCoral", superStructure.intakeCoral());
 
@@ -81,10 +84,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("autoScoreCoralL4", superStructure.autoScoreCoralL4());
         NamedCommands.registerCommand("autoScoreCoralL2", superStructure.autoScoreCoralL2());
         NamedCommands.registerCommand("autoScoreCoralL1", superStructure.autoScoreCoralL1());
+        NamedCommands.registerCommand("Test", Commands.print("isworking"));
 
         drivetrainSubsys.configDrivetrainSubsys();
 
         autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Polarity Chooser", polarityChooser);
+        polarityChooser.setDefaultOption("Default", 1.0);
+        polarityChooser.addOption("positive", 1.0);
+        polarityChooser.addOption("Negative", -1.0);
 
         configDefaultCommands();
         configButtonBindings();
@@ -100,25 +109,25 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         if (Utils.isSimulation()) {
             drivetrainSubsys.setDefaultCommand(
-                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getRawAxis(0) * MaxSpeed) // Drive
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getRawAxis(0) * polarityChooser.getSelected()* MaxSpeed) // Drive
                                                                                                                 // forward
                                                                                                                 // with
                                                                                                                 // negative
                                                                                                                 // Y
                                                                                                                 // (forward)
-                            .withVelocityY(joystick.getRawAxis(1) * MaxSpeed) // Drive left with negative X (left)
+                            .withVelocityY(joystick.getRawAxis(1)* polarityChooser.getSelected() * MaxSpeed) // Drive left with negative X (left)
                             .withRotationalRate(-joystick2.getRawAxis(1) * MaxAngularRate)) // Drive counterclockwise
                                                                                             // with negative X (left)
             );
         } else {
             drivetrainSubsys.setDefaultCommand(
-                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * MaxSpeed) // Drive
                                                                                                                    // forward
                                                                                                                    // with
                                                                                                                    // negative
                                                                                                                    // Y
                                                                                                                    // (forward)
-                            .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                            .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* MaxSpeed) // Drive left with negative X (left)
                             .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise
                                                                                               // with negative X (left)
                     ));
@@ -145,9 +154,13 @@ public class RobotContainer {
             // -xboxController.getLeftX()))
             // ));
 
-             xboxController.povRight().onTrue(algaeSubsys.intakeForward()).onFalse(algaeSubsys.intakeStop());
-             xboxController.povLeft().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+             xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+             xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
              //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+
+            xboxController.leftTrigger().whileTrue( drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * 0.2* MaxSpeed) // Drive
+.withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* 0.2* MaxSpeed) // Drive left with negative X (left)
+.withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
 
              xboxController.a().onTrue(algaeSubsys.setAngle(-20.0));
              xboxController.b().onTrue(algaeSubsys.stopPivot());
@@ -155,17 +168,17 @@ public class RobotContainer {
              xboxController.y().onTrue(algaeSubsys.setAngle(0.0));
 
              xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
-
              xboxController2.povDown().onTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
              xboxController2.povLeft().whileTrue(superStructure.outputCoral());
              xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
-            xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
-            xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
-            xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
-            xboxController2.y().onTrue(elevatorSubsys.setHeight(49.5));
-
-
+             xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
+             xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
+             xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
+             xboxController2.y().onTrue(elevatorSubsys.setHeight(49.5));
+            //xboxController2.a().onTrue(drivetrainSubsys.alignToLeftSide());
+            //xboxController2.b().onTrue(drivetrainSubsys.alignToRightSide());
+           
             drivetrainSubsys.registerTelemetry(logger::telemeterize);
         }
     }
