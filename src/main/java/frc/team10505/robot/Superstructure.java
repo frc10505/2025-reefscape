@@ -65,7 +65,7 @@ public class Superstructure {
     public Command holdAlgae(){
         return Commands.sequence(
             algaeSubsystem.intakeStop(),
-            algaeSubsystem.setAngle(-15)
+            algaeSubsystem.setAngle(-13)
         );
     }
 
@@ -112,6 +112,7 @@ public class Superstructure {
         return Commands.sequence(
           elevatorSubsystem.setHeight(9.0),
           Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          Commands.waitSeconds(0.5),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
     }  

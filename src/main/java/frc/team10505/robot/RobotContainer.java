@@ -162,10 +162,10 @@ public class RobotContainer {
 .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* 0.2* MaxSpeed) // Drive left with negative X (left)
 .withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
 
-             xboxController.a().onTrue(algaeSubsys.setAngle(-20.0));
+             xboxController.a().onTrue(algaeSubsys.setAngle(-18));
              xboxController.b().onTrue(algaeSubsys.stopPivot());
              xboxController.x().onTrue(algaeSubsys.setAngle(-90));
-             xboxController.y().onTrue(algaeSubsys.setAngle(0.0));
+             xboxController.y().onTrue(algaeSubsys.setAngle(5));
 
              xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
              xboxController2.povDown().onTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
@@ -175,7 +175,7 @@ public class RobotContainer {
              xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
              xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
              xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
-             xboxController2.y().onTrue(elevatorSubsys.setHeight(49.5));
+             xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
             //xboxController2.a().onTrue(drivetrainSubsys.alignToLeftSide());
             //xboxController2.b().onTrue(drivetrainSubsys.alignToRightSide());
            
