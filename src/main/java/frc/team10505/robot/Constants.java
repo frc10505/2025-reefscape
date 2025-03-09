@@ -147,7 +147,7 @@ public final class Constants {
       public final static double kIntakeSpeed = 0.30;
       public final static double kOutakeSpeed = 0.25;
       public final static double kOutakeTopSpeed = 0.1;
-      public final static double kTroughSpeed = 0.25;
+      public final static double kTroughSpeed = 0.30;
       public final static double kTroughRightMotorPercentage = 0.9;
     }
 
