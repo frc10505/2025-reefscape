@@ -69,6 +69,16 @@ public class Superstructure {
         );
     }
 
+
+    public Command alignToReef(){
+        if(drivetrainSubsystem.reefCam.getLatestResult().hasTargets()){
+            return drivetrainSubsystem.alignWithReef().until(() -> (drivetrainSubsystem.isNearTag() | (!drivetrainSubsystem.reefCam.getLatestResult().hasTargets())));
+        } else{
+            return Commands.print("No target!!");
+        }
+
+    }
+
     //COMMANDS FOR AUTONS
     public Command autoIntakeCoral(){
         return coralSubsystem.autoIntake().until(()-> (coralSubsystem.outSensor() && coralSubsystem.inSensor()));

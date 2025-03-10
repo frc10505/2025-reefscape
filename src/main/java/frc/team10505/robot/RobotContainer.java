@@ -50,6 +50,8 @@ public class RobotContainer {
     /* Operator interfaces */
     private final CommandXboxController xboxController = new CommandXboxController(kXboxControllerPort);
     private final CommandXboxController xboxController2 = new CommandXboxController(kControlPanelPort);
+
+
     // private final CommandXboxController controlPanel = new
     // CommandXboxController(kControlPanelPort);
     private final CommandJoystick joystick = new CommandJoystick(0);
@@ -176,8 +178,9 @@ public class RobotContainer {
              xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
              xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
              xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
-            //xboxController2.a().onTrue(drivetrainSubsys.alignToLeftSide());
-            //xboxController2.b().onTrue(drivetrainSubsys.alignToRightSide());
+
+
+           // xboxController.a().whileTrue(superStructure.alignToReef());
            
             drivetrainSubsys.registerTelemetry(logger::telemeterize);
         }

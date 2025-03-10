@@ -3,9 +3,14 @@ package frc.team10505.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -25,6 +30,9 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,6 +42,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team10505.robot.Vision;
+import frc.team10505.robot.Constants.VisionConstants;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -49,8 +59,20 @@ import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
-     private final PhotonCamera frontCam = new PhotonCamera("frontCam");
-  private final PhotonCamera backCam = new PhotonCamera("backCam");
+//      private final PhotonCamera frontCam = new PhotonCamera("frontCam");
+//   private final PhotonCamera backCam = new PhotonCamera("backCam");
+
+ public final PhotonCamera reefCam = new PhotonCamera("reefCam");
+private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+
+//private final PhotonPipelineResult tagResult = reefCam.getLatestResult();
+
+//private final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+
+
+private final PIDController strafeController = new PIDController(0.03, 0.0, 0.005);
+private final PIDController turnController = new PIDController(0.03, 0.0, 0.005);
+private final PIDController distanceController = new PIDController(0.05, 0.0, 0.01);
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -260,6 +282,11 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+      //  photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+
+        SmartDashboard.putBoolean("sees tag", reefCam.getLatestResult().hasTargets());
     }
 
     private void startSimThread() {
@@ -278,51 +305,64 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     }
 
 
-private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
-private final PIDController strafeController = new PIDController(0.1, 0, 0.01);
-
-public Command alignToLeftSide(){
-    return run(() ->{
-        PhotonPipelineResult result = frontCam.getLatestResult();
-        double strafeError;
-        double targetSkew = 5;
-               if (result.hasTargets()){
-                    strafeError = result.getBestTarget().getSkew() - targetSkew;
-                    double strafeDistance = strafeController.calculate(strafeError);
-                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
-               } else{
-                Commands.print("I don't see an april tag, WOMP WOMP");   
-               }
+//DEATH BUTTON 2.0
+//BE AFRAID
 
 
-              //  double otherDistance = strafeController.calculate(
-                // if(result.hasTargets()) {
-                //     result.getBestTarget().getPitch() - targetSkew;
-                //  this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
+public Command alignWithReef() {
+    return run(() -> {
+        PhotonPipelineResult result = reefCam.getLatestResult();
+        var alliance = DriverStation.getAlliance();
+        if(result.hasTargets()){
+
+            if(alliance.get() == Alliance.Red){
+            if(result.getBestTarget().getFiducialId() == (6|7|8|9|10|11)){
+                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), 3.0); 
+               // if(result.getBestTarget().getPitch() > 0){
+                double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), 180.0); 
+               // } else{
+                   // double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), -179.0); 
+ 
+               // }
+                double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), 3.0); 
+
+                this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));
+            }
+            else{
+                Commands.print("no valid red reef tag is visible");
+            }
+        } else{
+            if(result.getBestTarget().getFiducialId() == (17|18|19|20|21|22)){
+                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), 3.0); 
+                // if(result.getBestTarget().getPitch() > 0){
+                 double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), 180.0); 
+                // } else{
+                    // double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), -179.0); 
+  
+                // }
+                 double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), 3.0); 
+ 
+                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));
+                Commands.print("no valid BLUE reef tag is visible");
+            }
+       }       
+    } else{
+        Commands.print("No tag is visible!");
+    }
+                  
     });
 }
 
 
-public Command alignToRightSide(){
-    return run(() ->{
-        PhotonPipelineResult result = frontCam.getLatestResult();
-        double strafeError;
-        double targetSkew = -5;
-               if (result.hasTargets()){
-                    strafeError = result.getBestTarget().getSkew() - targetSkew;
-                    double strafeDistance = strafeController.calculate(strafeError);
-                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
-               } else{
-                Commands.print("I don't see an april tag, WOMP WOMP");   
-               }
 
 
-              //  double otherDistance = strafeController.calculate(
-                // if(result.hasTargets()) {
-                //     result.getBestTarget().getPitch() - targetSkew;
-                //  this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(0.0, strafeDistance, 0.0)));
-    });
+
+public boolean isNearTag() {
+    return MathUtil.isNear(3.0, reefCam.getLatestResult().getBestTarget().getYaw(),  2);
 }
+
+
+       
 
 
 
@@ -351,4 +391,75 @@ public Command alignToRightSide(){
             DriverStation.reportError("something may or may not be broken, idk", ex.getStackTrace());
         }
     }
+
+
+
+
+
+
+
+
+//     public final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+
+//   private final PhotonCamera photonCamera = new PhotonCamera("reefCam");
+//   //private final PhotonCamera photonNote = new PhotonCamera(kNoteCameraName);
+//   private final PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(kFieldLayout,
+//       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionConstants.kRobotToMod0CameraTransform);
+
+//   private double lastEstimateTimestamp = 0.0;
+
+// //   public Vision() {
+// //     configVision();
+// //   }
+
+//   public PhotonPipelineResult getLatestResult() {
+//     return photonCamera.getLatestResult();
+//   }
+
+// //   public PhotonPipelineResult getNoteResult() {
+// //     return photonNote.getLatestResult();
+// //   }
+
+//   public Optional<EstimatedRobotPose> getEstimatedRobotPose() {
+//     var visionEstimate = photonPoseEstimator.update(photonCamera.getLatestResult());
+//     double latestTimestamp = getLatestResult().getTimestampSeconds();
+//     boolean newResult = Math.abs(latestTimestamp - lastEstimateTimestamp) > 1e-5;
+
+//     if (newResult) {
+//       lastEstimateTimestamp = latestTimestamp;
+//     }
+
+//     return visionEstimate;
+//   }
+
+//   public double getTargetHeight() {
+//     double targetHeight;
+    
+//     var result = getLatestResult();
+
+//     if (result.hasTargets()) {
+//       targetHeight = kFieldLayout.getTagPose(result.getBestTarget().getFiducialId()).get().getZ();
+//     } else {
+//       targetHeight = 0.0;
+//     }
+
+//     return targetHeight;
+//   }
+
+// //   public double getTargetDistance() {
+// //     double targetDistance;
+
+// //     var result = getLatestResult();
+
+// //     if (result.hasTargets()) {
+// //       targetDistance = PhotonUtils.calculateDistanceToTargetMeters(kCameraHeight.in(Meters), getTargetHeight(),
+// //           kCameraPitch.in(Radians), Units.degreesToRadians(result.getBestTarget().getPitch()));
+// //     } else {
+// //       targetDistance = 0.0;
+// //     }
+
+// //     return targetDistance;
+// //   }
+
+
 }
