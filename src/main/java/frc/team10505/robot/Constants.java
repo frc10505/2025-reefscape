@@ -70,6 +70,30 @@ public final class Constants {
       public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
     
+    public final class DrivetrainConstants {
+      //Alignmnet Constants
+      public final static double kStrafeP = 0.01;
+      public final static double kStrafeI = 0.0;
+      public final static double kStrafeD = 0.005;
+
+      public final static double kTurnP = 0.01;
+      public final static double kTurnI = 0.0;
+      public final static double kTurnD = 0.005;
+
+      public final static double kDistanceP = 0.01;
+      public final static double kDistanceI = 0.0;
+      public final static double kDistanceD = 0.005;
+        //Left side
+        public final static double kLeftDistanceSetpoint = 2.0;
+        public final static double kLeftYawSetpoint = 2.0;
+
+        //right side
+        public final static double kRightDistanceSetpoint = 2.0;
+        public final static double kRightYawSetpoint = 2.0;
+
+    }
+
+
     public final class ElevatorConstants {
             // PID Constants
             public final static double KP = 0.32;

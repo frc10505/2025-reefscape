@@ -2,40 +2,22 @@ package frc.team10505.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
@@ -48,31 +30,22 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team10505.robot.Vision;
-import frc.team10505.robot.Constants.VisionConstants;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 
-/**
- * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
- * Subsystem so it can easily be used in command-based projects.
- */
+
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
-//      private final PhotonCamera frontCam = new PhotonCamera("frontCam");
-//   private final PhotonCamera backCam = new PhotonCamera("backCam");
 
- public final PhotonCamera reefCam = new PhotonCamera("reefCam");
-private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+private final SwerveRequest.ApplyFieldSpeeds autoRequest = new SwerveRequest.ApplyFieldSpeeds();
+//SwerveRequest.ApplyChassisSpeeds();
 
-//private final PhotonPipelineResult tagResult = reefCam.getLatestResult();
+private Vision vision;
 
-//private final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
-
-
-private final PIDController strafeController = new PIDController(0.03, 0.0, 0.005);
-private final PIDController turnController = new PIDController(0.03, 0.0, 0.005);
-private final PIDController distanceController = new PIDController(0.05, 0.0, 0.01);
+private final PIDController strafeController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
+private final PIDController turnController = new PIDController(kTurnP, kTurnI, kTurnD);
+private final PIDController distanceController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -155,16 +128,9 @@ private final PIDController distanceController = new PIDController(0.05, 0.0, 0.
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
-     * @param modules               Constants for each specific module
-     */
+
+
+//Three constructors that use different parameters
     public DrivetrainSubsystem(
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
@@ -175,19 +141,6 @@ private final PIDController distanceController = new PIDController(0.05, 0.0, 0.
         }
     }
 
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
-     * @param odometryUpdateFrequency The frequency to run the odometry loop. If
-     *                                unspecified or set to 0 Hz, this is 250 Hz on
-     *                                CAN FD, and 100 Hz on CAN 2.0.
-     * @param modules                 Constants for each specific module
-     */
     public DrivetrainSubsystem(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
@@ -199,25 +152,6 @@ private final PIDController distanceController = new PIDController(0.05, 0.0, 0.
         }
     }
 
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants       Drivetrain-wide constants for the swerve drive
-     * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
-     *                                  unspecified or set to 0 Hz, this is 250 Hz on
-     *                                  CAN FD, and 100 Hz on CAN 2.0.
-     * @param odometryStandardDeviation The standard deviation for odometry calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
-     *                                  and radians
-     * @param visionStandardDeviation   The standard deviation for vision calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
-     *                                  and radians
-     * @param modules                   Constants for each specific module
-     */
     public DrivetrainSubsystem(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
@@ -283,10 +217,15 @@ private final PIDController distanceController = new PIDController(0.05, 0.0, 0.
             });
         }
 
-      //  photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
 
-        SmartDashboard.putBoolean("sees tag", reefCam.getLatestResult().hasTargets());
+        SmartDashboard.putBoolean("sees tag", vision.reefCam.getLatestResult().hasTargets());
+        SmartDashboard.putBoolean("near yaw", isNearYaw());
+        SmartDashboard.putBoolean("near turn", isNearTurn());
+        SmartDashboard.putBoolean("near skew", isNearSkew());
+        SmartDashboard.putBoolean("near target", isNearTarget());
+
+
     }
 
     private void startSimThread() {
@@ -311,20 +250,20 @@ private final PIDController distanceController = new PIDController(0.05, 0.0, 0.
 
 public Command alignWithReef() {
     return run(() -> {
-        PhotonPipelineResult result = reefCam.getLatestResult();
+        PhotonPipelineResult result = vision.reefCam.getLatestResult();
         var alliance = DriverStation.getAlliance();
         if(result.hasTargets()){
 
             if(alliance.get() == Alliance.Red){
             if(result.getBestTarget().getFiducialId() == (6|7|8|9|10|11)){
-                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), 3.0); 
+                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), kLeftYawSetpoint); 
                // if(result.getBestTarget().getPitch() > 0){
                 double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), 180.0); 
                // } else{
                    // double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), -179.0); 
  
                // }
-                double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), 3.0); 
+                double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), kLeftDistanceSetpoint); 
 
                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));
             }
@@ -357,13 +296,24 @@ public Command alignWithReef() {
 
 
 
-public boolean isNearTag() {
-    return MathUtil.isNear(3.0, reefCam.getLatestResult().getBestTarget().getYaw(),  2);
+
+
+public boolean isNearYaw() {
+    return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  2);
 }
 
+public boolean isNearTurn() {
+    return MathUtil.isNear(180.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  2);
+}
+
+public boolean isNearSkew() {
+    return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  2);
+}
 
        
-
+public boolean isNearTarget() {
+    return (isNearSkew() & isNearTurn() & isNearYaw());
+}
 
 
     public void configDrivetrainSubsys() {

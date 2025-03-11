@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team10505.robot.Constants.AlgaeConstants;
+import static frc.team10505.robot.Constants.AlgaeConstants.*;
 
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -25,9 +25,9 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     // motor controllers
 
-    public final static SparkMax intakeMotor = new SparkMax(AlgaeConstants.kAlgaeIntakeMotorID, MotorType.kBrushless);
+    public final static SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
-    private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.kAlgaePivotMotorId, MotorType.kBrushless);
+    private final SparkMax pivotMotor = new SparkMax(kAlgaePivotMotorId, MotorType.kBrushless);
     private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
     // Encoder
@@ -36,8 +36,8 @@ public class AlgaeSubsystem extends SubsystemBase {
     private double absoluteOffset = 180.0;
 
     // Controller
-    private final PIDController pivotController = new PIDController(AlgaeConstants.KP, AlgaeConstants.KI,
-            AlgaeConstants.KD);
+    private final PIDController pivotController = new PIDController(KP, KI,
+            KD);
 
     private double pivotSetpoint = -90;
 
@@ -87,13 +87,13 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     public Command intakeForward() {
         return runOnce(() -> {
-            intakeMotor.set(AlgaeConstants.intakeSpeed);
+            intakeMotor.set(intakeSpeed);
         });
     }
 
     public Command intakeReverse() {
         return runOnce(() -> {
-            intakeMotor.set(-AlgaeConstants.intakeSpeed);
+            intakeMotor.set(-intakeSpeed);
         });
     }
 
@@ -120,17 +120,17 @@ public class AlgaeSubsystem extends SubsystemBase {
     private void configAlgaeSubsys() {
         // Pivot motor config
         pivotMotorConfig.idleMode(IdleMode.kBrake);
-        pivotMotorConfig.smartCurrentLimit(AlgaeConstants.kPivotMotorCurrentLimit,
-                AlgaeConstants.kPivotMotorCurrentLimit);
-        pivotMotorConfig.absoluteEncoder.positionConversionFactor(AlgaeConstants.pivotEncoderScale); // Angle encoder
+        pivotMotorConfig.smartCurrentLimit(kPivotMotorCurrentLimit,
+                kPivotMotorCurrentLimit);
+        pivotMotorConfig.absoluteEncoder.positionConversionFactor(pivotEncoderScale); // Angle encoder
                                                                                                      // scale
-        pivotMotorConfig.absoluteEncoder.zeroOffset(AlgaeConstants.pivotEncoderOffset); // Angle encoder offset
+        pivotMotorConfig.absoluteEncoder.zeroOffset(pivotEncoderOffset); // Angle encoder offset
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Intake motor config
         intakeMotorConfig.idleMode(IdleMode.kBrake);
-        intakeMotorConfig.smartCurrentLimit(AlgaeConstants.kIntakeMotorCurrentLimit,
-                AlgaeConstants.kIntakeMotorCurrentLimit);
+        intakeMotorConfig.smartCurrentLimit(kIntakeMotorCurrentLimit,
+                kIntakeMotorCurrentLimit);
         intakeMotor.configure(intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

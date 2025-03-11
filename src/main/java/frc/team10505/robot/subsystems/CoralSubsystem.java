@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team10505.robot.Robot;
-import frc.team10505.robot.Constants.CoralConstants;
+import static frc.team10505.robot.Constants.CoralConstants.*;
 
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -17,9 +17,9 @@ import au.grapplerobotics.LaserCan;
 public class CoralSubsystem extends SubsystemBase {
 
     //Motor controllers
-    private final SparkMax intakeLeft = new SparkMax(CoralConstants.kLeftMotorId, MotorType.kBrushless);
+    private final SparkMax intakeLeft = new SparkMax(kLeftMotorId, MotorType.kBrushless);
     private SparkMaxConfig intakeLeftConfig = new SparkMaxConfig();
-    private final SparkMax intakeRight = new SparkMax(CoralConstants.kRightMotorID, MotorType.kBrushless);
+    private final SparkMax intakeRight = new SparkMax(kRightMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeRightConfig = new SparkMaxConfig();
 
     //Laser sensors
@@ -39,8 +39,8 @@ public class CoralSubsystem extends SubsystemBase {
     }
         public Command intake(){
             return runEnd(() -> {
-                intakeLeft.set(CoralConstants.kIntakeSpeed);
-                intakeRight.set(CoralConstants.kIntakeSpeed);
+                intakeLeft.set(kIntakeSpeed);
+                intakeRight.set(kIntakeSpeed);
             },
             () -> {
                 intakeLeft.set(0);
@@ -49,8 +49,8 @@ public class CoralSubsystem extends SubsystemBase {
         }
         public Command output(){
             return runEnd(() -> {
-                intakeLeft.set(CoralConstants.kOutakeSpeed);
-                intakeRight.set(CoralConstants.kOutakeSpeed);
+                intakeLeft.set(kOutakeSpeed);
+                intakeRight.set(kOutakeSpeed);
             },
             () -> {
                 intakeLeft.set(0);
@@ -59,8 +59,8 @@ public class CoralSubsystem extends SubsystemBase {
         }
         public Command outputTop(){
             return runEnd(() -> {
-                intakeLeft.set(CoralConstants.kOutakeTopSpeed);
-                intakeRight.set(CoralConstants.kOutakeTopSpeed);
+                intakeLeft.set(kOutakeTopSpeed);
+                intakeRight.set(kOutakeTopSpeed);
         },
         () -> {
             intakeLeft.set(0);
@@ -69,8 +69,8 @@ public class CoralSubsystem extends SubsystemBase {
         }
          public Command trough(){
             return runEnd(() -> {
-                intakeLeft.set(CoralConstants.kTroughSpeed);
-                intakeRight.set(CoralConstants.kTroughSpeed*CoralConstants.kTroughRightMotorPercentage);
+                intakeLeft.set(kTroughSpeed);
+                intakeRight.set(kTroughSpeed*kTroughRightMotorPercentage);
             },
             () -> {
                 intakeLeft.set(0);
@@ -96,8 +96,8 @@ public class CoralSubsystem extends SubsystemBase {
 
     public Command autoIntake(){
         return runEnd(() -> {
-            intakeLeft.set(CoralConstants.kIntakeSpeed);
-            intakeRight.set(CoralConstants.kIntakeSpeed);
+            intakeLeft.set(kIntakeSpeed);
+            intakeRight.set(kIntakeSpeed);
         },
         () -> {
             slow().until(() ->(outSensor() && !inSensor()));
@@ -113,12 +113,12 @@ public class CoralSubsystem extends SubsystemBase {
     private void configCoralSubsys(){
         //Left intake config
         intakeLeftConfig.idleMode(IdleMode.kBrake);
-        intakeLeftConfig.smartCurrentLimit(CoralConstants.kLeftMotorCurrentLimit,CoralConstants.kLeftMotorCurrentLimit);
+        intakeLeftConfig.smartCurrentLimit(kLeftMotorCurrentLimit,kLeftMotorCurrentLimit);
         intakeLeft.configure(intakeLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
 
         //Right intake config
         intakeRightConfig.idleMode(IdleMode.kBrake);
-        intakeRightConfig.smartCurrentLimit(CoralConstants.kRightMotorCurrentLimit, CoralConstants.kRightMotorCurrentLimit);
+        intakeRightConfig.smartCurrentLimit(kRightMotorCurrentLimit, kRightMotorCurrentLimit);
       intakeRightConfig.inverted(true);
         intakeRight.configure(intakeRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }

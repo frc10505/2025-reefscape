@@ -45,12 +45,12 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team10505.robot.Constants;
-import frc.team10505.robot.Constants.ElevatorConstants;
+import static frc.team10505.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Motors
-    public final TalonFX elevatorMotor = new TalonFX(Constants.ElevatorConstants.kElevatorMotorId);
-    public final TalonFX elevatorFollowerMotor = new TalonFX(Constants.ElevatorConstants.kElevatorFollowerMotorId);
+    public final TalonFX elevatorMotor = new TalonFX(kElevatorMotorId);
+    public final TalonFX elevatorFollowerMotor = new TalonFX(kElevatorFollowerMotorId);
 
     // Encoders, Real and Simulated
     private double simElevatorEncoder;
@@ -63,20 +63,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double height = 0.0;
 
     // Controls, Actual
-    private final PIDController elevatorController = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI,
-            ElevatorConstants.KD);
-    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.KS,
-            ElevatorConstants.KG, ElevatorConstants.KV, ElevatorConstants.KA);
+    private final PIDController elevatorController = new PIDController(KP, KI,
+            KD);
+    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(KS,
+            KG, KV, KA);
 
     // Controls, Simulated
-    private final PIDController simElevatorController = new PIDController(ElevatorConstants.simKP,
-            ElevatorConstants.simKI, ElevatorConstants.simKD);
-    private final ElevatorFeedforward simElevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.simKS,
-            ElevatorConstants.simKG, ElevatorConstants.simKV, ElevatorConstants.simKA);
+    private final PIDController simElevatorController = new PIDController(simKP,
+            simKI, simKD);
+    private final ElevatorFeedforward simElevatorFeedforward = new ElevatorFeedforward(simKS,
+            simKG, simKV, simKA);
 
     // Simulation
-    private final ElevatorSim elevatorSim = new ElevatorSim(ElevatorConstants.simKV, ElevatorConstants.simKA,
-            DCMotor.getKrakenX60(2), 0, ElevatorConstants.kMaxHeightMeters, true, 0.1);
+    private final ElevatorSim elevatorSim = new ElevatorSim(simKV, simKA,
+            DCMotor.getKrakenX60(2), 0, kMaxHeightMeters, true, 0.1);
     // private final SingleJointedArmSim elevatorSim = new
     // SingleJointedArmSim(DCMotor.getFalcon500(2), 1, 6, 0.5, 1.57,
     // 1.58, false, Math.PI / 180);
@@ -94,7 +94,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         //set current limits
         var limitConfigs = new CurrentLimitsConfigs();
-        limitConfigs.StatorCurrentLimit = Constants.ElevatorConstants.kElevatorMotorCurrentLimit;
+        limitConfigs.StatorCurrentLimit = kElevatorMotorCurrentLimit;
         limitConfigs.StatorCurrentLimitEnable=true;
 
         motorConfig.NeutralMode = NeutralModeValue.Brake;

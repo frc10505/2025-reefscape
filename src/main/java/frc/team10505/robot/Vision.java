@@ -37,6 +37,32 @@ public class Vision {
     private DrivetrainSubsystem driveSubsys;
 
 /*Cameras */
+public final PhotonCamera reefCam = new PhotonCamera("reefCam");
+public final PhotonCamera backCam = new PhotonCamera("backCam");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//OLD STUFF
   private final PhotonCamera mod0Camera = new PhotonCamera("mod0Cam");
   private final PhotonCamera mod1Camera = new PhotonCamera("mod1Cam");
   private final PhotonCamera mod2Camera = new PhotonCamera("mod2Cam");
