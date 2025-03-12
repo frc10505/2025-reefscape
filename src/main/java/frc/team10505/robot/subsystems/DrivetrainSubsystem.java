@@ -38,10 +38,15 @@ import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
 
-private final SwerveRequest.ApplyFieldSpeeds autoRequest = new SwerveRequest.ApplyFieldSpeeds();
+private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 //SwerveRequest.ApplyChassisSpeeds();
 
-private Vision vision;
+private Vision vision = new Vision();
+
+
+double turnDistance = 0;
+double strafeDistance = 0;
+double skewDistance = 0;
 
 private final PIDController strafeController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
 private final PIDController turnController = new PIDController(kTurnP, kTurnI, kTurnD);
@@ -218,12 +223,57 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
         }
 
 
+        PhotonPipelineResult result = vision.reefCam.getLatestResult();
+        var alliance = DriverStation.getAlliance();
+        if(result.hasTargets()){
+            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+            //if(alliance.get() == Alliance.Red){
+          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+                
+            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  5)){
+                strafeDistance = 0;
+            }else{
+                 strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), kLeftYawSetpoint); 
+                SmartDashboard.putNumber("red strafe distance", strafeDistance);
+            }
+        }}
+        if(result.hasTargets()){
+            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+            //if(alliance.get() == Alliance.Red){
+          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+                
+            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  10)){
+                turnDistance = 0;
+            }else{
+                 turnDistance = strafeController.calculate(result.getBestTarget().getPitch(), 180.0); 
+                SmartDashboard.putNumber("red turn distance", turnDistance);
+            }
+        }}
 
-        SmartDashboard.putBoolean("sees tag", vision.reefCam.getLatestResult().hasTargets());
-        SmartDashboard.putBoolean("near yaw", isNearYaw());
-        SmartDashboard.putBoolean("near turn", isNearTurn());
-        SmartDashboard.putBoolean("near skew", isNearSkew());
-        SmartDashboard.putBoolean("near target", isNearTarget());
+        if(result.hasTargets()){
+            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+            //if(alliance.get() == Alliance.Red){
+          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+                
+            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  5)){
+                skewDistance = 0;
+            }else{
+                 skewDistance = strafeController.calculate(result.getBestTarget().getSkew(), kLeftDistanceSetpoint); 
+                SmartDashboard.putNumber("red skew distance", skewDistance);
+            }
+        }}
+
+        if(runDeathButton){
+            this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
+        }
+
+       
+         SmartDashboard.putBoolean("sees tag", vision.reefCam.getLatestResult().hasTargets());
+         SmartDashboard.putBoolean("run Death Button", runDeathButton);
+        // SmartDashboard.putBoolean("near yaw", isNearYaw());
+        // SmartDashboard.putBoolean("near turn", isNearTurn());
+        // SmartDashboard.putBoolean("near skew", isNearSkew());
+        // SmartDashboard.putBoolean("near target", isNearTarget());
 
 
     }
@@ -247,49 +297,15 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
 //DEATH BUTTON 2.0
 //BE AFRAID
 
-
+private boolean runDeathButton = false;
 public Command alignWithReef() {
-    return run(() -> {
-        PhotonPipelineResult result = vision.reefCam.getLatestResult();
-        var alliance = DriverStation.getAlliance();
-        if(result.hasTargets()){
-
-            if(alliance.get() == Alliance.Red){
-            if(result.getBestTarget().getFiducialId() == (6|7|8|9|10|11)){
-                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), kLeftYawSetpoint); 
-               // if(result.getBestTarget().getPitch() > 0){
-                double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), 180.0); 
-               // } else{
-                   // double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), -179.0); 
- 
-               // }
-                double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), kLeftDistanceSetpoint); 
-
-                this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));
-            }
-            else{
-                Commands.print("no valid red reef tag is visible");
-            }
-        } else{
-            if(result.getBestTarget().getFiducialId() == (17|18|19|20|21|22)){
-                double strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), 3.0); 
-                // if(result.getBestTarget().getPitch() > 0){
-                 double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), 180.0); 
-                // } else{
-                    // double turnDistance = turnController.calculate(result.getBestTarget().getPitch(), -179.0); 
-  
-                // }
-                 double skewDistance = distanceController.calculate(result.getBestTarget().getSkew(), 3.0); 
- 
-                 this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));
-                Commands.print("no valid BLUE reef tag is visible");
-            }
-       }       
-    } else{
-        Commands.print("No tag is visible!");
+    return runEnd(() -> {
+        runDeathButton = true;
+        // this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
+    }, () -> {
+        runDeathButton = false;
     }
-                  
-    });
+    );
 }
 
 

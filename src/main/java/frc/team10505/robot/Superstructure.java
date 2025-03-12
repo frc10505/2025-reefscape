@@ -20,12 +20,14 @@ public class Superstructure {
     private AlgaeSubsystem algaeSubsystem;
     private ElevatorSubsystem elevatorSubsystem;
     private DrivetrainSubsystem drivetrainSubsystem;
+    private Vision vision;
 
-    public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys){
+    public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys, Vision vision){
         this.coralSubsystem = coralSubsys;
         this.algaeSubsystem = algaeSubsys;
         this.elevatorSubsystem = elevatorSubsys;
         this.drivetrainSubsystem = drivetrainSubsys;
+        this.vision = vision;
     }  
 
 
@@ -71,11 +73,11 @@ public class Superstructure {
 
 
     public Command alignToReef(){
-        if(drivetrainSubsystem.reefCam.getLatestResult().hasTargets()){
-            return drivetrainSubsystem.alignWithReef().until(() -> (drivetrainSubsystem.isNearTag() | (!drivetrainSubsystem.reefCam.getLatestResult().hasTargets())));
-        } else{
-            return Commands.print("No target!!");
-        }
+      //  if(vision.reefCam.getLatestResult().hasTargets()){
+            return drivetrainSubsystem.alignWithReef();//.until(() -> (drivetrainSubsystem.isNearTarget() | (!vision.reefCam.getLatestResult().hasTargets())));
+       // } else{
+      //      return Commands.print("No target!!");
+      //  }
 
     }
 

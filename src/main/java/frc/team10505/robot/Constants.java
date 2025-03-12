@@ -36,53 +36,55 @@ public final class Constants {
       public static final int kHeightOfCamera = 3496;
       public static final Rotation2d kCameraFOV = Rotation2d.fromDegrees(90.0);
 
-      public static final String kMod0CameraName = "mod0Camera";
-      public static final String kMod1CameraName = "mod1Camera";
-      public static final String kMod2CameraName = "mod2Camera";
-      public static final String kMod3CameraName = "mod3Camera";
+      // public static final String kMod0CameraName = "mod0Camera";
+      // public static final String kMod1CameraName = "mod1Camera";
+      // public static final String kMod2CameraName = "mod2Camera";
+      // public static final String kMod3CameraName = "mod3Camera";
 
 
       //TODO
       //TRANFORM 3D VALUES 
       //ARE MADE UP
       //THEY MUST BE CHANGED eventually
-      public static final Transform3d kRobotToMod0CameraTransform = new Transform3d(
+      public static final Transform3d kRobotToBackCamTransform = new Transform3d(
         new Translation3d(-1.0, 1.0, 0.0),
-        new Rotation3d(0.0, 0.0, Units.degreesToRadians(135.0))
+        new Rotation3d(0.0, 0.0, Units.degreesToRadians(180.0))
       );
-      public static final Transform3d kRobotToMod1CameraTransform = new Transform3d(
-        new Translation3d(1.0, 1.0, 0.0),
+      public static final Transform3d kRobotToReefCamTransform = new Transform3d(
+        new Translation3d(0.254, 0.254, 0.0),
         new Rotation3d(0.0, 0.0, Units.degreesToRadians(45.0))
       );
-      public static final Transform3d kRobotToMod2CameraTransform = new Transform3d(
-        new Translation3d(1.0, -1.0, 0.0),
-        new Rotation3d(0.0, 0.0, Units.degreesToRadians(315.0))
-      );
-      public static final Transform3d kRobotToMod3CameraTransform = new Transform3d(
-        new Translation3d(-1.0, -1.0, 0.0),
-        new Rotation3d(0.0, 0.0, Units.degreesToRadians(225.0))
-      );
+      // public static final Transform3d kRobotToMod2CameraTransform = new Transform3d(
+      //   new Translation3d(1.0, -1.0, 0.0),
+      //   new Rotation3d(0.0, 0.0, Units.degreesToRadians(315.0))
+      // );
+      // public static final Transform3d kRobotToMod3CameraTransform = new Transform3d(
+      //   new Translation3d(-1.0, -1.0, 0.0),
+      //   new Rotation3d(0.0, 0.0, Units.degreesToRadians(225.0))
+      // );
 
-      public static final Measure<DistanceUnit> kCameraHeight = Inches.of(4);
-      public static final Measure<AngleUnit> kCameraPitch = Degrees.of(45); //23.5
+      // public static final Measure<DistanceUnit> kCameraHeight = Inches.of(4);
+      // public static final Measure<AngleUnit> kCameraPitch = Degrees.of(45); //23.5
 
-      public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-      public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+      // public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+      // public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
     
     public final class DrivetrainConstants {
       //Alignmnet Constants
       public final static double kStrafeP = 0.01;
-      public final static double kStrafeI = 0.0;
+      public final static double kStrafeI = 0.00;
       public final static double kStrafeD = 0.005;
 
       public final static double kTurnP = 0.01;
       public final static double kTurnI = 0.0;
       public final static double kTurnD = 0.005;
 
-      public final static double kDistanceP = 0.01;
+      public final static double kDistanceP = 0.1;
       public final static double kDistanceI = 0.0;
       public final static double kDistanceD = 0.005;
+      public final static double kTurnSetpoint = 180.0;
+
         //Left side
         public final static double kLeftDistanceSetpoint = 2.0;
         public final static double kLeftYawSetpoint = 2.0;

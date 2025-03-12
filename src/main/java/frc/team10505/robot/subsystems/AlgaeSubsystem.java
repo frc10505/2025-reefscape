@@ -41,6 +41,12 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     private double pivotSetpoint = -90;
 
+
+    public AlgaeSubsystem() {
+        configAlgaeSubsys();
+        SmartDashboard.putNumber("pivotEncoder", encoderValue);
+    }
+    
     // Get encoder
     public double getPivotEncoder() {
         return (-pivotEncoder.getPosition() + absoluteOffset) ;// TODO adjust
@@ -51,10 +57,7 @@ public class AlgaeSubsystem extends SubsystemBase {
         return pivotController.calculate(getPivotEncoder(), pivotSetpoint);
     }
 
-    public AlgaeSubsystem() {
-        configAlgaeSubsys();
-        SmartDashboard.putNumber("pivotEncoder", encoderValue);
-    }
+
 
     public Command setAngle(double angle) {
         return runOnce(() -> {

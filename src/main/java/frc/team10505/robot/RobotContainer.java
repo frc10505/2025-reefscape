@@ -48,7 +48,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     /* Operator interfaces */
-    private final CommandXboxController xboxController = new CommandXboxController(kXboxControllerPort);
+   // private final CommandXboxController xboxController = new CommandXboxController(kXboxControllerPort);
     private final CommandXboxController xboxController2 = new CommandXboxController(kControlPanelPort);
 
 
@@ -63,10 +63,10 @@ public class RobotContainer {
     private final CoralSubsystem coralSubsys = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
 
-    // private final Vision vision = new Vision(drivetrainSubsys);
+    private final Vision vision = new Vision();
     /* Superstructure */
     private final Superstructure superStructure = new Superstructure(coralSubsys, algaeSubsys, elevatorSubsys,
-            drivetrainSubsys);
+            drivetrainSubsys, vision);
 
     /* Autonomous */
     private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
@@ -123,14 +123,11 @@ public class RobotContainer {
             );
         } else {
             drivetrainSubsys.setDefaultCommand(
-                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * MaxSpeed) // Drive
-                                                                                                                   // forward
-                                                                                                                   // with
-                                                                                                                   // negative
-                                                                                                                   // Y
-                                                                                                                   // (forward)
-                            .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* MaxSpeed) // Drive left with negative X (left)
-                            .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise
+                    drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getY() * 0.6
+                 * polarityChooser.getSelected() * MaxSpeed) // Drive
+                                                                                                                  
+                            .withVelocityY(-joystick.getX() * 0.8 * polarityChooser.getSelected()* MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-joystick.getTwist()* 0.8 * MaxAngularRate) // Drive counterclockwise
                                                                                               // with negative X (left)
                     ));
         }
@@ -156,18 +153,39 @@ public class RobotContainer {
             // -xboxController.getLeftX()))
             // ));
 
-             xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-             xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
-             //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+//              xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+//              xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
+//              //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
-            xboxController.leftTrigger().whileTrue( drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * 0.2* MaxSpeed) // Drive
-.withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* 0.2* MaxSpeed) // Drive left with negative X (left)
-.withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
+//             xboxController.leftTrigger().whileTrue( drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * 0.2* MaxSpeed) // Drive
+// .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* 0.2* MaxSpeed) // Drive left with negative X (left)
+// .withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
 
-             xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-             xboxController.b().onTrue(algaeSubsys.stopPivot());
-             xboxController.x().onTrue(algaeSubsys.setAngle(-90));
-             xboxController.y().onTrue(algaeSubsys.setAngle(5));
+//              xboxController.a().onTrue(algaeSubsys.setAngle(-18));
+//              xboxController.b().onTrue(algaeSubsys.stopPivot());
+//              xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+//              xboxController.y().onTrue(algaeSubsys.setAngle(5));
+
+joystick.button(3).onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+joystick.button(2).onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
+//xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+
+// xboxController.leftTrigger().whileTrue( drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected() * 0.2* MaxSpeed) // Drive
+// .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()* 0.2* MaxSpeed) // Drive left with negative X (left)
+// .withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
+
+joystick.trigger().whileTrue( drivetrainSubsys.applyRequest(() -> drive.withVelocityX(-joystick.getY() * 0.3 * polarityChooser.getSelected() * MaxSpeed) // Drive
+                                                                                                                  
+.withVelocityY(-joystick.getX() * 0.3 * polarityChooser.getSelected()* MaxSpeed) // Drive left with negative X (left)
+.withRotationalRate(-joystick.getTwist()* 0.4 * MaxAngularRate) // Drive counterclockwise
+                                                                  // with negative X (left)
+));
+joystick.button(12).onTrue(algaeSubsys.setAngle(-22));//-18
+//joystick.button().onTrue(algaeSubsys.stopPivot());
+joystick.button(9).onTrue(algaeSubsys.setAngle(-90));
+joystick.button(10).onTrue(algaeSubsys.setAngle(5));
+joystick.button(4).whileTrue(superStructure.alignToReef());
+
 
              xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
              xboxController2.povDown().onTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
@@ -180,7 +198,6 @@ public class RobotContainer {
              xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
 
 
-           // xboxController.a().whileTrue(superStructure.alignToReef());
            
             drivetrainSubsys.registerTelemetry(logger::telemeterize);
         }
@@ -205,11 +222,50 @@ public class RobotContainer {
     }
 
     public void resetSimulation() {
-        // vision.reset();
+       // vision.reset();
     }
 
     public void updateSimulation() {
-        // vision.update(getPose());
+       //  vision.visionSim.update(drivetrainSubsys.getState().Pose);
+       //vision.visionSim.getDebugField();
     }
+
+    public void updateCamPoseValues(){
+        // if(vision.getReefCamEstimatedPose().isPresent()){
+        //     SmartDashboard.putNumber("Reef Cam Pose X", vision.getReefCamEstimatedPose().get().estimatedPose.getX());
+        //     SmartDashboard.putNumber("Reef Cam Pose Y", vision.getReefCamEstimatedPose().get().estimatedPose.getY());
+        //     SmartDashboard.putNumber("Reef Cam Pose Angle", vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d().getRotation().getDegrees());
+
+
+        // }
+    }
+
+
+    //Too scary to actually try
+    //theoretically updates the drivetrain pose with vision measurements
+
+    // public void updatePose(){
+    //         var mostRecentReefCamPose = new Pose2d();
+    //         var mostRecentBackCamPose = new Pose2d();
+
+    //     try{
+    //         var reefCamPose = vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
+    //         mostRecentReefCamPose = reefCamPose;
+    //         } catch (Exception e) {
+    //            Commands.print("reef cam pose failed");
+    //        }
+
+    //        try{
+    //         var backCamPose = vision.getBackCamEstimatedPose().get().estimatedPose.toPose2d();
+    //         mostRecentBackCamPose = backCamPose;
+    //         } catch (Exception e) {
+
+    //            Commands.print("back cam pose failed");
+    //        }
+
+    //        drivetrainSubsys.addVisionMeasurement(/*vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d()*/ mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp);
+    //        drivetrainSubsys.addVisionMeasurement(/*vision.getBackCamEstimatedPose().get().estimatedPose.toPose2d()*/ mostRecentBackCamPose, vision.lastBackCamEstimateTimestamp);
+
+    // }
 
 }
