@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -231,18 +232,7 @@ joystick.button(4).whileTrue(superStructure.alignToReef());
      //  vision.reset();
     }
 
-    public void updatePose() {
-    //     vision.visionSim.update(drivetrainSubsys.getState().Pose);
-    //    vision.visionSim.getDebugField();
 
-    SmartDashboard.putNumber("estimated drive pose x", drivetrainSubsys.getState().Pose.getX());
-    SmartDashboard.putNumber("estimated drive pose y", drivetrainSubsys.getState().Pose.getY());
-    SmartDashboard.putNumber("estimated drive pose rotation", drivetrainSubsys.getState().Pose.getRotation().getDegrees());
-
-       if(joystick.button(5).getAsBoolean()){
-        drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
-    }
-    }
 
     public void updateCamPoseValues(){
         if(vision.getReefCamEstimatedPose().isPresent()){
@@ -256,8 +246,15 @@ joystick.button(4).whileTrue(superStructure.alignToReef());
     //Too scary to actually try
     //theoretically updates the drivetrain pose with vision measurements
 
-    // public void updatePose(){
+    public void updatePose(){
 
+        SmartDashboard.putNumber("estimated drive pose x", drivetrainSubsys.getState().Pose.getX());
+        SmartDashboard.putNumber("estimated drive pose y", drivetrainSubsys.getState().Pose.getY());
+        SmartDashboard.putNumber("estimated drive pose rotation", drivetrainSubsys.getState().Pose.getRotation().getDegrees());
+    
+           if(joystick.button(5).getAsBoolean()){
+            drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+        }
     //     //Other thing from ctre example if (kUseLimelight) {
     //   var driveState = drivetrainSubsys.getState();
     //   double headingDeg = driveState.Pose.getRotation().getDegrees();
@@ -306,5 +303,6 @@ joystick.button(4).whileTrue(superStructure.alignToReef());
     //        drivetrainSubsys.addVisionMeasurement(/*vision.getBackCamEstimatedPose().get().estimatedPose.toPose2d()*/ mostRecentBackCamPose, vision.lastBackCamEstimateTimestamp);
 
     }
+}
 
 

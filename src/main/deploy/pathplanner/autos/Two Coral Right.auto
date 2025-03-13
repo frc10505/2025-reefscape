@@ -19,19 +19,19 @@
         {
           "type": "named",
           "data": {
-            "name": "autoScoreCoralL1"
+            "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoL4Bump"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "autoElevDown"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Test"
           }
         },
         {
@@ -56,18 +56,6 @@
           "type": "path",
           "data": {
             "pathName": "Go To Reef (Right) 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoScoreCoralL1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoElevDown"
           }
         }
       ]

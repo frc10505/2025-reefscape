@@ -45,6 +45,7 @@ public class CoralSubsystem extends SubsystemBase {
                 intakeRight.set(kIntakeSpeed);
             },
             () -> {
+            
                 intakeLeft.set(0);
                 intakeRight.set(0);
             });
@@ -106,7 +107,7 @@ public class CoralSubsystem extends SubsystemBase {
         }); 
     }
     
-
+   
     //TODO add back in when we have the sensors
     @Override
     public void periodic() {
