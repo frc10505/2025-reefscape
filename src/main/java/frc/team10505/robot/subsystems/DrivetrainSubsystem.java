@@ -18,6 +18,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
@@ -223,57 +224,57 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
         }
 
 
-        PhotonPipelineResult result = vision.reefCam.getLatestResult();
-        var alliance = DriverStation.getAlliance();
-        if(result.hasTargets()){
-            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
-            //if(alliance.get() == Alliance.Red){
-          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+        // PhotonPipelineResult result = vision.reefCam.getLatestResult();
+        // var alliance = DriverStation.getAlliance();
+        // if(result.hasTargets()){
+        //     SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+        //     //if(alliance.get() == Alliance.Red){
+        //   if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
                 
-            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  5)){
-                strafeDistance = 0;
-            }else{
-                 strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), kLeftYawSetpoint); 
-                SmartDashboard.putNumber("red strafe distance", strafeDistance);
-            }
-        }}
-        if(result.hasTargets()){
-            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
-            //if(alliance.get() == Alliance.Red){
-          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+        //     if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  5)){
+        //         strafeDistance = 0;
+        //     }else{
+        //          strafeDistance = strafeController.calculate(result.getBestTarget().getYaw(), kLeftYawSetpoint); 
+        //         SmartDashboard.putNumber("red strafe distance", strafeDistance);
+        //     }
+        // }}
+        // if(result.hasTargets()){
+        //     SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+        //     //if(alliance.get() == Alliance.Red){
+        //   if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
                 
-            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  10)){
-                turnDistance = 0;
-            }else{
-                 turnDistance = strafeController.calculate(result.getBestTarget().getPitch(), 180.0); 
-                SmartDashboard.putNumber("red turn distance", turnDistance);
-            }
-        }}
+        //     if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  10)){
+        //         turnDistance = 0;
+        //     }else{
+        //          turnDistance = strafeController.calculate(result.getBestTarget().getPitch(), 180.0); 
+        //         SmartDashboard.putNumber("red turn distance", turnDistance);
+        //     }
+        // }}
 
-        if(result.hasTargets()){
-            SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
-            //if(alliance.get() == Alliance.Red){
-          if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
+        // if(result.hasTargets()){
+        //     SmartDashboard.putNumber("Best target id", result.getBestTarget().fiducialId);
+        //     //if(alliance.get() == Alliance.Red){
+        //   if((result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 6)|(result.getBestTarget().fiducialId == 7)|(result.getBestTarget().fiducialId == 8)|(result.getBestTarget().fiducialId == 9)|(result.getBestTarget().fiducialId == 11)|(result.getBestTarget().fiducialId == 17)|(result.getBestTarget().fiducialId == 18)|(result.getBestTarget().fiducialId == 19)|(result.getBestTarget().fiducialId == 20)|(result.getBestTarget().fiducialId == 21)|(result.getBestTarget().fiducialId == 22)){//(6|7|8|9|10|11|17|18|19|20|21|22)){
                 
-            if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  5)){
-                skewDistance = 0;
-            }else{
-                 skewDistance = strafeController.calculate(result.getBestTarget().getSkew(), kLeftDistanceSetpoint); 
-                SmartDashboard.putNumber("red skew distance", skewDistance);
-            }
-        }}
+        //     if(MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  5)){
+        //         skewDistance = 0;
+        //     }else{
+        //          skewDistance = strafeController.calculate(result.getBestTarget().getSkew(), kLeftDistanceSetpoint); 
+        //         SmartDashboard.putNumber("red skew distance", skewDistance);
+        //     }
+        // }}
 
-        if(runDeathButton){
-            this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
-        }
+        // if(runDeathButton){
+        //     this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
+        // }
 
        
-         SmartDashboard.putBoolean("sees tag", vision.reefCam.getLatestResult().hasTargets());
-         SmartDashboard.putBoolean("run Death Button", runDeathButton);
-        // SmartDashboard.putBoolean("near yaw", isNearYaw());
-        // SmartDashboard.putBoolean("near turn", isNearTurn());
-        // SmartDashboard.putBoolean("near skew", isNearSkew());
-        // SmartDashboard.putBoolean("near target", isNearTarget());
+        //  SmartDashboard.putBoolean("sees tag", vision.reefCam.getLatestResult().hasTargets());
+        //  SmartDashboard.putBoolean("run Death Button", runDeathButton);
+        // // SmartDashboard.putBoolean("near yaw", isNearYaw());
+        // // SmartDashboard.putBoolean("near turn", isNearTurn());
+        // // SmartDashboard.putBoolean("near skew", isNearSkew());
+        // // SmartDashboard.putBoolean("near target", isNearTarget());
 
 
     }
@@ -314,22 +315,22 @@ public Command alignWithReef() {
 
 
 
-public boolean isNearYaw() {
-    return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  2);
-}
+// public boolean isNearYaw() {
+//     return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  2);
+// }
 
-public boolean isNearTurn() {
-    return MathUtil.isNear(180.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  2);
-}
+// public boolean isNearTurn() {
+//     return MathUtil.isNear(180.0, vision.reefCam.getLatestResult().getBestTarget().getPitch(),  2);
+// }
 
-public boolean isNearSkew() {
-    return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  2);
-}
+// public boolean isNearSkew() {
+//     return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getSkew(),  2);
+// }
 
        
-public boolean isNearTarget() {
-    return (isNearSkew() & isNearTurn() & isNearYaw());
-}
+// public boolean isNearTarget() {
+//     return (isNearSkew() & isNearTurn() & isNearYaw());
+// }
 
 
     public void configDrivetrainSubsys() {
@@ -428,4 +429,39 @@ public boolean isNearTarget() {
 // //   }
 
 
+
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     */
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     * <p>
+     * Note that the vision measurement standard deviations passed into this method
+     * will continue to apply to future measurements until a subsequent call to
+     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement
+     *     in the form [x, y, theta]ᵀ, with units in meters and radians.
+     */
+    @Override
+    public void addVisionMeasurement(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
 }

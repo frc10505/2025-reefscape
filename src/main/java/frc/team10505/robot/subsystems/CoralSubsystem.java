@@ -30,12 +30,14 @@ public class CoralSubsystem extends SubsystemBase {
         configCoralSubsys();
     }
     public boolean inSensor(){
-        LaserCan.Measurement inMeas =inLaser.getMeasurement();
-        return (inMeas.distance_mm < 50.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+       LaserCan.Measurement inMeas = inLaser.getMeasurement();
+       return (inMeas.distance_mm < 50.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    //   return false;
     }
     public boolean outSensor(){
         LaserCan.Measurement outMeas =outLaser.getMeasurement();
         return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        //return true;
     }
         public Command intake(){
             return runEnd(() -> {
@@ -104,6 +106,8 @@ public class CoralSubsystem extends SubsystemBase {
         }); 
     }
     
+
+    //TODO add back in when we have the sensors
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("inSensor", inSensor());

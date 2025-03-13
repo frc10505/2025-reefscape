@@ -107,11 +107,12 @@ public class Superstructure {
 
     public Command autoScoreCoralL4(){
         return Commands.sequence(
-          elevatorSubsystem.setHeight(49.5),
+          elevatorSubsystem.setHeight(48.5),
           Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
     }
+
     public Command autoScoreCoralL3(){
         return Commands.sequence(
           elevatorSubsystem.setHeight(24.0),
@@ -123,7 +124,7 @@ public class Superstructure {
     }   public Command autoScoreCoralL2(){
         return Commands.sequence(
           elevatorSubsystem.setHeight(9.0),
-          Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
           Commands.waitSeconds(0.5),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
         );
@@ -131,8 +132,15 @@ public class Superstructure {
      public Command autoScoreCoralL1(){
         return Commands.sequence(
           elevatorSubsystem.setHeight(0.0),
-            Commands.none().until(() -> elevatorSubsystem.isNearGoal()),
+            Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
           coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
+        );
+    }
+
+    public Command autoL4Bump(){
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(52.0),
+            Commands.waitUntil(() -> elevatorSubsystem.isNearGoal())
         );
     }
 

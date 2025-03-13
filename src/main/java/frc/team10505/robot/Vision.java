@@ -107,7 +107,9 @@ public Optional<EstimatedRobotPose> getBackCamEstimatedPose(){
 
 
 
-
+public void updateViz(Pose2d pose){
+    visionSim.update(pose);
+}
 
 public void reset() {
     visionSim.clearAprilTags();
