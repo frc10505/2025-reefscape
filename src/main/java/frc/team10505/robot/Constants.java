@@ -8,6 +8,8 @@ package frc.team10505.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -19,6 +21,7 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Measure;
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -36,6 +39,21 @@ public final class Constants {
       public static final int kHeightOfCamera = 3496;
       public static final Rotation2d kCameraFOV = Rotation2d.fromDegrees(90.0);
 
+      public static final Pose2d tag17or8L = new Pose2d(3.026,3.723,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9L = new Pose2d(4.973,2.861,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10L = new Pose2d(5.74,3.862,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11L = new Pose2d(5.257,5.026,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6L = new Pose2d(4.008,5.19,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7L = new Pose2d(3.24,4.19,Rotation2d.fromDegrees(0));
+      public static final Pose2d tag17or8R = new Pose2d(4.008,2.861,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9R = new Pose2d(5.257,3.026,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10R = new Pose2d(5.74,4.19,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11R = new Pose2d(4.973,5.19,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6R = new Pose2d(3.723,5.026,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7R = new Pose2d(3.24,3.862,Rotation2d.fromDegrees(0));
+
+
+
       // public static final String kMod0CameraName = "mod0Camera";
       // public static final String kMod1CameraName = "mod1Camera";
       // public static final String kMod2CameraName = "mod2Camera";
@@ -51,8 +69,8 @@ public final class Constants {
         new Rotation3d(0.0, 0.0, Units.degreesToRadians(180.0))
       );
       public static final Transform3d kRobotToReefCamTransform = new Transform3d(
-        new Translation3d(0.254, 0.254, 0.0),
-        new Rotation3d(0.0, 0.0, Units.degreesToRadians(45.0))
+        new Translation3d(0.254, 0.228, 0.216),
+        new Rotation3d(0.0, Units.degreesToRadians(25.0), Units.degreesToRadians(355.0))
       );
       // public static final Transform3d kRobotToMod2CameraTransform = new Transform3d(
       //   new Translation3d(1.0, -1.0, 0.0),
