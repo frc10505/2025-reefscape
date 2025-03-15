@@ -8,6 +8,8 @@ package frc.team10505.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -19,6 +21,7 @@ import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Measure;
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -43,13 +46,20 @@ public final class Constants {
         new Translation3d(0.254, 0.254, 0.0),
         new Rotation3d(0.0, 0.0, Units.degreesToRadians(45.0)));
    
-    // public static final Measure<DistanceUnit> kCameraHeight = Inches.of(4);
-    // public static final Measure<AngleUnit> kCameraPitch = Degrees.of(45); //23.5
 
-    // public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4,
-    // 8);
-    // public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5,
-    // 0.5, 1);
+    //positions of things on the field
+      public static final Pose2d tag17or8L = new Pose2d(3.026,3.723,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9L = new Pose2d(4.973,2.861,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10L = new Pose2d(5.74,3.862,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11L = new Pose2d(5.257,5.026,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6L = new Pose2d(4.008,5.19,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7L = new Pose2d(3.24,4.19,Rotation2d.fromDegrees(0));
+      public static final Pose2d tag17or8R = new Pose2d(4.008,2.861,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9R = new Pose2d(5.257,3.026,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10R = new Pose2d(5.74,4.19,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11R = new Pose2d(4.973,5.19,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6R = new Pose2d(3.723,5.026,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7R = new Pose2d(3.24,3.862,Rotation2d.fromDegrees(0));
   }
 
   public final class DrivetrainConstants {
