@@ -7,7 +7,6 @@
 package frc.team10505.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,7 +23,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 public class AlgaeSubsystem extends SubsystemBase {
 
     // motor controllers
-
     public final static SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax pivotMotor = new SparkMax(kAlgaePivotMotorId, MotorType.kBrushless);
@@ -41,15 +39,18 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     private double pivotSetpoint = -90;
 
+    public boolean coasting = false;
 
+    /*Our constructor */
     public AlgaeSubsystem() {
         configAlgaeSubsys();
         SmartDashboard.putNumber("pivotEncoder", encoderValue);
     }
-    
+
+    /*Pivot calculation methods */
     // Get encoder
     public double getPivotEncoder() {
-        return (-pivotEncoder.getPosition() + absoluteOffset) ;// TODO adjust
+        return (-pivotEncoder.getPosition() + absoluteOffset);
     }
 
     // Calc PID
@@ -57,37 +58,47 @@ public class AlgaeSubsystem extends SubsystemBase {
         return pivotController.calculate(getPivotEncoder(), pivotSetpoint);
     }
 
-
-
+    /*pivot commands to reference */
     public Command setAngle(double angle) {
         return runOnce(() -> {
             pivotSetpoint = angle;
         });
     }
 
-   public boolean coasting = false;
-
+    //command we set to as the default command
+        /*NOTE that defaul command has been problematic in past years -
+            if it becomes an issue, set the pivot motor to pid effort periodically*/
     public Command holdAngle() {
         return run(() -> {
             if (!coasting) {
-            pivotMotor.setVoltage(PIDEffort());
+                pivotMotor.setVoltage(PIDEffort());
             }
         });
     }
-    public Command coastPivot(){
-        return run(() ->{
-            pivotMotorConfig.idleMode(IdleMode.kCoast);
+
+    //Only use when testing motor direction, not useful with pid(the motor will only stop for 0.02 s)
+    public Command stopPivot() {
+        return runOnce(() -> {
+            pivotMotor.stopMotor();
+        });
+    }
+
+    public Command coastPivot() {
+        return run(() -> {
+            pivotMotorConfig.idleMode(IdleMode.kCoast);//stops pivot motor from being set to calculated pid effort
             coasting = true;
         });
     }
-    public Command brakePivot(){
-        return run(() ->{
+
+    public Command brakePivot() {
+        return run(() -> {
             pivotMotorConfig.idleMode(IdleMode.kBrake);
             pivotSetpoint = getPivotEncoder();
             coasting = false;
         });
     }
 
+    /*intake commands to reference */
     public Command intakeForward() {
         return runOnce(() -> {
             intakeMotor.set(intakeSpeed);
@@ -106,12 +117,6 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
     }
 
-    public Command stopPivot() {
-        return runOnce(() -> {
-            pivotMotor.stopMotor();
-        });
-    }
-
     @Override
     public void periodic() {
         encoderValue = getPivotEncoder();
@@ -120,13 +125,16 @@ public class AlgaeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Pivot Motor Output", pivotMotor.getAppliedOutput());
     }
 
+    /*configurations to be called in the constructor,
+     * runs once during init,
+     * here it is used to configure motor settings
+     */
     private void configAlgaeSubsys() {
         // Pivot motor config
         pivotMotorConfig.idleMode(IdleMode.kBrake);
         pivotMotorConfig.smartCurrentLimit(kPivotMotorCurrentLimit,
                 kPivotMotorCurrentLimit);
-        pivotMotorConfig.absoluteEncoder.positionConversionFactor(pivotEncoderScale); // Angle encoder
-                                                                                                     // scale
+        pivotMotorConfig.absoluteEncoder.positionConversionFactor(pivotEncoderScale); // Angle encoder scale
         pivotMotorConfig.absoluteEncoder.zeroOffset(pivotEncoderOffset); // Angle encoder offset
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

@@ -6,35 +6,16 @@
 
 package frc.team10505.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogEncoder;
-import edu.wpi.first.wpilibj.DigitalSource;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Encoder.IndexingType;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -44,7 +25,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team10505.robot.Constants;
 import static frc.team10505.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -85,9 +65,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public final MechanismLigament2d elevatorViz = elevatorRoot
             .append(new MechanismLigament2d("Elevator Ligament", 0.6, 90, 70.0, new Color8Bit(Color.kBlanchedAlmond)));
 
+
+    /*Constructor, runs everything inside during initialization */
     public ElevatorSubsystem() {
+        //for simulation
         SmartDashboard.putData("Elevator Viz", elevatorSimMech);
 
+        //
         elevatorMotor.setPosition(0.0);
 
         var motorConfig = new MotorOutputConfigs();
@@ -107,18 +91,26 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorFollowerMotor.setControl(new Follower(elevatorMotor.getDeviceID(), false));
     }
 
+
+    /*commands to referense */
+    //the only command we need to referense
+    //changes our setpoint, which changes our pid calcuations therefore effort to the motor, which happens periodically
     public Command setHeight(double newHeight) {
         return runOnce(() -> {
             height = newHeight;
         });
     }
 
-    // public Command setHeightRun(double newHeight) {
-    //     return run(() -> {
-    //         height = newHeight;
-    //     });
+     //ONLY to use for testing motor direction
+    // public Command testElevator(double voltage){
+    // return runEnd(() -> {
+    // elevatorMotor.setVoltage(voltage);
+    // }, () -> {
+    // elevatorMotor.setVoltage(0.0);
+    // });
     // }
 
+    /*Calculations */
     public double getElevatorEncoder() {
         return (elevatorMotor.getRotorPosition().getValueAsDouble() * (Math.PI * 1.751*2) / 12.0 ) * -1.0;
     }
@@ -136,38 +128,26 @@ public class ElevatorSubsystem extends SubsystemBase {
         return totalEffort = ((elevatorFeedforward.calculate(0, 0))
                 + (elevatorController.calculate(getElevatorEncoder(), height)));
     }
-    // public Command testElevator(double voltage){
-    // return runEnd(() -> {
-    // elevatorMotor.setVoltage(voltage);
-    // }, () -> {
-    // elevatorMotor.setVoltage(0.0);
-    // });
-    // }
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Elevator Motor Output",
-        // elevatorMotor.getMotorVoltage().getValueAsDouble());
-        // SmartDashboard.putNumber("Sim Elevator Motor Output",
-        // simElevatorMotor.getMotorVoltage());
-        // SmartDashboard.putNumber("Sim Elevator Encoder Inches", simElevatorEncoder);
-        // SmartDashboard.putNumber("Elevator Height", height);
-        // SmartDashboard.putNumber("ElevatorSim.getPosiitonMeters()",
-        // elevatorSim.getPositionMeters());
-        // SmartDashboard.putNumber("Sim Elevator total Effort", simTotalEffort);
-        // SmartDashboard.putNumber("Sim Elevator PID Effort",
-        // simElevatorController.calculate(simElevatorEncoder, height));
-
         elevatorEncoderValue = getElevatorEncoder();
-        SmartDashboard.putNumber("ElevatorHeight", elevatorEncoderValue);
-        // simElevatorEncoder = elevatorViz.getLength();
-        // elevatorEncoder = elevatorMotor.getPosition().getValueAsDouble(); // TODO <-
-        // figure out when using real robot
-        // simTotalEffort = simGetEffort();
         totalEffort = getEffort();
-
         elevatorMotor.setVoltage(totalEffort * -1.0);
-        SmartDashboard.putNumber("Control Effort", totalEffort);
+
+        SmartDashboard.putNumber("ElevatorHeight", elevatorEncoderValue);
+        SmartDashboard.putNumber("Elevator Effort", totalEffort);
+        SmartDashboard.putNumber("Elevator Height", height);
+
+       
+        
+        //Stuff for simulation
+       // might not be functional still, probably not necessary either
+        SmartDashboard.putNumber("Sim Elevator Encoder", simElevatorEncoder);
+        SmartDashboard.putNumber("Sim Elevator total Effort", simTotalEffort);
+
+        simElevatorEncoder = elevatorViz.getLength();
+        simTotalEffort = simGetEffort();
     }
 
 }

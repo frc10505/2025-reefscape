@@ -22,129 +22,131 @@ public class Superstructure {
     private DrivetrainSubsystem drivetrainSubsystem;
     private Vision vision;
 
-    public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys, DrivetrainSubsystem drivetrainSubsys, Vision vision){
+    public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys,
+            DrivetrainSubsystem drivetrainSubsys, Vision vision) {
         this.coralSubsystem = coralSubsys;
         this.algaeSubsystem = algaeSubsys;
         this.elevatorSubsystem = elevatorSubsys;
         this.drivetrainSubsystem = drivetrainSubsys;
         this.vision = vision;
-    }  
+    }
 
-
-    public Command intakeCoral(){
+    public Command intakeCoral() {
         return Commands.sequence(
-            coralSubsystem.intake().until(()-> (coralSubsystem.outSensor() && coralSubsystem.inSensor())),
-            coralSubsystem.slow().until(()-> (coralSubsystem.outSensor() && !coralSubsystem.inSensor()))
-        );
-    } 
+                coralSubsystem.intake().until(() -> (coralSubsystem.outSensor() && coralSubsystem.inSensor())),
+                coralSubsystem.slow().until(() -> (coralSubsystem.outSensor() && !coralSubsystem.inSensor())));
+    }
+
     public Command outputCoral() {
         return Commands.sequence(
-            coralSubsystem.output().until(()-> (!coralSubsystem.outSensor())),
-            elevatorSubsystem.setHeight(0.0)//setHeightRun( 0.0).until(() -> (elevatorSubsystem.isNearGoal()))
-            );            
-        
+                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())),
+                elevatorSubsystem.setHeight(0.0)// setHeightRun( 0.0).until(() -> (elevatorSubsystem.isNearGoal()))
+        );
+
     }
+
     public Command outputCoralTrough() {
         return Commands.sequence(
-            coralSubsystem.trough().until(()-> (!coralSubsystem.outSensor())),
-            coralSubsystem.stop()
-        );
+                coralSubsystem.trough().until(() -> (!coralSubsystem.outSensor())),
+                coralSubsystem.stop());
     }
+
     public Command outputTopCoral() {
         return Commands.sequence(
-            coralSubsystem.outputTop().until(()-> (!coralSubsystem.outSensor())),
-            elevatorSubsystem.setHeight(52.0),
-            Commands.waitUntil(()-> (elevatorSubsystem.isNearGoal())),
-            elevatorSubsystem.setHeight(0.0)
-        );
+                coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
+                elevatorSubsystem.setHeight(52.0),
+                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+                elevatorSubsystem.setHeight(0.0));
     }
+
     public Command grabAlgae() {
         return Commands.sequence(
-            algaeSubsystem.intakeReverse(),
-            algaeSubsystem.coastPivot()  
-        );
+                algaeSubsystem.intakeReverse(),
+                algaeSubsystem.coastPivot());
     }
-    public Command holdAlgae(){
+
+    public Command holdAlgae() {
         return Commands.sequence(
-            algaeSubsystem.intakeStop(),
-            algaeSubsystem.setAngle(-13)
-        );
+                algaeSubsystem.intakeStop(),
+                algaeSubsystem.setAngle(-13));
     }
 
-
-    public Command alignToReef(){
-      //  if(vision.reefCam.getLatestResult().hasTargets()){
-            return drivetrainSubsystem.alignWithReef();//.until(() -> (drivetrainSubsystem.isNearTarget() | (!vision.reefCam.getLatestResult().hasTargets())));
-       // } else{
-      //      return Commands.print("No target!!");
-      //  }
+    public Command alignToReef() {
+        // if(vision.reefCam.getLatestResult().hasTargets()){
+        return drivetrainSubsystem.alignWithReef();// .until(() -> (drivetrainSubsystem.isNearTarget() |
+                                                   // (!vision.reefCam.getLatestResult().hasTargets())));
+        // } else{
+        // return Commands.print("No target!!");
+        // }
 
     }
 
-    //COMMANDS FOR AUTONS
-    public Command autoIntakeCoral(){
-        return coralSubsystem.autoIntake().until(()-> (coralSubsystem.outSensor() && coralSubsystem.inSensor()));
-    } 
+    // COMMANDS FOR AUTONS
+    public Command autoIntakeCoral() {
+        return coralSubsystem.autoIntake().until(() -> (coralSubsystem.outSensor() && coralSubsystem.inSensor()));
+    }
+
     public Command autoOutputCoral() {
-        return coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()));
-       
+        return coralSubsystem.output().until(() -> (!coralSubsystem.outSensor()));
+
     }
+
     public Command autoOutputCoralTrough() {
-        return coralSubsystem.trough().until(()-> (!coralSubsystem.outSensor()));
+        return coralSubsystem.trough().until(() -> (!coralSubsystem.outSensor()));
     }
+
     public Command autoOutputTopCoral() {
-        return coralSubsystem.outputTop().until(()-> (!coralSubsystem.outSensor()));
+        return coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor()));
     }
+
     public Command autoGrabAlgae() {
         return Commands.sequence(
-            algaeSubsystem.intakeReverse(),
-            algaeSubsystem.coastPivot()  
-        );
+                algaeSubsystem.intakeReverse(),
+                algaeSubsystem.coastPivot());
     }
-    public Command autoHoldAlgae(){
+
+    public Command autoHoldAlgae() {
         return algaeSubsystem.intakeStop();
     }
 
-    public Command autoScoreCoralL4(){
+    public Command autoScoreCoralL4() {
         return Commands.sequence(
-          elevatorSubsystem.setHeight(49.5),
-          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-          coralSubsystem.outputTop().until(()-> (!coralSubsystem.outSensor()))
-        );
+                elevatorSubsystem.setHeight(49.5),
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())));
     }
 
-    public Command autoScoreCoralL3(){
+    public Command autoScoreCoralL3() {
         return Commands.sequence(
-          elevatorSubsystem.setHeight(24.0),
-          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-          Commands.waitSeconds(0.5),
-          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
-        );
-        
-    }   public Command autoScoreCoralL2(){
-        return Commands.sequence(
-          elevatorSubsystem.setHeight(9.0),
-          Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-          Commands.waitSeconds(0.5),
-          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
-        );
-    }  
-     public Command autoScoreCoralL1(){
-        return Commands.sequence(
-          elevatorSubsystem.setHeight(0.0),
-            Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-          coralSubsystem.output().until(()-> (!coralSubsystem.outSensor()))
-        );
+                elevatorSubsystem.setHeight(24.0),
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                Commands.waitSeconds(0.5),
+                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())));
+
     }
 
-    public Command autoL4Bump(){
+    public Command autoScoreCoralL2() {
         return Commands.sequence(
-            elevatorSubsystem.setHeight(53.0),
-            Commands.waitUntil(() -> elevatorSubsystem.isNearGoal())
-        );
+                elevatorSubsystem.setHeight(9.0),
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                Commands.waitSeconds(0.5),
+                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())));
     }
 
-    public Command autoElevDown(){
+    public Command autoScoreCoralL1() {
+        return Commands.sequence(
+                elevatorSubsystem.setHeight(0.0),
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())));
+    }
+
+    public Command autoL4Bump() {
+        return Commands.sequence(
+                elevatorSubsystem.setHeight(53.0),
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()));
+    }
+
+    public Command autoElevDown() {
         return elevatorSubsystem.setHeight(0.0);
     }
 }

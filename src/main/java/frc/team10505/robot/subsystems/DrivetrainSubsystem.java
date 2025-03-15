@@ -177,6 +177,7 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
      * @param request Function returning the request to apply
      * @return Command to run
      */
+     //The command we referense to make the drivetrain move
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
@@ -443,19 +444,7 @@ public Command alignWithReef() {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
-    /**
-     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
-     * while still accounting for measurement noise.
-     * <p>
-     * Note that the vision measurement standard deviations passed into this method
-     * will continue to apply to future measurements until a subsequent call to
-     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
-     *
-     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
-     * @param timestampSeconds The timestamp of the vision measurement in seconds.
-     * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement
-     *     in the form [x, y, theta]ᵀ, with units in meters and radians.
-     */
+    // same thing as before, but could be used in place of it if we use the standard deviation of vision measurments(I have no idea how to do that!)
     @Override
     public void addVisionMeasurement(
         Pose2d visionRobotPoseMeters,

@@ -16,117 +16,127 @@ import au.grapplerobotics.LaserCan;
 
 public class CoralSubsystem extends SubsystemBase {
 
-    //Motor controllers
+    // Motor controllers
     private final SparkMax intakeLeft = new SparkMax(kLeftMotorId, MotorType.kBrushless);
     private SparkMaxConfig intakeLeftConfig = new SparkMaxConfig();
     private final SparkMax intakeRight = new SparkMax(kRightMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeRightConfig = new SparkMaxConfig();
 
-    //Laser sensors
+    // Laser sensors
     private final LaserCan inLaser = new LaserCan(60);
     private final LaserCan outLaser = new LaserCan(61);
 
-    public CoralSubsystem(){
+    /*Constructor */
+    public CoralSubsystem() {
         configCoralSubsys();
     }
-    public boolean inSensor(){
-       LaserCan.Measurement inMeas = inLaser.getMeasurement();
-       return (inMeas.distance_mm < 50.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
-    //   return false;
-    }
-    public boolean outSensor(){
-        LaserCan.Measurement outMeas =outLaser.getMeasurement();
-        return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
-        //return true;
-    }
-        public Command intake(){
-            return runEnd(() -> {
-                intakeLeft.set(kIntakeSpeed);
-                intakeRight.set(kIntakeSpeed);
-            },
-            () -> {
-            
-                intakeLeft.set(0);
-                intakeRight.set(0);
-            });
-        }
-        public Command output(){
-            return runEnd(() -> {
-                intakeLeft.set(kOutakeSpeed);
-                intakeRight.set(kOutakeSpeed);
-            },
-            () -> {
-                intakeLeft.set(0);
-                intakeRight.set(0);
-            });
-        }
-        public Command outputTop(){
-            return runEnd(() -> {
-                intakeLeft.set(kOutakeTopSpeed);
-                intakeRight.set(kOutakeTopSpeed);
-        },
-        () -> {
-            intakeLeft.set(0);
-            intakeRight.set(0);
-        });
-        }
-         public Command trough(){
-            return runEnd(() -> {
-                intakeLeft.set(kTroughSpeed);
-                intakeRight.set(kTroughSpeed*kTroughRightMotorPercentage);
-            },
-            () -> {
-                intakeLeft.set(0);
-                intakeRight.set(0);
-            });
-        }
-     public Command stop(){
-        return run(() -> {
-            intakeLeft.set(0);
-            intakeRight.set(0);
-         });
-    }
-    public Command slow(){
-        return runEnd(() -> {
-            intakeLeft.set(0.05);
-            intakeRight.set(0.05);
-        },
-        () -> {
-            intakeLeft.set(0);
-            intakeRight.set(0);
-        });
+
+    /*Calculations */
+    public boolean inSensor() {
+        LaserCan.Measurement inMeas = inLaser.getMeasurement();
+        return (inMeas.distance_mm < 50.0 && inMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
 
-    public Command autoIntake(){
+    public boolean outSensor() {
+        LaserCan.Measurement outMeas = outLaser.getMeasurement();
+        return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    }
+
+    /*Commands to referense */
+    public Command intake() {
         return runEnd(() -> {
             intakeLeft.set(kIntakeSpeed);
             intakeRight.set(kIntakeSpeed);
         },
-        () -> {
-            slow().until(() ->(outSensor() && !inSensor()));
-        }); 
+                () -> {
+
+                    intakeLeft.set(0);
+                    intakeRight.set(0);
+                });
     }
-    
-   
-    //TODO add back in when we have the sensors
+
+    public Command output() {
+        return runEnd(() -> {
+            intakeLeft.set(kOutakeSpeed);
+            intakeRight.set(kOutakeSpeed);
+        },
+                () -> {
+                    intakeLeft.set(0);
+                    intakeRight.set(0);
+                });
+    }
+
+    public Command outputTop() {
+        return runEnd(() -> {
+            intakeLeft.set(kOutakeTopSpeed);
+            intakeRight.set(kOutakeTopSpeed);
+        },
+                () -> {
+                    intakeLeft.set(0);
+                    intakeRight.set(0);
+                });
+    }
+
+    public Command trough() {
+        return runEnd(() -> {
+            intakeLeft.set(kTroughSpeed);
+            intakeRight.set(kTroughSpeed * kTroughRightMotorPercentage);
+        },
+                () -> {
+                    intakeLeft.set(0);
+                    intakeRight.set(0);
+                });
+    }
+
+    public Command stop() {
+        return run(() -> {
+            intakeLeft.set(0);
+            intakeRight.set(0);
+        });
+    }
+
+    public Command slow() {
+        return runEnd(() -> {
+            intakeLeft.set(0.05);
+            intakeRight.set(0.05);
+        },
+                () -> {
+                    intakeLeft.set(0);
+                    intakeRight.set(0);
+                });
+    }
+
+    public Command autoIntake() {
+        return runEnd(() -> {
+            intakeLeft.set(kIntakeSpeed);
+            intakeRight.set(kIntakeSpeed);
+        },
+                () -> {
+                    slow().until(() -> (outSensor() && !inSensor()));
+                });
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("inSensor", inSensor());
         SmartDashboard.putBoolean("outSensor", outSensor());
     }
 
-    private void configCoralSubsys(){
-        //Left intake config
+     /*configurations to be called in the constructor,
+     * runs once during init,
+     * here it is used to configure motor settings
+     */
+    private void configCoralSubsys() {
+        // Left intake config
         intakeLeftConfig.idleMode(IdleMode.kBrake);
-        intakeLeftConfig.smartCurrentLimit(kLeftMotorCurrentLimit,kLeftMotorCurrentLimit);
-        intakeLeft.configure(intakeLeftConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+        intakeLeftConfig.smartCurrentLimit(kLeftMotorCurrentLimit, kLeftMotorCurrentLimit);
+        intakeLeft.configure(intakeLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        //Right intake config
+        // Right intake config
         intakeRightConfig.idleMode(IdleMode.kBrake);
         intakeRightConfig.smartCurrentLimit(kRightMotorCurrentLimit, kRightMotorCurrentLimit);
-      intakeRightConfig.inverted(true);
+        intakeRightConfig.inverted(true);
         intakeRight.configure(intakeRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-
 
 }
