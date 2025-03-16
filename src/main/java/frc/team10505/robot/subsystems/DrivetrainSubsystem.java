@@ -207,6 +207,8 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
 
     @Override
     public void periodic() {
+        updateOdometry();
+
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -296,7 +298,6 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-
 //DEATH BUTTON 2.0
 //BE AFRAID
 
@@ -310,12 +311,6 @@ public Command alignWithReef() {
     }
     );
 }
-
-
-
-
-
-
 
 // public boolean isNearYaw() {
 //     return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  2);
@@ -333,7 +328,6 @@ public Command alignWithReef() {
 // public boolean isNearTarget() {
 //     return (isNearSkew() & isNearTurn() & isNearYaw());
 // }
-
 
     public void configDrivetrainSubsys() {
         try {
@@ -360,13 +354,6 @@ public Command alignWithReef() {
             DriverStation.reportError("something may or may not be broken, idk", ex.getStackTrace());
         }
     }
-
-
-
-
-
-
-
 
 //     public final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
 
@@ -430,32 +417,20 @@ public Command alignWithReef() {
 // //     return targetDistance;
 // //   }
 
+    private void updateOdometry() {
+        var reefPose = vision.getReefCamEstimatedPose();
+        var backPose = vision.getBackCamEstimatedPose();
 
-
-
-    /**
-     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
-     * while still accounting for measurement noise.
-     *
-     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
-     * @param timestampSeconds The timestamp of the vision measurement in seconds.
-     */
-    @Override
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
-
-    // same thing as before, but could be used in place of it if we use the standard deviation of vision measurments(I have no idea how to do that!)
-    @Override
-    public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs
-    ) {
         // Standard deviations of the vision measurement for multi tag.
         // X position in meters, y position in meters, and heading in radians.
         Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), multiTagStdDevs);
+        if (reefPose.isPresent() && backPose.isPresent()) {
+            var estimatedReefPose = reefPose.get();
+            var estimatedBackPose = backPose.get();
+
+            this.addVisionMeasurement(estimatedReefPose.estimatedPose.toPose2d(), estimatedReefPose.timestampSeconds, multiTagStdDevs);
+            this.addVisionMeasurement(estimatedBackPose.estimatedPose.toPose2d(), estimatedBackPose.timestampSeconds, multiTagStdDevs);
+        }
     }
 }
