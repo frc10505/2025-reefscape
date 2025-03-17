@@ -14,8 +14,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +27,7 @@ import frc.team10505.robot.subsystems.AlgaeSubsystem;
 import frc.team10505.robot.subsystems.CoralSubsystem;
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
+import static frc.team10505.robot.Constants.VisionConstants.*;
 
 public class RobotContainer {
 
@@ -203,9 +202,17 @@ public class RobotContainer {
             joystick.trigger()
                     .whileTrue(drivetrainSubsys.applyRequest(
                             () -> drive.withVelocityX(-joystick.getY() * 0.2 * polarityChooser.getSelected() * MaxSpeed) // Drive
-                                    .withVelocityY(-joystick.getX() * 0.2 * polarityChooser.getSelected() * MaxSpeed) // Drive left with negative X (left)
-                                    .withRotationalRate(-joystick.getTwist() * 0.5 * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                                    ));
+                                    .withVelocityY(-joystick.getX() * 0.2 * polarityChooser.getSelected() * MaxSpeed) // Drive
+                                                                                                                      // left
+                                                                                                                      // with
+                                                                                                                      // negative
+                                                                                                                      // X
+                                                                                                                      // (left)
+                                    .withRotationalRate(-joystick.getTwist() * 0.5 * MaxAngularRate) // Drive
+                                                                                                     // counterclockwise
+                                                                                                     // with negative X
+                                                                                                     // (left)
+                    ));
 
             joystick.button(12).onTrue(algaeSubsys.setAngle(-22));// -18
             joystick.button(9).onTrue(algaeSubsys.setAngle(-90));
@@ -282,7 +289,7 @@ public class RobotContainer {
         try {
             var reefCamPose = vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
             var mostRecentReefCamPose = reefCamPose;
-            drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp);
+            drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp, kMultiTagStdDevs);
         } catch (Exception e) {
             Commands.print("reef cam pose failed");
         }

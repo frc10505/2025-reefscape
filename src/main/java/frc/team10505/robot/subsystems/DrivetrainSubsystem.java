@@ -207,8 +207,6 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
 
     @Override
     public void periodic() {
-        updateOdometry();
-
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -416,21 +414,4 @@ public Command alignWithReef() {
 
 // //     return targetDistance;
 // //   }
-
-    private void updateOdometry() {
-        var reefPose = vision.getReefCamEstimatedPose();
-        var backPose = vision.getBackCamEstimatedPose();
-
-        // Standard deviations of the vision measurement for multi tag.
-        // X position in meters, y position in meters, and heading in radians.
-        Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-
-        if (reefPose.isPresent() && backPose.isPresent()) {
-            var estimatedReefPose = reefPose.get();
-            var estimatedBackPose = backPose.get();
-
-            this.addVisionMeasurement(estimatedReefPose.estimatedPose.toPose2d(), estimatedReefPose.timestampSeconds, multiTagStdDevs);
-            this.addVisionMeasurement(estimatedBackPose.estimatedPose.toPose2d(), estimatedBackPose.timestampSeconds, multiTagStdDevs);
-        }
-    }
 }
