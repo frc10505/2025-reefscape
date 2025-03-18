@@ -12,8 +12,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +32,9 @@ import frc.team10505.robot.subsystems.AlgaeSubsystem;
 import frc.team10505.robot.subsystems.CoralSubsystem;
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
-import static frc.team10505.robot.Constants.VisionConstants.*;
+
+import org.ejml.data.Matrix;
+import org.ejml.equation.MatrixConstructor;
 
 public class RobotContainer {
 
@@ -215,9 +222,9 @@ public class RobotContainer {
                     ));
 
             joystick.button(12).onTrue(algaeSubsys.setAngle(-22));// -18
-            joystick.button(9).onTrue(algaeSubsys.setAngle(-90));
+            joystick.button(9).onTrue(algaeSubsys.setAngle(90));//-90
             joystick.button(10).onTrue(algaeSubsys.setAngle(5));
-            joystick.button(4).whileTrue(superStructure.alignToReef());// currently NON functional
+            joystick.povLeft().whileTrue(drivetrainSubsys.alignLeft());
 
             // operator bindings
             xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
@@ -245,6 +252,14 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
+
+    public void updateDriveSensors(){
+        SmartDashboard.putBoolean("left drive sensor", drivetrainSubsys.seesLeftSensor());
+        SmartDashboard.putBoolean("right drive sensor", drivetrainSubsys.seesRightSensor());
+    }
+
+
+
     // called periodically in robot.java, updates all our pose estimation stuff for
     // drivetrain and vision
     // TODO test vision pose estimtaion with a tag, and taking it away
@@ -256,12 +271,7 @@ public class RobotContainer {
                 drivetrainSubsys.getState().Pose.getRotation().getDegrees());
 
         // puts the pose from the reef cam on our dashboards if it sees a tag
-        if (vision.getReefCamEstimatedPose().isPresent()) {
-            SmartDashboard.putNumber("Reef Cam Pose X", vision.getReefCamEstimatedPose().get().estimatedPose.getX());
-            SmartDashboard.putNumber("Reef Cam Pose Y", vision.getReefCamEstimatedPose().get().estimatedPose.getY());
-            SmartDashboard.putNumber("Reef Cam Pose Angle",
-                    vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d().getRotation().getDegrees());
-        }
+       
 
         // allows us to reset our pose
         // TODO take out for matches
@@ -272,24 +282,24 @@ public class RobotContainer {
             drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
         }
 
-        // //stuff from ctre example, I dont think its needed(took it out morning of
-        // 3/14)
-        // var driveState = drivetrainSubsys.getState();
-        // double headingDeg = driveState.Pose.getRotation().getDegrees();
-        // double omegaRps =
-        // Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-
         // ***I think having this here gives a pose of 0,0,0 */
         // *** therefore, i commented it out (morning of 3/14)*/
-        // var mostRecentReefCamPose = new Pose2d();
+         var mostRecentReefCamPose = new Pose2d();
 
         // if the camera has a tag in sight, it will calculate a pose and add to the
         // drivetrain
         // if it fails, it will print the message
         try {
             var reefCamPose = vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
-            var mostRecentReefCamPose = reefCamPose;
-            drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp, kMultiTagStdDevs);
+             mostRecentReefCamPose = reefCamPose;
+            //         double [][] array = {{3}, {4}, {3}};
+        //Nat<N3> x = new Nat<N3>();
+            drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp);
+
+            SmartDashboard.putNumber("reef cam pose x", mostRecentReefCamPose.getX());
+            SmartDashboard.putNumber("reef cam pose y", mostRecentReefCamPose.getY());
+            SmartDashboard.putNumber("reef cam pose rot", mostRecentReefCamPose.getRotation().getDegrees());
+            
         } catch (Exception e) {
             Commands.print("reef cam pose failed");
         }
@@ -298,6 +308,11 @@ public class RobotContainer {
         // adding these */
         // var newestPose = drivetrainSubsys.getState().Pose;
         // drivetrainSubsys.resetPose(newestPose);
+    }
+
+    public void setPose(){
+        drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+
     }
 
     // method called periodically in robot.java only when we simulate the code

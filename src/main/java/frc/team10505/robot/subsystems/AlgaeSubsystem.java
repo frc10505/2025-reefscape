@@ -37,7 +37,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     private final PIDController pivotController = new PIDController(KP, KI,
             KD);
 
-    private double pivotSetpoint = -90;
+    private double pivotSetpoint = 90; //-90
 
     public boolean coasting = false;
 

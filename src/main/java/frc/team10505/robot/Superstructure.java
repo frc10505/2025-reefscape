@@ -54,9 +54,9 @@ public class Superstructure {
     public Command outputTopCoral() {
         return Commands.sequence(
                 coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
-                elevatorSubsystem.setHeight(52.0),
-                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
-                elevatorSubsystem.setHeight(0.0));
+                elevatorSubsystem.setHeight(54.5), //53.0
+                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal()))
+               /*  elevatorSubsystem.setHeight(0.0)*/);
     }
 
     public Command grabAlgae() {
@@ -69,16 +69,6 @@ public class Superstructure {
         return Commands.sequence(
                 algaeSubsystem.intakeStop(),
                 algaeSubsystem.setAngle(-13));
-    }
-
-    public Command alignToReef() {
-        // if(vision.reefCam.getLatestResult().hasTargets()){
-        return drivetrainSubsystem.alignWithReef();// .until(() -> (drivetrainSubsystem.isNearTarget() |
-                                                   // (!vision.reefCam.getLatestResult().hasTargets())));
-        // } else{
-        // return Commands.print("No target!!");
-        // }
-
     }
 
     // COMMANDS FOR AUTONS
@@ -127,7 +117,7 @@ public class Superstructure {
 
     public Command autoScoreCoralL2() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(9.0),
+                elevatorSubsystem.setHeight(8.0),
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
                 Commands.waitSeconds(0.5),
                 coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())));

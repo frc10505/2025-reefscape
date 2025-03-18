@@ -15,8 +15,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,6 +28,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.team10505.robot.Constants.VisionConstants;
 import frc.team10505.robot.Vision;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import static frc.team10505.robot.Constants.DrivetrainConstants.*;
@@ -45,14 +52,17 @@ private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.A
 
 private Vision vision = new Vision();
 
+ private final LaserCan leftLaser = new LaserCan(52); 
+    private final LaserCan rightLaser = new LaserCan(53);
+
 
 double turnDistance = 0;
 double strafeDistance = 0;
 double skewDistance = 0;
 
-private final PIDController strafeController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
-private final PIDController turnController = new PIDController(kTurnP, kTurnI, kTurnD);
-private final PIDController distanceController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
+private final PIDController yController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
+private final PIDController headingController = new PIDController(kTurnP, kTurnI, kTurnD);
+private final PIDController xController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -67,6 +77,7 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
 
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -205,7 +216,18 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
-    @Override
+
+    public boolean seesLeftSensor(){
+        LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
+       return (leftMeas.distance_mm < leftDriveLaserDistance && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
+      }
+      
+      public boolean seesRightSensor(){
+       LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+       return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
+      }
+  
+      @Override
     public void periodic() {
         /*
          * Periodically try to apply the operator perspective.
@@ -223,8 +245,11 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
                 );
                 m_hasAppliedOperatorPerspective = true;
             });
+
+           
         }
 
+        
 
         // PhotonPipelineResult result = vision.reefCam.getLatestResult();
         // var alliance = DriverStation.getAlliance();
@@ -296,6 +321,7 @@ private final PIDController distanceController = new PIDController(kDistanceP, k
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+
 //DEATH BUTTON 2.0
 //BE AFRAID
 
@@ -309,6 +335,41 @@ public Command alignWithReef() {
     }
     );
 }
+//Command to align with left pole
+private boolean poseCaptured = false;
+private double xSP, ySP, hSP, xOut, yOut, hOut;
+public Command alignLeft() {
+    return runEnd(() -> {
+        if (!poseCaptured){
+            xSP = tag17or8L.getX();
+            ySP = tag17or8L.getY();
+            hSP = tag17or8L.getRotation().getDegrees();
+            poseCaptured = true;
+        }
+        xOut = xController.calculate(getState().Pose.getX(), xSP);
+        yOut = yController.calculate(getState().Pose.getY(), ySP);
+        hOut = headingController.calculate(getState().Pose.getRotation().getDegrees(), hSP);
+        m_pathApplyFieldSpeeds.withSpeeds(null)
+            .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(xOut, MetersPerSecond),
+            LinearVelocity.ofBaseUnits(yOut, MetersPerSecond),
+            AngularVelocity.ofBaseUnits(hOut, RadiansPerSecond)));
+
+    }, () ->{
+     poseCaptured = false;
+     m_pathApplyFieldSpeeds.withSpeeds(null)
+            .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(0, MetersPerSecond),
+            LinearVelocity.ofBaseUnits(0, MetersPerSecond),
+            AngularVelocity.ofBaseUnits(0, RadiansPerSecond)));
+
+    });
+}
+
+
+
+
+
+
+
 
 // public boolean isNearYaw() {
 //     return MathUtil.isNear(3.0, vision.reefCam.getLatestResult().getBestTarget().getYaw(),  2);
@@ -326,6 +387,7 @@ public Command alignWithReef() {
 // public boolean isNearTarget() {
 //     return (isNearSkew() & isNearTurn() & isNearYaw());
 // }
+
 
     public void configDrivetrainSubsys() {
         try {
@@ -414,4 +476,34 @@ public Command alignWithReef() {
 
 // //     return targetDistance;
 // //   }
+
+
+
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     */
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+
+        Matrix<N3, N1> tagStdDevs = VecBuilder.fill(8.0, 8.0, 8.0);
+       // visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), tagStdDevs);
+       // super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    // same thing as before, but could be used in place of it if we use the standard deviation of vision measurments(I have no idea how to do that!)
+    @Override
+    public void addVisionMeasurement(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
 }

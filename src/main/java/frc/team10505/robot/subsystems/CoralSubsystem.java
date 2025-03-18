@@ -39,7 +39,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     public boolean outSensor() {
         LaserCan.Measurement outMeas = outLaser.getMeasurement();
-        return (outMeas.distance_mm < 50.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        return (outMeas.distance_mm < 100.0 && outMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
     }
 
     /*Commands to referense */

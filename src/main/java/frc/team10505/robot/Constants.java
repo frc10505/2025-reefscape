@@ -45,22 +45,23 @@ public final class Constants {
         new Translation3d(-1.0, 1.0, 0.0),
         new Rotation3d(0.0, 0.0, Units.degreesToRadians(180.0)));
     public static final Transform3d kRobotToReefCamTransform = new Transform3d(
-        new Translation3d(0.254, 0.254, 0.0),
-        new Rotation3d(0.0, 0.0, Units.degreesToRadians(45.0)));
+        new Translation3d(-0.254, -0.254, 0.178),
+        new Rotation3d(0.0, Units.degreesToRadians(25.0), Units.degreesToRadians(15.0)));//3rd value 45
+   
 
-    // positions of things on the field
-    public static final Pose2d tag17or8L = new Pose2d(3.026, 3.723, Rotation2d.fromDegrees(60));
-    public static final Pose2d tag22or9L = new Pose2d(4.973, 2.861, Rotation2d.fromDegrees(120));
-    public static final Pose2d tag21or10L = new Pose2d(5.74, 3.862, Rotation2d.fromDegrees(180));
-    public static final Pose2d tag20or11L = new Pose2d(5.257, 5.026, Rotation2d.fromDegrees(-120));
-    public static final Pose2d tag19or6L = new Pose2d(4.008, 5.19, Rotation2d.fromDegrees(-60));
-    public static final Pose2d tag18or7L = new Pose2d(3.24, 4.19, Rotation2d.fromDegrees(0));
-    public static final Pose2d tag17or8R = new Pose2d(4.008, 2.861, Rotation2d.fromDegrees(60));
-    public static final Pose2d tag22or9R = new Pose2d(5.257, 3.026, Rotation2d.fromDegrees(120));
-    public static final Pose2d tag21or10R = new Pose2d(5.74, 4.19, Rotation2d.fromDegrees(180));
-    public static final Pose2d tag20or11R = new Pose2d(4.973, 5.19, Rotation2d.fromDegrees(-120));
-    public static final Pose2d tag19or6R = new Pose2d(3.723, 5.026, Rotation2d.fromDegrees(-60));
-    public static final Pose2d tag18or7R = new Pose2d(3.24, 3.862, Rotation2d.fromDegrees(0));
+    //positions of things on the field
+      public static final Pose2d tag17or8L = new Pose2d(3.026,3.723,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9L = new Pose2d(4.973,2.861,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10L = new Pose2d(5.74,3.862,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11L = new Pose2d(5.257,5.026,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6L = new Pose2d(4.008,5.19,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7L = new Pose2d(3.24,4.19,Rotation2d.fromDegrees(0));
+      public static final Pose2d tag17or8R = new Pose2d(4.008,2.861,Rotation2d.fromDegrees(60));
+      public static final Pose2d tag22or9R = new Pose2d(5.257,3.026,Rotation2d.fromDegrees(120));
+      public static final Pose2d tag21or10R = new Pose2d(5.74,4.19,Rotation2d.fromDegrees(180));
+      public static final Pose2d tag20or11R = new Pose2d(4.973,5.19,Rotation2d.fromDegrees(-120));
+      public static final Pose2d tag19or6R = new Pose2d(3.723,5.026,Rotation2d.fromDegrees(-60));
+      public static final Pose2d tag18or7R = new Pose2d(3.24,3.862,Rotation2d.fromDegrees(0));
   }
 
   public final class DrivetrainConstants {
@@ -73,10 +74,25 @@ public final class Constants {
     public final static double kTurnI = 0.0;
     public final static double kTurnD = 0.005;
 
-    public final static double kDistanceP = 0.1;
+    public final static double kDistanceP = 0.01;
     public final static double kDistanceI = 0.0;
     public final static double kDistanceD = 0.005;
     public final static double kTurnSetpoint = 180.0;
+
+    //positions of things on the field
+    public static final Pose2d tag17or8L = new Pose2d(3.026,3.723,Rotation2d.fromDegrees(60));
+    public static final Pose2d tag22or9L = new Pose2d(4.973,2.861,Rotation2d.fromDegrees(120));
+    public static final Pose2d tag21or10L = new Pose2d(5.74,3.862,Rotation2d.fromDegrees(180));
+    public static final Pose2d tag20or11L = new Pose2d(5.257,5.026,Rotation2d.fromDegrees(-120));
+    public static final Pose2d tag19or6L = new Pose2d(4.008,5.19,Rotation2d.fromDegrees(-60));
+    public static final Pose2d tag18or7L = new Pose2d(3.24,4.19,Rotation2d.fromDegrees(0));
+    public static final Pose2d tag17or8R = new Pose2d(4.008,2.861,Rotation2d.fromDegrees(60));
+    public static final Pose2d tag22or9R = new Pose2d(5.257,3.026,Rotation2d.fromDegrees(120));
+    public static final Pose2d tag21or10R = new Pose2d(5.74,4.19,Rotation2d.fromDegrees(180));
+    public static final Pose2d tag20or11R = new Pose2d(4.973,5.19,Rotation2d.fromDegrees(-120));
+    public static final Pose2d tag19or6R = new Pose2d(3.723,5.026,Rotation2d.fromDegrees(-60));
+    public static final Pose2d tag18or7R = new Pose2d(3.24,3.862,Rotation2d.fromDegrees(0));
+
 
     // Left side
     public final static double kLeftDistanceSetpoint = 2.0;
@@ -85,6 +101,9 @@ public final class Constants {
     // right side
     public final static double kRightDistanceSetpoint = 2.0;
     public final static double kRightYawSetpoint = 2.0;
+
+    public final static double rightDriveLaserDistance = 400.0;
+    public final static double leftDriveLaserDistance = 300.0;
 
   }
 
@@ -162,7 +181,7 @@ public final class Constants {
     public final static int kIntakeOutId = 61;
     public final static double kIntakeSpeed = 0.30;
     public final static double kOutakeSpeed = 0.25;
-    public final static double kOutakeTopSpeed = 0.1;
+    public final static double kOutakeTopSpeed = 0.05;
     public final static double kTroughSpeed = 0.30;
     public final static double kTroughRightMotorPercentage = 0.9;
   }

@@ -26,12 +26,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    robotContainer.setPose();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     robotContainer.updatePose();
+    robotContainer.updateDriveSensors();
   }
 
   @Override
@@ -68,6 +70,7 @@ public class Robot extends TimedRobot {
     if(Utils.isSimulation()){
       robotContainer.updateSimulation();
     }
+    
   }
 
   @Override
