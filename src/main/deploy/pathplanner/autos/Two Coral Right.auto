@@ -23,9 +23,21 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "autoL4Bump"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
           }
         },
         {
@@ -56,6 +68,30 @@
           "type": "path",
           "data": {
             "pathName": "Go To Reef (Right) 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoL4Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoElevDown"
           }
         }
       ]

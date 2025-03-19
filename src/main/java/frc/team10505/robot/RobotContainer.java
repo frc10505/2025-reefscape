@@ -15,6 +15,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -49,16 +50,13 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
     private final Telemetry logger = new Telemetry(MaxSpeed);
+    private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Operator interfaces */
-    // private final CommandXboxController xboxController = new
-    // CommandXboxController(kXboxControllerPort);
+    private final CommandXboxController xboxController = new CommandXboxController(0);
     private final CommandXboxController xboxController2 = new CommandXboxController(kControlPanelPort);
 
-    // private final CommandXboxController controlPanel = new
-    // CommandXboxController(kControlPanelPort);
     private final CommandJoystick joystick = new CommandJoystick(0);
     private final CommandJoystick joystick2 = new CommandJoystick(1);
 
@@ -133,27 +131,32 @@ public class RobotContainer {
             );
 
         } else {
-            drivetrainSubsys.setDefaultCommand(
-                    drivetrainSubsys.applyRequest(
-                            () -> drive.withVelocityX(-joystick.getY() * 0.6 * polarityChooser.getSelected() * MaxSpeed) // Drive
+            drivetrainSubsys.setDefaultCommand(drivetrainSubsys.applyRequest(() -> drive
+                    .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
+                            * 0.8 * MaxSpeed) // Drive
+                    .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
+                            0.8 * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-xboxController.getRightX() * 1.4 * MaxAngularRate)));
+            // drivetrainSubsys.applyRequest(
+            // () -> drive.withVelocityX(-joystick.getY() * 0.8 *
+            // polarityChooser.getSelected() * MaxSpeed) //0.6// Drive
 
-                                    .withVelocityY(-joystick.getX() * 0.8 * polarityChooser.getSelected() * MaxSpeed) // Drive
-                                                                                                                      // left
-                                                                                                                      // with
-                                                                                                                      // negative
-                                                                                                                      // X
-                                                                                                                      // (left)
-                                    .withRotationalRate(-joystick.getTwist() * 1.6 * MaxAngularRate) // Drive
-                                                                                                     // counterclockwise
-                                                                                                     // with negative X
-                                                                                                     // (left)
-                    ));
+            // .withVelocityY(-joystick.getX() * 0.8 * polarityChooser.getSelected() *
+            // MaxSpeed) // Drive
+            // // left
+            // // with
+            // // negative
+            // // X
+            // // (left)
+            // //.withRotationalRate(-joystick.getTwist() * 1.6 * MaxAngularRate) // Drive
+            // // counterclockwise
+            // // with negative X
+            // // (left)
+            // ));
         }
 
         algaeSubsys.setDefaultCommand(algaeSubsys.holdAngle());
     }
-
-    private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
 
     /**
      * Function that is called in the constructor where we configure operator
@@ -188,43 +191,52 @@ public class RobotContainer {
             // xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
             // //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
-            // xboxController.leftTrigger().whileTrue( drivetrainSubsys.applyRequest(() ->
-            // drive.withVelocityX(-xboxController.getLeftY()* polarityChooser.getSelected()
-            // * 0.2* MaxSpeed) // Drive
-            // .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected()*
-            // 0.2* MaxSpeed) // Drive left with negative X (left)
-            // .withRotationalRate(-xboxController.getRightX() * 0.6* MaxAngularRate)));
+            xboxController.leftTrigger()
+                    .whileTrue(drivetrainSubsys.applyRequest(() -> drive
+                            .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
+                                    * 0.2 * MaxSpeed) // Drive
+                            .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
+                                    0.2 * MaxSpeed) // Drive left with negative X (left)
+                            .withRotationalRate(-xboxController.getRightX() * 0.6 * MaxAngularRate)));
 
-            // xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-            // xboxController.b().onTrue(algaeSubsys.stopPivot());
-            // xboxController.x().onTrue(algaeSubsys.setAngle(-90));
-            // xboxController.y().onTrue(algaeSubsys.setAngle(5));
+            xboxController.a().onTrue(algaeSubsys.setAngle(-18));
+            xboxController.b().onTrue(algaeSubsys.stopPivot());
+            xboxController.x().onTrue(algaeSubsys.setAngle(90));
+            xboxController.y().onTrue(algaeSubsys.setAngle(5));
 
-            // xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
-
+            xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+            xboxController.povLeft().whileTrue(
+                    drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsys.seesLeftSensor()));
+            xboxController.povRight().whileTrue(
+                        drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.3, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));
+    
             // NEW joystick bindings
-            joystick.button(3).onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-            joystick.button(2).onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
 
-            joystick.trigger()
-                    .whileTrue(drivetrainSubsys.applyRequest(
-                            () -> drive.withVelocityX(-joystick.getY() * 0.2 * polarityChooser.getSelected() * MaxSpeed) // Drive
-                                    .withVelocityY(-joystick.getX() * 0.2 * polarityChooser.getSelected() * MaxSpeed) // Drive
-                                                                                                                      // left
-                                                                                                                      // with
-                                                                                                                      // negative
-                                                                                                                      // X
-                                                                                                                      // (left)
-                                    .withRotationalRate(-joystick.getTwist() * 0.5 * MaxAngularRate) // Drive
-                                                                                                     // counterclockwise
-                                                                                                     // with negative X
-                                                                                                     // (left)
-                    ));
+            // joystick.trigger()
+            // .whileTrue(drivetrainSubsys.applyRequest(
+            // () -> drive.withVelocityX(-joystick.getY() * 0.2 *
+            // polarityChooser.getSelected() * MaxSpeed) // Drive
+            // .withVelocityY(-joystick.getX() * 0.2 * polarityChooser.getSelected() *
+            // MaxSpeed) // Drive
+            // // left
+            // // with
+            // // negative
+            // // X
+            // // (left)
+            // .withRotationalRate(-joystick.getTwist() * 0.5 * MaxAngularRate) // Drive
+            // // counterclockwise
+            // // with negative X
+            // // (left)
+            // ));
 
-            joystick.button(12).onTrue(algaeSubsys.setAngle(-22));// -18
-            joystick.button(9).onTrue(algaeSubsys.setAngle(90));//-90
-            joystick.button(10).onTrue(algaeSubsys.setAngle(5));
-            joystick.povLeft().whileTrue(drivetrainSubsys.alignLeft());
+            // joystick.button(12).onTrue(algaeSubsys.setAngle(-22));// -18
+            // joystick.button(9).onTrue(algaeSubsys.setAngle(90));//-90
+            // joystick.button(10).onTrue(algaeSubsys.setAngle(5));
+
+            // joystick.button(3).onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+            // joystick.button(5).onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
+
+            // joystick.povLeft().whileTrue(drivetrainSubsys.alignLeft());
 
             // operator bindings
             xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
@@ -236,6 +248,7 @@ public class RobotContainer {
             xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
             xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
             xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
+            xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
 
             // automoatically added from the ctre generated swerve drive
             // probably is important?
@@ -252,13 +265,10 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
-
-    public void updateDriveSensors(){
+    public void updateDriveSensors() {
         SmartDashboard.putBoolean("left drive sensor", drivetrainSubsys.seesLeftSensor());
         SmartDashboard.putBoolean("right drive sensor", drivetrainSubsys.seesRightSensor());
     }
-
-
 
     // called periodically in robot.java, updates all our pose estimation stuff for
     // drivetrain and vision
@@ -271,7 +281,6 @@ public class RobotContainer {
                 drivetrainSubsys.getState().Pose.getRotation().getDegrees());
 
         // puts the pose from the reef cam on our dashboards if it sees a tag
-       
 
         // allows us to reset our pose
         // TODO take out for matches
@@ -284,22 +293,35 @@ public class RobotContainer {
 
         // ***I think having this here gives a pose of 0,0,0 */
         // *** therefore, i commented it out (morning of 3/14)*/
-         var mostRecentReefCamPose = new Pose2d();
+        var mostRecentReefCamPose = new Pose2d();
 
         // if the camera has a tag in sight, it will calculate a pose and add to the
         // drivetrain
         // if it fails, it will print the message
-        try {
-            var reefCamPose = vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
-             mostRecentReefCamPose = reefCamPose;
-            //         double [][] array = {{3}, {4}, {3}};
-        //Nat<N3> x = new Nat<N3>();
-            drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose, vision.lastReefCamEstimateTimestamp);
 
-            SmartDashboard.putNumber("reef cam pose x", mostRecentReefCamPose.getX());
-            SmartDashboard.putNumber("reef cam pose y", mostRecentReefCamPose.getY());
-            SmartDashboard.putNumber("reef cam pose rot", mostRecentReefCamPose.getRotation().getDegrees());
-            
+        try {
+
+            var visionEst = vision.getReefCamEstimatedPose();
+            visionEst.ifPresent(est -> {
+                drivetrainSubsys.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds);
+                SmartDashboard.putNumber("reef cam pose x", est.estimatedPose.toPose2d().getX());
+                SmartDashboard.putNumber("reef cam pose y", est.estimatedPose.toPose2d().getY());
+                SmartDashboard.putNumber("reef cam pose rot", est.estimatedPose.toPose2d().getRotation().getDegrees());
+            });
+
+            // var reefCamPose =
+            // vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
+            // mostRecentReefCamPose = reefCamPose;
+            // // double [][] array = {{3}, {4}, {3}};
+            // //Nat<N3> x = new Nat<N3>();
+            // drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose,
+            // vision.lastReefCamEstimateTimestamp);
+
+            // SmartDashboard.putNumber("reef cam pose x", mostRecentReefCamPose.getX());
+            // SmartDashboard.putNumber("reef cam pose y", mostRecentReefCamPose.getY());
+            // SmartDashboard.putNumber("reef cam pose rot",
+            // mostRecentReefCamPose.getRotation().getDegrees());
+
         } catch (Exception e) {
             Commands.print("reef cam pose failed");
         }
@@ -310,8 +332,8 @@ public class RobotContainer {
         // drivetrainSubsys.resetPose(newestPose);
     }
 
-    public void setPose(){
-        drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+    public void setPose() {
+        drivetrainSubsys.resetPose(new Pose2d(7.29, 0.5, new Rotation2d(180.0)));
 
     }
 

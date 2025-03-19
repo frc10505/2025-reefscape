@@ -54,9 +54,9 @@ public class Superstructure {
     public Command outputTopCoral() {
         return Commands.sequence(
                 coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
-                elevatorSubsystem.setHeight(54.5), //53.0
-                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal()))
-               /*  elevatorSubsystem.setHeight(0.0)*/);
+                elevatorSubsystem.setHeight(54.5), //was 53.0
+                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+                 elevatorSubsystem.setHeight(0.0));
     }
 
     public Command grabAlgae() {
@@ -69,6 +69,15 @@ public class Superstructure {
         return Commands.sequence(
                 algaeSubsystem.intakeStop(),
                 algaeSubsystem.setAngle(-13));
+    }
+
+    public Command manualL4Bump() {
+        return Commands.sequence(
+                elevatorSubsystem.setHeight(54.0),// 54.5
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                coralSubsystem.setStop(), 
+                elevatorSubsystem.setHeight(0.0)
+                );
     }
 
     // COMMANDS FOR AUTONS
@@ -101,9 +110,10 @@ public class Superstructure {
 
     public Command autoScoreCoralL4() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(49.5),
+                elevatorSubsystem.setHeight(48.5),//49.5 -> shoots over top
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-                coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())));
+                coralSubsystem.autoSetIntake(),
+                Commands.waitUntil(() -> (!coralSubsystem.outSensor())));
     }
 
     public Command autoScoreCoralL3() {
@@ -132,8 +142,9 @@ public class Superstructure {
 
     public Command autoL4Bump() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(53.0),
-                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()));
+                elevatorSubsystem.setHeight(54.0),// 54.5
+                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                coralSubsystem.setStop());
     }
 
     public Command autoElevDown() {

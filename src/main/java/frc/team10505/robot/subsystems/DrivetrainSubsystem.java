@@ -216,7 +216,6 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
-
     public boolean seesLeftSensor(){
         LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
        return (leftMeas.distance_mm < leftDriveLaserDistance && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    

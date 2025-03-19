@@ -116,7 +116,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
        public boolean isNearGoal(){
-        return MathUtil.isNear(height, getElevatorEncoder(), 1);
+        return MathUtil.isNear(height, getElevatorEncoder(), 2);
     }
 
     public double simGetEffort() {
@@ -134,8 +134,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorEncoderValue = getElevatorEncoder();
         totalEffort = getEffort();
         elevatorMotor.setVoltage(totalEffort * -1.0);
-
-        SmartDashboard.putNumber("ElevatorHeight", elevatorEncoderValue);
+ 
+        SmartDashboard.putNumber("Elevator Encoder", elevatorEncoderValue);
         SmartDashboard.putNumber("Elevator Effort", totalEffort);
         SmartDashboard.putNumber("Elevator Height", height);
 

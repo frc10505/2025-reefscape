@@ -94,6 +94,12 @@ public class CoralSubsystem extends SubsystemBase {
             intakeRight.set(0);
         });
     }
+    public Command setStop() {
+        return runOnce(() -> {
+            intakeLeft.set(0);
+            intakeRight.set(0);
+        });
+    }
 
     public Command slow() {
         return runEnd(() -> {
@@ -114,6 +120,12 @@ public class CoralSubsystem extends SubsystemBase {
                 () -> {
                     slow().until(() -> (outSensor() && !inSensor()));
                 });
+    }
+    public Command autoSetIntake() {
+        return runOnce(() -> {
+            intakeLeft.set(kIntakeSpeed);
+            intakeRight.set(kIntakeSpeed);
+        });
     }
 
     @Override
