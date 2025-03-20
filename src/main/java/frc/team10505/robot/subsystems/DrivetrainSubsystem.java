@@ -4,8 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -17,30 +15,19 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import au.grapplerobotics.LaserCan;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.team10505.robot.Constants.VisionConstants;
-import frc.team10505.robot.Vision;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 
@@ -48,9 +35,10 @@ import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
 
 private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
+
 //SwerveRequest.ApplyChassisSpeeds();
 
-private Vision vision = new Vision();
 
  private final LaserCan leftLaser = new LaserCan(52); 
     private final LaserCan rightLaser = new LaserCan(53);
@@ -194,6 +182,16 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public Command stop(){
+        return runOnce(() -> this.setControl(robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))));
+    }
+
+
+    public Command setRobotSpeeds(double xSpeed, double ySpeed, double rotSpeed){
+        return runOnce(() -> this.setControl(robotDrive.withSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed))));
+    }
+
+
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -217,13 +215,25 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
     }
 
     public boolean seesLeftSensor(){
+        try{
         LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
        return (leftMeas.distance_mm < leftDriveLaserDistance && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
-      }
+        }catch (Exception l){
+            DriverStation.reportError("left sensor is null", l.getStackTrace());
+            return false;
+        }
+            
+    }
       
       public boolean seesRightSensor(){
+        try{
        LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
        return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
+
+        } catch(Exception r){
+            DriverStation.reportError("right sensor is null", r.getStackTrace());
+            return false;
+        }
       }
   
       @Override
@@ -245,7 +255,6 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
                 m_hasAppliedOperatorPerspective = true;
             });
 
-           
         }
 
         
@@ -324,44 +333,44 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
 //DEATH BUTTON 2.0
 //BE AFRAID
 
-private boolean runDeathButton = false;
-public Command alignWithReef() {
-    return runEnd(() -> {
-        runDeathButton = true;
-        // this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
-    }, () -> {
-        runDeathButton = false;
-    }
-    );
-}
-//Command to align with left pole
-private boolean poseCaptured = false;
-private double xSP, ySP, hSP, xOut, yOut, hOut;
-public Command alignLeft() {
-    return runEnd(() -> {
-        if (!poseCaptured){
-            xSP = tag17or8L.getX();
-            ySP = tag17or8L.getY();
-            hSP = tag17or8L.getRotation().getDegrees();
-            poseCaptured = true;
-        }
-        xOut = xController.calculate(getState().Pose.getX(), xSP);
-        yOut = yController.calculate(getState().Pose.getY(), ySP);
-        hOut = headingController.calculate(getState().Pose.getRotation().getDegrees(), hSP);
-        m_pathApplyFieldSpeeds.withSpeeds(null)
-            .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(xOut, MetersPerSecond),
-            LinearVelocity.ofBaseUnits(yOut, MetersPerSecond),
-            AngularVelocity.ofBaseUnits(hOut, RadiansPerSecond)));
+// private boolean runDeathButton = false;
+// public Command alignWithReef() {
+//     return runEnd(() -> {
+//         runDeathButton = true;
+//         // this.setControl(autoRequest.withSpeeds(new ChassisSpeeds(skewDistance, strafeDistance, turnDistance)));    
+//     }, () -> {
+//         runDeathButton = false;
+//     }
+//     );
+// }
+// //Command to align with left pole
+// private boolean poseCaptured = false;
+// private double xSP, ySP, hSP, xOut, yOut, hOut;
+// public Command alignLeft() {
+//     return runEnd(() -> {
+//         if (!poseCaptured){
+//             xSP = tag17or8L.getX();
+//             ySP = tag17or8L.getY();
+//             hSP = tag17or8L.getRotation().getDegrees();
+//             poseCaptured = true;
+//         }
+//         xOut = xController.calculate(getState().Pose.getX(), xSP);
+//         yOut = yController.calculate(getState().Pose.getY(), ySP);
+//         hOut = headingController.calculate(getState().Pose.getRotation().getDegrees(), hSP);
+//         m_pathApplyFieldSpeeds.withSpeeds(null)
+//             .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(xOut, MetersPerSecond),
+//             LinearVelocity.ofBaseUnits(yOut, MetersPerSecond),
+//             AngularVelocity.ofBaseUnits(hOut, RadiansPerSecond)));
 
-    }, () ->{
-     poseCaptured = false;
-     m_pathApplyFieldSpeeds.withSpeeds(null)
-            .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(0, MetersPerSecond),
-            LinearVelocity.ofBaseUnits(0, MetersPerSecond),
-            AngularVelocity.ofBaseUnits(0, RadiansPerSecond)));
+//     }, () ->{
+//      poseCaptured = false;
+//      m_pathApplyFieldSpeeds.withSpeeds(null)
+//             .withSpeeds(new ChassisSpeeds(LinearVelocity.ofBaseUnits(0, MetersPerSecond),
+//             LinearVelocity.ofBaseUnits(0, MetersPerSecond),
+//             AngularVelocity.ofBaseUnits(0, RadiansPerSecond)));
 
-    });
-}
+//     });
+// }
 
 
 
@@ -479,30 +488,39 @@ public Command alignLeft() {
 
 
 
-    /**
-     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
-     * while still accounting for measurement noise.
-     *
-     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
-     * @param timestampSeconds The timestamp of the vision measurement in seconds.
-     */
-    @Override
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+    // /**
+    //  * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+    //  * while still accounting for measurement noise.
+    //  *
+    //  * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+    //  * @param timestampSeconds The timestamp of the vision measurement in seconds.
+    //  */
+    // @Override
+    // public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
 
-        Matrix<N3, N1> tagStdDevs = VecBuilder.fill(8.0, 8.0, 8.0);
-       // visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), tagStdDevs);
-       // super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
+    //     Matrix<N3, N1> tagStdDevs = VecBuilder.fill(8.0, 8.0, 8.0);
+    //    // visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
+    //     super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), tagStdDevs);
+    //    // super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    // }
 
-    // same thing as before, but could be used in place of it if we use the standard deviation of vision measurments(I have no idea how to do that!)
-    @Override
-    public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs
-    ) {
-        visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
-    }
+    // // same thing as before, but could be used in place of it if we use the standard deviation of vision measurments(I have no idea how to do that!)
+    // @Override
+    // public void addVisionMeasurement(
+    //     Pose2d visionRobotPoseMeters,
+    //     double timestampSeconds,
+    //     Matrix<N3, N1> visionMeasurementStdDevs
+    // ) {
+    //     visionMeasurementStdDevs.set(m_drivetrainId, kNumConfigAttempts, timestampSeconds);
+    //     super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    // }
+
+
+
+
+    // public Command setPose(double x, double y, double rot) {
+    //     return runOnce(() -> {
+    //         this.setPose(x, y, rot);
+    //     });
+    // }
 }

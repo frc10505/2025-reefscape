@@ -34,87 +34,87 @@ import java.util.Optional;
 
 import frc.team10505.robot.subsystems.DrivetrainSubsystem;
 
-public class Vision {
-/*Cameras */
-public final PhotonCamera reefCam = new PhotonCamera("reefCam");
-public final PhotonCamera backCam = new PhotonCamera("backCam");
+// public class Vision {
+// /*Cameras */
+// public final PhotonCamera reefCam = new PhotonCamera("reefCam");
+// public final PhotonCamera backCam = new PhotonCamera("backCam");
 
-/*field layout */
-// private final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
-private final AprilTagFieldLayout kFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+// /*field layout */
+// // private final AprilTagFieldLayout kFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+// private final AprilTagFieldLayout kFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-/*pose estimators */
-private final PhotonPoseEstimator reefCamEstimator = new PhotonPoseEstimator(kFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, kRobotToReefCamTransform);
-private final PhotonPoseEstimator backCamEstimator = new PhotonPoseEstimator(kFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, kRobotToBackCamTransform);
+// /*pose estimators */
+// private final PhotonPoseEstimator reefCamEstimator = new PhotonPoseEstimator(kFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, kRobotToReefCamTransform);
+// private final PhotonPoseEstimator backCamEstimator = new PhotonPoseEstimator(kFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, kRobotToBackCamTransform);
 
-/*Simulation */
-public final VisionSystemSim visionSim = new VisionSystemSim("Vision Sim");
-private final SimCameraProperties cameraProperties = new SimCameraProperties();
-private PhotonCameraSim reefCamSim = new PhotonCameraSim(reefCam, cameraProperties);
-private PhotonCameraSim backCamSim = new PhotonCameraSim(backCam, cameraProperties);
+// /*Simulation */
+// public final VisionSystemSim visionSim = new VisionSystemSim("Vision Sim");
+// private final SimCameraProperties cameraProperties = new SimCameraProperties();
+// private PhotonCameraSim reefCamSim = new PhotonCameraSim(reefCam, cameraProperties);
+// private PhotonCameraSim backCamSim = new PhotonCameraSim(backCam, cameraProperties);
 
 
-public Vision() {
-    reefCamEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-    backCamEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+// public Vision() {
+//     reefCamEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+//     backCamEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
    
-    //sim stuff
-    visionSim.addAprilTags(kFieldLayout);
-    visionSim.addCamera(reefCamSim, kRobotToReefCamTransform);
-    visionSim.addCamera(backCamSim, kRobotToBackCamTransform);
+//     //sim stuff
+//     visionSim.addAprilTags(kFieldLayout);
+//     visionSim.addCamera(reefCamSim, kRobotToReefCamTransform);
+//     visionSim.addCamera(backCamSim, kRobotToBackCamTransform);
 
-    cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(100));
-    cameraProperties.setCalibError(0.25, 0.08);
-    cameraProperties.setFPS(20);
-    cameraProperties.setAvgLatencyMs(35.0);
-    cameraProperties.setLatencyStdDevMs(5);
-    cameraProperties.setCalibration(kWidthOfCamera, kHeightOfCamera, kCameraFOV);            
-}
+//     cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(100));
+//     cameraProperties.setCalibError(0.25, 0.08);
+//     cameraProperties.setFPS(20);
+//     cameraProperties.setAvgLatencyMs(35.0);
+//     cameraProperties.setLatencyStdDevMs(5);
+//     cameraProperties.setCalibration(kWidthOfCamera, kHeightOfCamera, kCameraFOV);            
+// }
 
 
 
-/*Calculations for pose estimations */
-public double lastReefCamEstimateTimestamp = 0.0;
+// /*Calculations for pose estimations */
+// public double lastReefCamEstimateTimestamp = 0.0;
 
-public Optional<EstimatedRobotPose> getReefCamEstimatedPose(){
-        Optional<EstimatedRobotPose> reefCamRobotPose = Optional.empty();
+// public Optional<EstimatedRobotPose> getReefCamEstimatedPose(){
+//         Optional<EstimatedRobotPose> reefCamRobotPose = Optional.empty();
 
-        for (PhotonPipelineResult change : reefCam.getAllUnreadResults() ){
+//         for (PhotonPipelineResult change : reefCam.getAllUnreadResults() ){
 
-            reefCamRobotPose = reefCamEstimator.update(change);
-        }
+//             reefCamRobotPose = reefCamEstimator.update(change);
+//         }
         
-        lastReefCamEstimateTimestamp = reefCam.getLatestResult().getTimestampSeconds();
+//         lastReefCamEstimateTimestamp = reefCam.getLatestResult().getTimestampSeconds();
 
-        return reefCamRobotPose;
-    }
+//         return reefCamRobotPose;
+//     }
 
-public double lastBackCamEstimateTimestamp = 0.0;
+// public double lastBackCamEstimateTimestamp = 0.0;
 
-public Optional<EstimatedRobotPose> getBackCamEstimatedPose(){
-        Optional<EstimatedRobotPose> backCamRobotPose = Optional.empty();
+// public Optional<EstimatedRobotPose> getBackCamEstimatedPose(){
+//         Optional<EstimatedRobotPose> backCamRobotPose = Optional.empty();
 
-        for (PhotonPipelineResult change : backCam.getAllUnreadResults() ){
+//         for (PhotonPipelineResult change : backCam.getAllUnreadResults() ){
 
-            backCamRobotPose = backCamEstimator.update(change);
-        }
+//             backCamRobotPose = backCamEstimator.update(change);
+//         }
         
-        lastBackCamEstimateTimestamp = backCam.getLatestResult().getTimestampSeconds();
+//         lastBackCamEstimateTimestamp = backCam.getLatestResult().getTimestampSeconds();
 
-        return backCamRobotPose;
-    }
-
-
+//         return backCamRobotPose;
+//     }
 
 
 
-public void updateViz(Pose2d pose){
-    visionSim.update(pose);
-}
 
-public void reset() {
-    visionSim.clearAprilTags();
-    visionSim.addAprilTags(kFieldLayout);
-}
 
-}
+// public void updateViz(Pose2d pose){
+//     visionSim.update(pose);
+// }
+
+// public void reset() {
+//     visionSim.clearAprilTags();
+//     visionSim.addAprilTags(kFieldLayout);
+// }
+
+// }

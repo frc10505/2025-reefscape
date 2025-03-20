@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go To Reef (middle)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoDriveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlignRight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setPose_FarMiddleReef_RightSide"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoL4Bump"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoElevDown"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

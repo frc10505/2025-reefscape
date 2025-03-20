@@ -66,16 +66,18 @@ public class RobotContainer {
     private final CoralSubsystem coralSubsys = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsys = new ElevatorSubsystem();
 
-    private final Vision vision = new Vision();
     /* Superstructure */
     private final Superstructure superStructure = new Superstructure(coralSubsys, algaeSubsys, elevatorSubsys,
-            drivetrainSubsys, vision);
+            drivetrainSubsys);
 
     /* Autonomous */
     private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
     private final SendableChooser<Double> polarityChooser = new SendableChooser<>();
 
     public RobotContainer() {
+
+        NamedCommands.registerCommand("Test", Commands.print("auto command stuff is working"));
+
         NamedCommands.registerCommand("setElevToZero", elevatorSubsys.setHeight(0.0));
         NamedCommands.registerCommand("setElevToNine", elevatorSubsys.setHeight(9.0));
         NamedCommands.registerCommand("setElevTo24", elevatorSubsys.setHeight(24.0));
@@ -83,13 +85,24 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("intakeCoral", superStructure.intakeCoral());
 
-        NamedCommands.registerCommand("autoElevDown", superStructure.autoElevDown());
         NamedCommands.registerCommand("autoScoreCoralL3", superStructure.autoScoreCoralL3());
         NamedCommands.registerCommand("autoScoreCoralL4", superStructure.autoScoreCoralL4());
         NamedCommands.registerCommand("autoScoreCoralL2", superStructure.autoScoreCoralL2());
         NamedCommands.registerCommand("autoScoreCoralL1", superStructure.autoScoreCoralL1());
-        NamedCommands.registerCommand("Test", Commands.print("isworking"));
+
+        NamedCommands.registerCommand("autoElevDown", superStructure.autoElevDown());
         NamedCommands.registerCommand("autoL4Bump", superStructure.autoL4Bump());
+
+        NamedCommands.registerCommand("setPose_FarRightReef_LeftSide", superStructure.setPose(4.973, 2.861, 120));
+        NamedCommands.registerCommand("setPose_FarRightReef_RightSide", superStructure.setPose(5.257, 3.026, 120));
+        NamedCommands.registerCommand("setPose_FarMiddleReef_LeftSide", superStructure.setPose(5.74, 3.862, 180));
+        NamedCommands.registerCommand("setPose_FarMiddleReef_RightSide", superStructure.setPose(5.74, 4.19, 180));
+
+        NamedCommands.registerCommand("autoAlignLeft", superStructure.autoAlignLeft());
+        NamedCommands.registerCommand("autoAlignRight", superStructure.autoAlignRight());
+        NamedCommands.registerCommand("autoDriveForward", superStructure.autoDriveForward());
+        NamedCommands.registerCommand("autoDriveForwardTillSeesRight", superStructure.autoDriveForwardTillSeesRight());
+
 
         drivetrainSubsys.configDrivetrainSubsys();
 
@@ -136,7 +149,7 @@ public class RobotContainer {
                             * 0.8 * MaxSpeed) // Drive
                     .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
                             0.8 * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-xboxController.getRightX() * 1.4 * MaxAngularRate)));
+                    .withRotationalRate(-xboxController.getRightX() * 2.5 * MaxAngularRate)));
             // drivetrainSubsys.applyRequest(
             // () -> drive.withVelocityX(-joystick.getY() * 0.8 *
             // polarityChooser.getSelected() * MaxSpeed) //0.6// Drive
@@ -187,9 +200,9 @@ public class RobotContainer {
 
             // Old bindings for the xbox controller
             // KEEP in case we swtich back
-            // xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-            // xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
-            // //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+            xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+            xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
+            //xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
             xboxController.leftTrigger()
                     .whileTrue(drivetrainSubsys.applyRequest(() -> drive
@@ -201,14 +214,18 @@ public class RobotContainer {
 
             xboxController.a().onTrue(algaeSubsys.setAngle(-18));
             xboxController.b().onTrue(algaeSubsys.stopPivot());
-            xboxController.x().onTrue(algaeSubsys.setAngle(90));
+            xboxController.x().onTrue(algaeSubsys.setAngle(-90));
             xboxController.y().onTrue(algaeSubsys.setAngle(5));
 
-            xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
-            xboxController.povLeft().whileTrue(
+            xboxController.start().onTrue(resetGyro());
+
+           // xboxController.l().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
+            xboxController.povLeft().whileTrue(//superStructure.autoAlignLeft());
                     drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsys.seesLeftSensor()));
-            xboxController.povRight().whileTrue(
-                        drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.3, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));
+            xboxController.povRight().whileTrue(//superStructure.autoAlignRight());
+                      drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.3, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));
+            // xboxController.povUp().whileTrue(superStructure.autoTwist());//.until(() -> (drivetrainSubsys.seesLeftSensor() && drivetrainSubsys.seesRightSensor())));
+            //         //   drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() -> (drivetrainSubsys.seesRightSensor() && drivetrainSubsys.seesLeftSensor())));
     
             // NEW joystick bindings
 
@@ -245,7 +262,7 @@ public class RobotContainer {
             xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
             xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
-            xboxController2.b().onTrue(elevatorSubsys.setHeight(24.0));
+            xboxController2.b().onTrue(elevatorSubsys.setHeight(23.0));
             xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
             xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
             xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
@@ -254,6 +271,12 @@ public class RobotContainer {
             // probably is important?
             drivetrainSubsys.registerTelemetry(logger::telemeterize);
         }
+    }
+
+    private Command resetGyro(){
+        return Commands.runOnce(() -> {
+            drivetrainSubsys.getPigeon2().reset();;
+            });
     }
 
     // methods that allow us to select and use our auton selected in our dashboards
@@ -279,6 +302,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("estimated drive pose y", drivetrainSubsys.getState().Pose.getY());
         SmartDashboard.putNumber("estimated drive pose rotation",
                 drivetrainSubsys.getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Gyro rot", Math.abs(drivetrainSubsys.getPigeon2().getRotation2d().getDegrees() % 60));
 
         // puts the pose from the reef cam on our dashboards if it sees a tag
 
@@ -287,44 +311,44 @@ public class RobotContainer {
         // for auton testing at LSSU, change the pose to the starting pose we have in
         // pathplanner. Note that the rotation2d value is found in the starting state,
         // NOT the start pose
-        if (joystick.button(5).getAsBoolean()) {
-            drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
-        }
+        // if (joystick.button(5).getAsBoolean()) {
+        //     drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+        // }
 
-        // ***I think having this here gives a pose of 0,0,0 */
-        // *** therefore, i commented it out (morning of 3/14)*/
-        var mostRecentReefCamPose = new Pose2d();
+        // // ***I think having this here gives a pose of 0,0,0 */
+        // // *** therefore, i commented it out (morning of 3/14)*/
+        // var mostRecentReefCamPose = new Pose2d();
 
-        // if the camera has a tag in sight, it will calculate a pose and add to the
-        // drivetrain
-        // if it fails, it will print the message
+        // // if the camera has a tag in sight, it will calculate a pose and add to the
+        // // drivetrain
+        // // if it fails, it will print the message
 
-        try {
+        // try {
 
-            var visionEst = vision.getReefCamEstimatedPose();
-            visionEst.ifPresent(est -> {
-                drivetrainSubsys.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds);
-                SmartDashboard.putNumber("reef cam pose x", est.estimatedPose.toPose2d().getX());
-                SmartDashboard.putNumber("reef cam pose y", est.estimatedPose.toPose2d().getY());
-                SmartDashboard.putNumber("reef cam pose rot", est.estimatedPose.toPose2d().getRotation().getDegrees());
-            });
+        //     var visionEst = vision.getReefCamEstimatedPose();
+        //     visionEst.ifPresent(est -> {
+        //         drivetrainSubsys.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds);
+        //         SmartDashboard.putNumber("reef cam pose x", est.estimatedPose.toPose2d().getX());
+        //         SmartDashboard.putNumber("reef cam pose y", est.estimatedPose.toPose2d().getY());
+        //         SmartDashboard.putNumber("reef cam pose rot", est.estimatedPose.toPose2d().getRotation().getDegrees());
+        //     });
 
-            // var reefCamPose =
-            // vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
-            // mostRecentReefCamPose = reefCamPose;
-            // // double [][] array = {{3}, {4}, {3}};
-            // //Nat<N3> x = new Nat<N3>();
-            // drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose,
-            // vision.lastReefCamEstimateTimestamp);
+        //     // var reefCamPose =
+        //     // vision.getReefCamEstimatedPose().get().estimatedPose.toPose2d();
+        //     // mostRecentReefCamPose = reefCamPose;
+        //     // // double [][] array = {{3}, {4}, {3}};
+        //     // //Nat<N3> x = new Nat<N3>();
+        //     // drivetrainSubsys.addVisionMeasurement(mostRecentReefCamPose,
+        //     // vision.lastReefCamEstimateTimestamp);
 
-            // SmartDashboard.putNumber("reef cam pose x", mostRecentReefCamPose.getX());
-            // SmartDashboard.putNumber("reef cam pose y", mostRecentReefCamPose.getY());
-            // SmartDashboard.putNumber("reef cam pose rot",
-            // mostRecentReefCamPose.getRotation().getDegrees());
+        //     // SmartDashboard.putNumber("reef cam pose x", mostRecentReefCamPose.getX());
+        //     // SmartDashboard.putNumber("reef cam pose y", mostRecentReefCamPose.getY());
+        //     // SmartDashboard.putNumber("reef cam pose rot",
+        //     // mostRecentReefCamPose.getRotation().getDegrees());
 
-        } catch (Exception e) {
-            Commands.print("reef cam pose failed");
-        }
+        // } catch (Exception e) {
+        //     Commands.print("reef cam pose failed");
+        // }
 
         // ***If the stuff above doesn't work(i changed it 3/14 in the morning), try
         // adding these */
@@ -332,21 +356,18 @@ public class RobotContainer {
         // drivetrainSubsys.resetPose(newestPose);
     }
 
-    public void setPose() {
-        drivetrainSubsys.resetPose(new Pose2d(7.29, 0.5, new Rotation2d(180.0)));
 
-    }
 
     // method called periodically in robot.java only when we simulate the code
     // makes the robot icon appear in the correct place
-    public void updateSimulation() {
-        vision.visionSim.update(drivetrainSubsys.getState().Pose);
-        vision.visionSim.getDebugField();
-    }
+    // public void updateSimulation() {
+    //     vision.visionSim.update(drivetrainSubsys.getState().Pose);
+    //     vision.visionSim.getDebugField();
+    // }
 
-    // method called once in robot.java to reset our simulated field
-    public void resetSimulation() {
-        vision.reset();
-    }
+    // // method called once in robot.java to reset our simulated field
+    // public void resetSimulation() {
+    //     vision.reset();
+    // }
 
 }
