@@ -40,7 +40,7 @@ import org.ejml.equation.MatrixConstructor;
 public class RobotContainer {
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.25).in(RadiansPerSecond); // was .75 3/4 of a rotation per
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // was .75 3/4 of a rotation per
                                                                                       // second
                                                                                       // max angular velocity
 
@@ -149,7 +149,7 @@ public class RobotContainer {
                             * 0.8 * MaxSpeed) // Drive
                     .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
                             0.8 * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-xboxController.getRightX() * 2.5 * MaxAngularRate)));
+                    .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate))); //2.5
             // drivetrainSubsys.applyRequest(
             // () -> drive.withVelocityX(-joystick.getY() * 0.8 *
             // polarityChooser.getSelected() * MaxSpeed) //0.6// Drive
@@ -213,7 +213,7 @@ public class RobotContainer {
                             .withRotationalRate(-xboxController.getRightX() * 0.6 * MaxAngularRate)));
 
             xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-            xboxController.b().onTrue(algaeSubsys.stopPivot());
+            xboxController.b().onTrue(resetPose());//onTrue(algaeSubsys.stopPivot());
             xboxController.x().onTrue(algaeSubsys.setAngle(-90));
             xboxController.y().onTrue(algaeSubsys.setAngle(5));
 
@@ -223,7 +223,7 @@ public class RobotContainer {
             xboxController.povLeft().whileTrue(//superStructure.autoAlignLeft());
                     drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsys.seesLeftSensor()));
             xboxController.povRight().whileTrue(//superStructure.autoAlignRight());
-                      drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.3, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));
+                      drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.4, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));//.3
             // xboxController.povUp().whileTrue(superStructure.autoTwist());//.until(() -> (drivetrainSubsys.seesLeftSensor() && drivetrainSubsys.seesRightSensor())));
             //         //   drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() -> (drivetrainSubsys.seesRightSensor() && drivetrainSubsys.seesLeftSensor())));
     
@@ -279,6 +279,12 @@ public class RobotContainer {
             });
     }
 
+
+    private Command resetPose(){
+        return Commands.runOnce(()-> {
+            drivetrainSubsys.resetPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+        });
+    }
     // methods that allow us to select and use our auton selected in our dashboards
     private void configAutonomous() {
         SmartDashboard.putData(autoChooser);

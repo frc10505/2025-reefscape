@@ -168,7 +168,7 @@ public class Superstructure {
 
     public Command autoScoreCoralL4() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(48.8),//49.5 -> shoots over top//48.5
+                elevatorSubsystem.setHeight(48.5),//49.5 -> shoots over top//48.5
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
                 coralSubsystem.autoSetIntake(),
                 Commands.waitUntil(() -> (!coralSubsystem.outSensor())));
