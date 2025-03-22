@@ -40,7 +40,7 @@ public class Superstructure {
 
 
 
-    public Command intakeCoral() {
+    public Command  intakeCoral() {
         return Commands.sequence(
                 coralSubsystem.intake().until(() -> (coralSubsystem.outSensor() && coralSubsystem.inSensor())),
                 coralSubsystem.slow().until(() -> (coralSubsystem.outSensor() && !coralSubsystem.inSensor())));
@@ -188,7 +188,19 @@ public class Superstructure {
                 elevatorSubsystem.setHeight(8.0),
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
                 Commands.waitSeconds(0.5),
-                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor())));
+                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor()))//,
+                // coralSubsystem.setOutput(),
+                // Commands.race(
+                //     Commands.waitUntil(()->(!coralSubsystem.outSensor())),
+                //     Commands.waitSeconds(4)
+                // ),
+                // coralSubsystem.setStop()
+                );
+    }
+
+    public Command dropCoral(){
+        return coralSubsystem.output().until(() -> (!coralSubsystem.outSensor()));
+
     }
 
     public Command autoScoreCoralL1() {
@@ -219,38 +231,38 @@ public class Superstructure {
 
 
 
-    public Command autoAlignRight(){
-        return Commands.sequence(
-            drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.35, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()), //0.3
-            drivetrainSubsystem.stop()
-            //drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()),
-            //Commands.none()
-            );
-        }
+    // public Command autoAlignRight(){
+    //     return Commands.sequence(
+    //         drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.35, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()), //0.3
+    //         drivetrainSubsystem.stop()
+    //         //drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()),
+    //         //Commands.none()
+    //         );
+    //     }
 
-        public Command autoDriveForwardBothSensors(){
-            return Commands.sequence(
-                 drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->( drivetrainSubsystem.seesRightSensor() && drivetrainSubsystem.seesLeftSensor())),
-                 drivetrainSubsystem.stop()
-                 // Commands.none()
-            );
-        }
+        // public Command autoDriveForwardBothSensors(){
+        //     return Commands.sequence(
+        //          drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->( drivetrainSubsystem.seesRightSensor() && drivetrainSubsystem.seesLeftSensor())),
+        //          drivetrainSubsystem.stop()
+        //          // Commands.none()
+        //     );
+        // }
 
         public Command autoDriveForward(){
             return Commands.sequence(
-                 drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->( drivetrainSubsystem.seesRightSensor() | drivetrainSubsystem.seesLeftSensor())),
+                 drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->(drivetrainSubsystem.seesLeftSensor())),
                  drivetrainSubsystem.stop()
                  // Commands.none()
             );
         }
 
-        public Command autoDriveForwardTillSeesRight(){
-            return Commands.sequence(
-                 drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->( drivetrainSubsystem.seesRightSensor())),
-                 drivetrainSubsystem.stop()
-                 // Commands.none()
-            );
-        }
+        // public Command autoDriveForwardTillSeesRight(){
+        //     return Commands.sequence(
+        //          drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->( drivetrainSubsystem.seesRightSensor())),
+        //          drivetrainSubsystem.stop()
+        //          // Commands.none()
+        //     );
+        // }
 
 
         public Command setPose(double x, double y, double rot) {

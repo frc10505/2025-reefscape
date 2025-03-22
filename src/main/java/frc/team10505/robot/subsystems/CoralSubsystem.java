@@ -66,6 +66,12 @@ public class CoralSubsystem extends SubsystemBase {
                 });
     }
 
+    public Command setOutput() {
+        return runOnce(() -> {
+            intakeLeft.set(kOutakeSpeed);
+            intakeRight.set(kOutakeSpeed);
+        });
+    }
     public Command outputTop() {
         return runEnd(() -> {
             intakeLeft.set(kOutakeTopSpeed);

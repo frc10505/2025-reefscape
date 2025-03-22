@@ -7,7 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (Left)"
+            "pathName": "New Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoDriveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlignLeft"
           }
         },
         {
@@ -25,13 +43,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reload Coral Left"
+            "pathName": "Copy of New Path"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "intakeCoral"
+            "name": "dropCoral"
           }
         }
       ]

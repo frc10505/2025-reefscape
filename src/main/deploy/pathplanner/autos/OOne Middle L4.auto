@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "autoL4Bump"

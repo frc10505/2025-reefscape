@@ -41,7 +41,7 @@ private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobot
 
 
  private final LaserCan leftLaser = new LaserCan(52); 
-    private final LaserCan rightLaser = new LaserCan(53);
+  //  private final LaserCan rightLaser = new LaserCan(54);
 
 
 double turnDistance = 0;
@@ -225,16 +225,16 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
             
     }
       
-      public boolean seesRightSensor(){
-        try{
-       LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
-       return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
+    //   public boolean seesRightSensor(){
+    //     try{
+    //    LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+    //    return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
 
-        } catch(Exception r){
-            DriverStation.reportError("right sensor is null", r.getStackTrace());
-            return false;
-        }
-      }
+    //     } catch(Exception r){
+    //         DriverStation.reportError("right sensor is null", r.getStackTrace());
+    //         return false;
+    //     }
+    //   }
   
       @Override
     public void periodic() {

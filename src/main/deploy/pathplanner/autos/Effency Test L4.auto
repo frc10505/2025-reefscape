@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (middle)"
+            "pathName": "New Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevTo48/5"
           }
         },
         {
@@ -26,6 +32,12 @@
           "type": "named",
           "data": {
             "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
           }
         },
         {

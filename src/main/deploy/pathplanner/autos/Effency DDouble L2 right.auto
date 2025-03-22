@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "autoDriveForward"
           }
         },
@@ -25,25 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoScoreCoralL4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoL4Bump"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.3
+            "name": "autoScoreCoralL2"
           }
         },
         {
@@ -73,6 +61,12 @@
         {
           "type": "named",
           "data": {
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "autoDriveForward"
           }
         },
@@ -85,31 +79,25 @@
         {
           "type": "named",
           "data": {
-            "name": "autoScoreCoralL4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoL4Bump"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.3
+            "name": "autoScoreCoralL2"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Second coral reload"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCoral"
           }
         }
       ]

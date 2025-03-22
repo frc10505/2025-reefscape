@@ -79,11 +79,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("Test", Commands.print("auto command stuff is working"));
 
         NamedCommands.registerCommand("setElevToZero", elevatorSubsys.setHeight(0.0));
-        NamedCommands.registerCommand("setElevToNine", elevatorSubsys.setHeight(9.0));
+        NamedCommands.registerCommand("setElevToL2", elevatorSubsys.setHeight(8.0));
         NamedCommands.registerCommand("setElevTo24", elevatorSubsys.setHeight(24.0));
-        NamedCommands.registerCommand("setElevTo49/5", elevatorSubsys.setHeight(48.5));
+        NamedCommands.registerCommand("setElevTo48/5", elevatorSubsys.setHeight(48.5));
 
         NamedCommands.registerCommand("intakeCoral", superStructure.intakeCoral());
+        NamedCommands.registerCommand("dropCoral", superStructure.dropCoral());
+
 
         NamedCommands.registerCommand("autoScoreCoralL3", superStructure.autoScoreCoralL3());
         NamedCommands.registerCommand("autoScoreCoralL4", superStructure.autoScoreCoralL4());
@@ -99,9 +101,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("setPose_FarMiddleReef_RightSide", superStructure.setPose(5.74, 4.19, 180));
 
         NamedCommands.registerCommand("autoAlignLeft", superStructure.autoAlignLeft());
-        NamedCommands.registerCommand("autoAlignRight", superStructure.autoAlignRight());
+      //  NamedCommands.registerCommand("autoAlignRight", superStructure.autoAlignRight());
         NamedCommands.registerCommand("autoDriveForward", superStructure.autoDriveForward());
-        NamedCommands.registerCommand("autoDriveForwardTillSeesRight", superStructure.autoDriveForwardTillSeesRight());
+       // NamedCommands.registerCommand("autoDriveForwardTillSeesRight", superStructure.autoDriveForwardTillSeesRight());
 
 
         drivetrainSubsys.configDrivetrainSubsys();
@@ -218,12 +220,13 @@ public class RobotContainer {
             xboxController.y().onTrue(algaeSubsys.setAngle(5));
 
             xboxController.start().onTrue(resetGyro());
+            xboxController.back().onTrue(resetGyro180());
 
            // xboxController.l().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
             xboxController.povLeft().whileTrue(//superStructure.autoAlignLeft());
                     drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsys.seesLeftSensor()));
-            xboxController.povRight().whileTrue(//superStructure.autoAlignRight());
-                      drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.4, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));//.3
+            // xboxController.povRight().whileTrue(//superStructure.autoAlignRight());
+            //           drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.4, 0.0))).until(() -> !drivetrainSubsys.seesRightSensor()));//.3
             // xboxController.povUp().whileTrue(superStructure.autoTwist());//.until(() -> (drivetrainSubsys.seesLeftSensor() && drivetrainSubsys.seesRightSensor())));
             //         //   drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() -> (drivetrainSubsys.seesRightSensor() && drivetrainSubsys.seesLeftSensor())));
     
@@ -279,6 +282,12 @@ public class RobotContainer {
             });
     }
 
+    private Command resetGyro180(){
+        return Commands.runOnce(() -> {
+            drivetrainSubsys.getPigeon2().setYaw(180);
+            });
+    }
+
 
     private Command resetPose(){
         return Commands.runOnce(()-> {
@@ -296,7 +305,7 @@ public class RobotContainer {
 
     public void updateDriveSensors() {
         SmartDashboard.putBoolean("left drive sensor", drivetrainSubsys.seesLeftSensor());
-        SmartDashboard.putBoolean("right drive sensor", drivetrainSubsys.seesRightSensor());
+        //SmartDashboard.putBoolean("right drive sensor", drivetrainSubsys.seesRightSensor());
     }
 
     // called periodically in robot.java, updates all our pose estimation stuff for

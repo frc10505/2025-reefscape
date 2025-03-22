@@ -19,6 +19,12 @@
         {
           "type": "named",
           "data": {
+            "name": "setElevTo48/5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "autoAlignLeft"
           }
         },
@@ -26,6 +32,12 @@
           "type": "named",
           "data": {
             "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
           }
         },
         {

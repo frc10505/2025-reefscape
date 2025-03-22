@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (middle)"
+            "pathName": "New Path"
           }
         },
         {
@@ -25,19 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoScoreCoralL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoL4Bump"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.3
+            "name": "autoScoreCoralL2"
           }
         },
         {
