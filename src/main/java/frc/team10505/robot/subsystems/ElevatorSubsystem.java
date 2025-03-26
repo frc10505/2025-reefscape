@@ -29,8 +29,12 @@ import static frc.team10505.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Motors
-    public final TalonFX elevatorMotor = new TalonFX(kElevatorMotorId);
-    public final TalonFX elevatorFollowerMotor = new TalonFX(kElevatorFollowerMotorId);
+    //public final TalonFX elevatorMotor = new TalonFX(kElevatorMotorId);
+    public final TalonFX elevatorMotor = new TalonFX(kElevatorMotorId, "kingKan");
+
+    //public final TalonFX elevatorFollowerMotor = new TalonFX(kElevatorFollowerMotorId);
+    public final TalonFX elevatorFollowerMotor = new TalonFX(kElevatorFollowerMotorId,"kingKan");
+
 
     // Encoders, Real and Simulated
     private double simElevatorEncoder;

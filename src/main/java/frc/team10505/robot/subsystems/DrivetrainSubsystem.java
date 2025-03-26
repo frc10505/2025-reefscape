@@ -31,26 +31,23 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 
-
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
 
-private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
-private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
 
-//SwerveRequest.ApplyChassisSpeeds();
+    // SwerveRequest.ApplyChassisSpeeds();
 
+    private final LaserCan leftLaser = new LaserCan(52);
+    // private final LaserCan rightLaser = new LaserCan(54);
 
- private final LaserCan leftLaser = new LaserCan(52); 
-  //  private final LaserCan rightLaser = new LaserCan(54);
+    double turnDistance = 0;
+    double strafeDistance = 0;
+    double skewDistance = 0;
 
-
-double turnDistance = 0;
-double strafeDistance = 0;
-double skewDistance = 0;
-
-private final PIDController yController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
-private final PIDController headingController = new PIDController(kTurnP, kTurnI, kTurnD);
-private final PIDController xController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
+    private final PIDController yController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
+    private final PIDController headingController = new PIDController(kTurnP, kTurnI, kTurnD);
+    private final PIDController xController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -72,75 +69,71 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+    /*
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * for the drive motors.
+     */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,        // Use default ramp rate (1 V/s)
-            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-            null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> setControl(m_translationCharacterization.withVolts(output)),
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(m_translationCharacterization.withVolts(output)),
+                    null,
+                    this));
 
-    /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
+    /*
+     * SysId routine for characterizing steer. This is used to find PID gains for
+     * the steer motors.
+     */
     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,        // Use default ramp rate (1 V/s)
-            Volts.of(7), // Use dynamic voltage of 7 V
-            null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            volts -> setControl(m_steerCharacterization.withVolts(volts)),
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(7), // Use dynamic voltage of 7 V
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
+                    null,
+                    this));
 
     /*
      * SysId routine for characterizing rotation.
-     * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+     * This is used to find PID gains for the FieldCentricFacingAngle
+     * HeadingController.
+     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
+     * importing the log to SysId.
      */
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            /* This is in radians per second², but SysId only supports "volts per second" */
-            Volts.of(Math.PI / 6).per(Second),
-            /* This is in radians per second, but SysId only supports "volts" */
-            Volts.of(Math.PI),
-            null, // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> {
-                /* output is actually radians per second, but SysId only supports "volts" */
-                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                /* also log the requested output for SysId */
-                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-            },
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    /* This is in radians per second², but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> {
+                        /* output is actually radians per second, but SysId only supports "volts" */
+                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                        /* also log the requested output for SysId */
+                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                    },
+                    null,
+                    this));
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
-
-
-//Three constructors that use different parameters
+    // Three constructors that use different parameters
     public DrivetrainSubsystem(
-        SwerveDrivetrainConstants drivetrainConstants,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
+            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -148,10 +141,9 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
     }
 
     public DrivetrainSubsystem(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -159,38 +151,37 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
     }
 
     public DrivetrainSubsystem(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        Matrix<N3, N1> odometryStandardDeviation,
-        Matrix<N3, N1> visionStandardDeviation,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            Matrix<N3, N1> odometryStandardDeviation,
+            Matrix<N3, N1> visionStandardDeviation,
+            SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
+                modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
     }
 
     /**
-     * Returns a command that applies the specified control request to this swerve drivetrain.
+     * Returns a command that applies the specified control request to this swerve
+     * drivetrain.
      *
      * @param request Function returning the request to apply
      * @return Command to run
      */
-     //The command we referense to make the drivetrain move
+    // The command we referense to make the drivetrain move
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public Command stop(){
+    public Command stop() {
         return runOnce(() -> this.setControl(robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))));
     }
 
-
-    public Command setRobotSpeeds(double xSpeed, double ySpeed, double rotSpeed){
+    public Command setRobotSpeeds(double xSpeed, double ySpeed, double rotSpeed) {
         return runOnce(() -> this.setControl(robotDrive.withSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed))));
     }
-
 
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
@@ -214,44 +205,49 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
-    public boolean seesLeftSensor(){
-        try{
-        LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
-       return (leftMeas.distance_mm < leftDriveLaserDistance && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
-        }catch (Exception l){
+    public boolean seesLeftSensor() {
+        try {
+            LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
+            return (leftMeas.distance_mm < leftDriveLaserDistance
+                    && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        } catch (NullPointerException l) {
             DriverStation.reportError("left sensor is null", l.getStackTrace());
             return false;
         }
-            
-    }
-      
-    //   public boolean seesRightSensor(){
-    //     try{
-    //    LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
-    //    return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);    
 
-    //     } catch(Exception r){
-    //         DriverStation.reportError("right sensor is null", r.getStackTrace());
-    //         return false;
-    //     }
-    //   }
-  
-      @Override
+    }
+
+    // public boolean seesRightSensor(){
+    // try{
+    // LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+    // return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status
+    // == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+
+    // } catch(NullPointerException r){
+    // DriverStation.reportError("right sensor is null", r.getStackTrace());
+    // return false;
+    // }
+    // }
+
+    @Override
     public void periodic() {
         /*
          * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state.
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match.
+         * Otherwise, only check and apply the operator perspective if the DS is
+         * disabled.
+         * This ensures driving behavior doesn't change until an explicit disable event
+         * occurs during testing.
          */
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
 
@@ -278,26 +274,22 @@ private final PIDController xController = new PIDController(kDistanceP, kDistanc
             var config = RobotConfig.fromGUISettings();
 
             AutoBuilder.configure(
-                () -> getState().Pose,
-                this::resetPose,
-                () -> getState().Speeds,
-                (speeds, feedforwards) -> setControl(
-                    m_pathApplyRobotSpeeds.withSpeeds(speeds)
-                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
-                ),
-                new PPHolonomicDriveController(
-                    new PIDConstants(10, 0, 0),
-                    new PIDConstants(7, 0, 0)
-                ),
-                config,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                this
-            );
+                    () -> getState().Pose,
+                    this::resetPose,
+                    () -> getState().Speeds,
+                    (speeds, feedforwards) -> setControl(
+                            m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(10, 0, 0),
+                            new PIDConstants(7, 0, 0)),
+                    config,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
         } catch (Exception ex) {
             DriverStation.reportError("something may or may not be broken, idk", ex.getStackTrace());
         }
     }
-
 
 }
