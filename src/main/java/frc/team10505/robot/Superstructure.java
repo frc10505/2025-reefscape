@@ -28,7 +28,7 @@ public class Superstructure {
     private ElevatorSubsystem elevatorSubsystem;
     private DrivetrainSubsystem drivetrainSubsystem;
 
-    private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
+    private SwerveRequest.ApplyRobotSpeeds autoRobotDrive = new SwerveRequest.ApplyRobotSpeeds();
 
     public Superstructure(CoralSubsystem coralSubsys, AlgaeSubsystem algaeSubsys, ElevatorSubsystem elevatorSubsys,
             DrivetrainSubsystem drivetrainSubsys) {
@@ -61,11 +61,20 @@ public class Superstructure {
     }
 
     public Command outputTopCoral() {
-        return Commands.sequence(
+        if (elevatorSubsystem.getElevatorEncoder()> 30) {
+            return Commands.sequence(
                 coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
                 elevatorSubsystem.setHeight(54.5), //was 53.0
-                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
-                 elevatorSubsystem.setHeight(0.0));
+                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())));
+        } else{
+            return Commands.print("Cooper struggles with driving due to a lack of focus, poor decision-making, and inability to judge distances. His reaction times are slow, leading to frequent mistakes. He is a very bad BAD BOY. and maybe slow  w  c( . . )o     (\r\n" + //
+                                "  (   (    -    )   )\r\n" + //
+                                "  \\  \\_/`-----'   /  \r\n" + //
+                                "   /  /    |     (   \r\n" + //
+                                "  (   )  |   )  (  (  \r\n" + //
+                                "  `-`    `-`    `-` ` ");
+        }
+   
     }
 
     public Command grabAlgae() {
@@ -113,19 +122,7 @@ public class Superstructure {
         }
 
           return drivetrainSubsystem.setRobotSpeeds(0.0, 0.0, (dist / 20));//.until(() -> isNearGoalTwist(0, Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60))),
-   // });
 
-    //   if (currentTwist > 45){
-    //     return Commands.sequence(
-    //         drivetrainSubsystem.setRobotSpeeds(0.0, 0.0, -1).until(() -> isNearGoalTwist(60, Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60))),
-    //         drivetrainSubsystem.stop());
-    // } else if(currentTwist<15){
-    //     return Commands.sequence(
-    //      drivetrainSubsystem.setRobotSpeeds(0.0, 0.0, 1).until(() -> isNearGoalTwist(0, Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60))),
-    //      drivetrainSubsystem.stop());
-    //   } else{
-    //     return Commands.print("NOT CLOSE ENOUGH");//drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0, 0.0))).until(() -> drivetrainSubsystem.seesLeftSensor() && drivetrainSubsystem.seesRightSensor()); //0.3
-    //   }
 
     }
 
@@ -223,7 +220,7 @@ public class Superstructure {
 
     public Command autoAlignLeft(){
         return Commands.sequence(
-             drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsystem.seesLeftSensor()),
+             drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsystem.seesLeftSensor()),
              drivetrainSubsystem.stop()
              // Commands.none()
         );
@@ -250,7 +247,7 @@ public class Superstructure {
 
         public Command autoDriveForward(){
             return Commands.sequence(
-                 drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->(drivetrainSubsystem.seesLeftSensor())),
+                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->(drivetrainSubsystem.seesLeftSensor())),
                  drivetrainSubsystem.stop()
                  // Commands.none()
             );

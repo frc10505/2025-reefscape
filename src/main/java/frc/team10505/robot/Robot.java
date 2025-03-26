@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    // robotContainer.cameraFeedInit();
+     robotContainer.cameraFeedInit();
   }
 
   @Override
@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    robotContainer.updateDrive();
+    //robotContainer.updateDrive();
   }
 
   @Override

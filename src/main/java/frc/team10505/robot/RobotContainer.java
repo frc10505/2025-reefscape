@@ -9,21 +9,14 @@ package frc.team10505.robot;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,8 +31,6 @@ import frc.team10505.robot.subsystems.CoralSubsystem;
 import static edu.wpi.first.units.Units.*;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
 
-import org.ejml.data.Matrix;
-import org.ejml.equation.MatrixConstructor;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -53,8 +44,9 @@ public class RobotContainer {
                                                                                       // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
-    private SwerveRequest.RobotCentric newRobotDrive = new SwerveRequest.RobotCentric()
+    // private SwerveRequest.ApplyRobotSpeeds autonRobotDrive = new
+    // SwerveRequest.ApplyRobotSpeeds();
+    private SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -140,13 +132,12 @@ public class RobotContainer {
         /* OLD XBOX */
         // TODO ADD back
         // TODO test periodically setting drive
-        // drivetrainSubsys.setDefaultCommand(drivetrainSubsys.applyRequest(() -> drive
-        // .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
-        // * 0.8 * MaxSpeed) // Drive
-        // .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
-        // 0.8 * MaxSpeed) // Drive left with negative X (left)
-        // .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate))); //
-        // 2.5
+        drivetrainSubsys.setDefaultCommand(drivetrainSubsys.applyRequest(() -> drive
+                .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
+                        * 0.8 * MaxSpeed) // Drive
+                .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *
+                        0.8 * MaxSpeed) // Drive left with negative X (left)
+                .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate))); // 2.5
 
         /* OLD joystick bindings */
         // drivetrainSubsys.applyRequest(
@@ -200,7 +191,7 @@ public class RobotContainer {
         xboxController.a().onTrue(algaeSubsys.setAngle(-18));
         xboxController.b().onTrue(resetPose());// onTrue(algaeSubsys.stopPivot());
         xboxController.x().onTrue(algaeSubsys.setAngle(-90));
-        xboxController.y().onTrue(algaeSubsys.setAngle(5));
+        xboxController.y().onTrue(algaeSubsys.setAngle(10)); //5
 
         xboxController.start().onTrue(resetGyro());
         xboxController.back().onTrue(resetGyro180());
@@ -209,10 +200,10 @@ public class RobotContainer {
 
         // TODO Test setting drive peiodically
         // IF FAILS, add back in
-        // xboxController.povLeft().whileTrue(// superStructure.autoAlignLeft());
-        // drivetrainSubsys.applyRequest(() -> robotDrive.withSpeeds(new
-        // ChassisSpeeds(0.0, 0.3, 0.0)))
-        // .until(() -> !drivetrainSubsys.seesLeftSensor()))
+        xboxController.povLeft().whileTrue(// superStructure.autoAlignLeft());
+                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
+                        .withVelocityY(0.3).withRotationalRate(0.0))
+                        .until(() -> !drivetrainSubsys.seesLeftSensor()));
         // .onFalse(drivetrainSubsys.applyRequest(() -> drive
         // .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
         // * 0.8 * MaxSpeed) // Drive
@@ -277,7 +268,7 @@ public class RobotContainer {
 
         // operator bindings
         xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
-        xboxController2.povDown().onTrue(superStructure.intakeCoral()).onFalse(coralSubsys.stop());
+        xboxController2.povDown().onTrue(superStructure.intakeCoral());//.onFalse(coralSubsys.stop());
         xboxController2.povLeft().whileTrue(superStructure.outputCoral());
         xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
@@ -346,7 +337,7 @@ public class RobotContainer {
                 // ChassisSpeeds(0.0, 0.3, 0.0)));
 
                 // NEW ROBOT CENTRIC
-                return drivetrainSubsys.applyRequest(() -> newRobotDrive.withVelocityX(0.0)
+                return drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
                         .withVelocityY(0.3).withRotationalRate(0.0));
 
             } else {
@@ -381,44 +372,43 @@ public class RobotContainer {
         }
     }
 
-    // public void cameraFeedInit() {
-    // m_visionThread =
-    // new Thread(
-    // () -> {
-    // // Get the UsbCamera from CameraServer
-    // UsbCamera camera = CameraServer.startAutomaticCapture();
-    // // Set the resolution
-    // camera.setResolution(640, 480);
+    public void cameraFeedInit() {
+        var m_visionThread = new Thread(
+                () -> {
+                    // Get the UsbCamera from CameraServer
+                    UsbCamera camera = CameraServer.startAutomaticCapture();
+                    // Set the resolution
+                    camera.setResolution(640, 480);
 
-    // // Get a CvSink. This will capture Mats from the camera
-    // CvSink cvSink = CameraServer.getVideo();
-    // // Setup a CvSource. This will send images back to the Dashboard
-    // CvSource outputStream = CameraServer.putVideo("Rectangle", 640, 480);
+                    // Get a CvSink. This will capture Mats from the camera
+                    CvSink cvSink = CameraServer.getVideo();
+                    // Setup a CvSource. This will send images back to the Dashboard
+                    CvSource outputStream = CameraServer.putVideo("Rectangle", 640, 480);
 
-    // // Mats are very memory expensive. Lets reuse this Mat.
-    // Mat mat = new Mat();
+                    // Mats are very memory expensive. Lets reuse this Mat.
+                    Mat mat = new Mat();
 
-    // // This cannot be 'true'. The program will never exit if it is. This
-    // // lets the robot stop this thread when restarting robot code or
-    // // deploying.
-    // while (!Thread.interrupted()) {
-    // // Tell the CvSink to grab a frame from the camera and put it
-    // // in the source mat. If there is an error notify the output.
-    // if (cvSink.grabFrame(mat) == 0) {
-    // // Send the output the error.
-    // outputStream.notifyError(cvSink.getError());
-    // // skip the rest of the current iteration
-    // continue;
-    // }
-    // // Put a rectangle on the image
-    // Imgproc.rectangle(
-    // mat, new Point(100, 100), new Point(400, 400), new Scalar(255, 255, 255), 5);
-    // // Give the output stream a new image to display
-    // outputStream.putFrame(mat);
-    // }
-    // });
-    // m_visionThread.setDaemon(true);
-    // m_visionThread.start();
-    // }
-    // }
+                    // This cannot be 'true'. The program will never exit if it is. This
+                    // lets the robot stop this thread when restarting robot code or
+                    // deploying.
+                    while (!Thread.interrupted()) {
+                        // Tell the CvSink to grab a frame from the camera and put it
+                        // in the source mat. If there is an error notify the output.
+                        if (cvSink.grabFrame(mat) == 0) {
+                            // Send the output the error.
+                            outputStream.notifyError(cvSink.getError());
+                            // skip the rest of the current iteration
+                            continue;
+                        }
+                        // Put a rectangle on the image
+                        Imgproc.rectangle(
+                                mat, new Point(100, 100), new Point(400, 400), new Scalar(255, 255, 255), 5);
+                        // Give the output stream a new image to display
+                        outputStream.putFrame(mat);
+                    }
+                });
+        m_visionThread.setDaemon(true);
+        m_visionThread.start();
+    }
+
 }
