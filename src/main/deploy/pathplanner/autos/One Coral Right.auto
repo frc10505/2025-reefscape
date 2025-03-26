@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go To Reef (Right)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Test"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScoreCoralL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Test"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
