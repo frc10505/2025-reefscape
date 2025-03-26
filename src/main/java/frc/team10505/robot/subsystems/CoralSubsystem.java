@@ -85,14 +85,15 @@ public class CoralSubsystem extends SubsystemBase {
 
     public Command trough() {
         return runEnd(() -> {
-            intakeLeft.set(kTroughSpeed);
-            intakeRight.set(kTroughSpeed * kTroughRightMotorPercentage);
+            intakeLeft.set(kLeftL1Speed);
+            intakeRight.set(kRightL1Speed * kTroughRightMotorPercentage);
         },
                 () -> {
                     intakeLeft.set(0);
                     intakeRight.set(0);
                 });
     }
+
 
     public Command stop() {
         return run(() -> {

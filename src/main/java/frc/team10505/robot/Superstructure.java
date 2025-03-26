@@ -148,7 +148,7 @@ public class Superstructure {
 
     }
 
-    public Command autoOutputCoralTrough() {
+     public Command autoOutputCoralTrough() {
         return coralSubsystem.trough().until(() -> (!coralSubsystem.outSensor()));
     }
 
@@ -273,3 +273,4 @@ public class Superstructure {
 
 
 }
+

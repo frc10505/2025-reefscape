@@ -177,7 +177,9 @@ public final class Constants {
     public final static int kRightMotorCurrentLimit = 15;
     public final static int kIntakeInId = 60;
     public final static int kIntakeOutId = 61;
-    public final static double kIntakeSpeed = 0.30;
+    public final static double kIntakeSpeed = 0.4;//0.3
+    public final static double kLeftL1Speed = 0.2;
+    public final static double kRightL1Speed = 0.4;
     public final static double kOutakeSpeed = 0.25;
     public final static double kOutakeTopSpeed = 0.2;//.1
     public final static double kTroughSpeed = 0.30;

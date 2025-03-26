@@ -6,27 +6,27 @@
 
 package frc.team10505.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-import com.ctre.phoenix6.Utils;
 
 import au.grapplerobotics.CanBridge;
 
 public class Robot extends TimedRobot {
 
-    private final RobotContainer robotContainer = new RobotContainer();
+  private final RobotContainer robotContainer = new RobotContainer();
 
   private Command autonomousCommand;
 
   public Robot() {
     CanBridge.runTCP();
+    CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void robotInit() {
-    // robotContainer.setPose();
+    // robotContainer.cameraFeedInit();
   }
 
   @Override
@@ -46,11 +46,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand  = robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-    //robotContainer.resetSimulation();
   }
 
   @Override
@@ -62,15 +61,11 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-   // robotContainer.resetSimulation();
   }
 
   @Override
   public void teleopPeriodic() {
-    if(Utils.isSimulation()){
-      //robotContainer.updateSimulation();
-    }
-    
+    robotContainer.updateDrive();
   }
 
   @Override
