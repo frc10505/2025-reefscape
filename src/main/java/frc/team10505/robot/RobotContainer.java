@@ -277,8 +277,10 @@ public class RobotContainer {
         xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
         xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
         xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
+        xboxController2.rightTrigger().onTrue(superStructure.bombsAway());
+        xboxController2.leftTrigger().onTrue(superStructure.takeCover());
 
-        // automoatically added from the ctre generated swerve drive
+        // automoatically added from the CTRE generated swerve drive
         // probably is important?
         drivetrainSubsys.registerTelemetry(logger::telemeterize);
     }

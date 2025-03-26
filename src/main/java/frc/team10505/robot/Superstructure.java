@@ -77,6 +77,26 @@ public class Superstructure {
    
     }
 
+    public Command bombsAway(){
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(54.5),
+            Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+            algaeSubsystem.setAngle(90),
+            algaeSubsystem.intakeForward()
+            );
+
+    }
+
+    public Command takeCover(){
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(0.0),
+            algaeSubsystem.setAngle(-90),
+            algaeSubsystem.intakeStop()
+
+        );
+
+    }
+
     public Command grabAlgae() {
         return Commands.sequence(
                 algaeSubsystem.intakeReverse(),
