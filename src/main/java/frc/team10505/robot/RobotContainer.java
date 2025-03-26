@@ -277,6 +277,8 @@ public class RobotContainer {
         xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
         xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
         xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
+
+        // noo
         xboxController2.rightTrigger().onTrue(superStructure.bombsAway());
         xboxController2.leftTrigger().onTrue(superStructure.takeCover());
 
