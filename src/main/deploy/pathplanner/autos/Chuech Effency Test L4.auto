@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (Right)"
+            "pathName": "New Path"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Test"
+            "name": "setElevTo48/5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoDriveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoAlignLeft"
           }
         },
         {
@@ -23,21 +35,27 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "autoL4Bump"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "autoElevDown"
+            "waitTime": 0.3
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Test"
+            "name": "autoElevDown"
           }
         }
       ]

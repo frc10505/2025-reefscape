@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "autoDriveForward"
           }
         },
@@ -32,6 +38,18 @@
           "type": "named",
           "data": {
             "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of New Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "dropCoral"
           }
         }
       ]

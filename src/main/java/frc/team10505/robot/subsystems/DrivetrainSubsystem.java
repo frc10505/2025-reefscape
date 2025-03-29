@@ -38,8 +38,8 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
 
     // SwerveRequest.ApplyChassisSpeeds();
 
-    private final LaserCan leftLaser = new LaserCan(52);
-    // private final LaserCan rightLaser = new LaserCan(54);
+    private final LaserCan leftLaser = new LaserCan(53);
+    private final LaserCan rightLaser = new LaserCan(52);
 
     double turnDistance = 0;
     double strafeDistance = 0;
@@ -217,17 +217,16 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
 
     }
 
-    // public boolean seesRightSensor(){
-    // try{
-    // LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
-    // return (RightMeas.distance_mm < rightDriveLaserDistance && RightMeas.status
-    // == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+    public boolean seesRightSensor(){
+    try{
+    LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+    return (RightMeas.distance_mm < rightDriveLaserDistance); //&& RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
 
-    // } catch(NullPointerException r){
-    // DriverStation.reportError("right sensor is null", r.getStackTrace());
-    // return false;
-    // }
-    // }
+    } catch(NullPointerException r){
+    DriverStation.reportError("right sensor is null", r.getStackTrace());
+    return false;
+    }
+    }
 
     @Override
     public void periodic() {

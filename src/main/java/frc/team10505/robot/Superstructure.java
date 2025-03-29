@@ -61,30 +61,35 @@ public class Superstructure {
     }
 
     public Command outputTopCoral() {
-        if (elevatorSubsystem.getElevatorEncoder()> 30) {
+      // if (elevatorSubsystem.issGigh()) {
             return Commands.sequence(
                 coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
                 elevatorSubsystem.setHeight(54.5), //was 53.0
-                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())));
-        } else{
-            return Commands.print("Cooper struggles with driving due to a lack of focus, poor decision-making, and inability to judge distances. His reaction times are slow, leading to frequent mistakes. He is a very bad BAD BOY. and maybe slow  w  c( . . )o     (\r\n" + //
-                                "  (   (    -    )   )\r\n" + //
-                                "  \\  \\_/`-----'   /  \r\n" + //
-                                "   /  /    |     (   \r\n" + //
-                                "  (   )  |   )  (  (  \r\n" + //
-                                "  `-`    `-`    `-` ` ");
-        }
+                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+                elevatorSubsystem.setHeight(0.00));
+        // } else{
+        //     return Commands.print("Cooper struggles with driving due to a lack of focus, poor decision-making, and inability to judge distances. His reaction times are slow, leading to frequent mistakes. He is a very bad BAD BOY. and maybe slow w  \r\n" +
+        //                                 "c( . . )o     (\r\n" + //
+        //                         "  (   (    -    )   )\r\n" + //
+        //                         "  \\  \\_/`-----'   /  \r\n" + //
+        //                         "   /  /    |     (   \r\n" + //
+        //                         "  (   )  |   )  (  (  \r\n" + //
+        //                         "  `-`    `-`    `-` ` ");
+        // }
    
     }
 
     public Command bombsAway(){
         return Commands.sequence(
-            elevatorSubsystem.setHeight(54.5),
-            Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+            //TODO test the set motor cmd, if we have time are we're feeling gutsy
+                //NOTE- we'd have to add in the if/else statement in the elev periodic
+            //elevatorSubsystem.setMotor(2).until(() -> elevatorSubsystem.getElevatorEncoder() >50),
+
+            elevatorSubsystem.setHeight(55.5),
+            Commands.waitUntil(() -> (elevatorSubsystem.getElevatorEncoder() > 42)),//EDIT VALUE IRL
             algaeSubsystem.setAngle(90),
             algaeSubsystem.intakeForward()
             );
-
     }
 
     public Command takeCover(){
@@ -118,33 +123,7 @@ public class Superstructure {
                 );
     }
 
-    // public Command autoTwist(){
-    //     return Commands.run(() -> {
-    //     if((!drivetrainSubsystem.seesLeftSensor()) && (drivetrainSubsystem.seesRightSensor())){
-    //          drivetrainSubsystem.setRobotSpeeds(0.2, 0.0, 0.3);
-    //     } else if ((drivetrainSubsystem.seesLeftSensor()) && (!drivetrainSubsystem.seesRightSensor())){
-    //          drivetrainSubsystem.setRobotSpeeds(0.2, 0.0, -0.3);
-    //     }else {
-    //          drivetrainSubsystem.setRobotSpeeds(0.2, 0, 0);
-    //     }
-    // });
 
-    public double dist;
-
-    public Command autoTwist(){
-       // return Commands.run(() -> {
-      var currentTwist = Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60);
-
-        if(Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60) > 30){
-             dist = Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60) - 60;
-        } else{
-            dist = Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60);
-        }
-
-          return drivetrainSubsystem.setRobotSpeeds(0.0, 0.0, (dist / 20));//.until(() -> isNearGoalTwist(0, Math.abs(drivetrainSubsystem.getPigeon2().getRotation2d().getDegrees() % 60))),
-
-
-    }
 
 
 
@@ -240,7 +219,7 @@ public class Superstructure {
 
     public Command autoAlignLeft(){
         return Commands.sequence(
-             drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.3, 0.0))).until(() -> !drivetrainSubsystem.seesLeftSensor()),
+             drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.6, 0.0))).until(() -> !drivetrainSubsystem.seesLeftSensor()),
              drivetrainSubsystem.stop()
              // Commands.none()
         );
@@ -248,14 +227,14 @@ public class Superstructure {
 
 
 
-    // public Command autoAlignRight(){
-    //     return Commands.sequence(
-    //         drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.35, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()), //0.3
-    //         drivetrainSubsystem.stop()
-    //         //drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()),
-    //         //Commands.none()
-    //         );
-    //     }
+    public Command autoAlignRight(){
+        return Commands.sequence(
+            drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.75, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()), //0.3
+            drivetrainSubsystem.stop()
+            //drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))).until(() -> !drivetrainSubsystem.seesRightSensor()),
+            //Commands.none()
+            );
+        }
 
         // public Command autoDriveForwardBothSensors(){
         //     return Commands.sequence(
@@ -282,11 +261,11 @@ public class Superstructure {
         // }
 
 
-        public Command setPose(double x, double y, double rot) {
-            return Commands.runOnce(() -> {
-                drivetrainSubsystem.resetPose(new Pose2d(x, y, new Rotation2d(rot)));
-            });
-        }
+        // public Command setPose(double x, double y, double rot) {
+        //     return Commands.runOnce(() -> {
+        //         drivetrainSubsystem.resetPose(new Pose2d(x, y, new Rotation2d(rot)));
+        //     });
+        // }
 
 
 }

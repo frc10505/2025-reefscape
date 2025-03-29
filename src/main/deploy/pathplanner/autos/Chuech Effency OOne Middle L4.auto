@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (middle)"
+            "pathName": "Cheuch Go To Reef (middle)"
           }
         },
         {
@@ -19,7 +19,13 @@
         {
           "type": "named",
           "data": {
-            "name": "autoAlignLeft"
+            "name": "setElevTo48/5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "newAutoAlignRight"
           }
         },
         {
@@ -41,15 +47,27 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.3
+            "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cheuch TOO go middel"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "autoElevDown"
+            "name": "raisinPivot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setAlgaeIntake"
           }
         }
       ]

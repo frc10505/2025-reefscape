@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Go To Reef (Right)"
+            "pathName": "Cheuch New Go To Reef (Right)"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoAlignLeft"
+            "name": "newAutoAlignLeft"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reload Coral Right"
+            "pathName": "Cheuch Reload Coral Right"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (Right) 2"
+            "pathName": "Cheuch Go To Reef (Right) 2"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Second coral reload"
+            "pathName": "Cheuch Second coral reload"
           }
         },
         {

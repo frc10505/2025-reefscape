@@ -17,16 +17,16 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer robotContainer = new RobotContainer();
 
-  private Command autonomousCommand;
+  private Command autonomousCommand;//skibidi
 
   public Robot() {
     CanBridge.runTCP();
-    CameraServer.startAutomaticCapture();
+    //CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void robotInit() {
-     robotContainer.cameraFeedInit();
+   // robotContainer.cameraFeedInit();
   }
 
   @Override
@@ -65,7 +65,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    //robotContainer.updateDrive();
   }
 
   @Override

@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Go To Reef (Right)"
+            "pathName": "Go To Reef (Left)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
           }
         },
         {
@@ -37,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reload Coral Right"
+            "pathName": "Reload Coral Left"
           }
         },
         {
@@ -49,7 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Reef (Right) 2"
+            "pathName": "Left Second Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
           }
         },
         {
@@ -79,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Second coral reload"
+            "pathName": "Return Second Reef"
           }
         },
         {
