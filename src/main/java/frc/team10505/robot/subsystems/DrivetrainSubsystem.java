@@ -17,12 +17,14 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,8 +34,6 @@ import frc.team10505.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import static frc.team10505.robot.Constants.DrivetrainConstants.*;
 
 public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
-
-    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
     private SwerveRequest.ApplyRobotSpeeds robotDrive = new SwerveRequest.ApplyRobotSpeeds();
 
     // SwerveRequest.ApplyChassisSpeeds();
@@ -41,13 +41,11 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     private final LaserCan leftLaser = new LaserCan(53);
     private final LaserCan rightLaser = new LaserCan(52);
 
+    public final Spark blinkyLight = new Spark(0);
+
     double turnDistance = 0;
     double strafeDistance = 0;
     double skewDistance = 0;
-
-    private final PIDController yController = new PIDController(kStrafeP, kStrafeI, kStrafeD);
-    private final PIDController headingController = new PIDController(kTurnP, kTurnI, kTurnD);
-    private final PIDController xController = new PIDController(kDistanceP, kDistanceI, kDistanceD);
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -62,7 +60,6 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
 
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
-    private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -139,7 +136,6 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
             startSimThread();
         }
     }
-
     public DrivetrainSubsystem(
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
@@ -251,6 +247,16 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
             });
 
         }
+
+        if (seesLeftSensor() && seesRightSensor() ) {
+            blinkyLight.set(0.65);//roughly green?
+        } else if (!seesLeftSensor() && !seesRightSensor()) {
+            blinkyLight.set(0.61);//roughly red?
+        } else if (seesLeftSensor() | seesRightSensor()) {
+            blinkyLight.set(0.77);//purple?
+       
+        }
+
     }
 
     private void startSimThread() {

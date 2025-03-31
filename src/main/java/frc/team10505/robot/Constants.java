@@ -79,6 +79,7 @@ public final class Constants {
 
     // Intake speed
     public final static double intakeSpeed = 0.5;
+    public final static double skibidiSpead = 0.3;
 
     public final static double pivotEncoderOffset = 0;
     public final static double pivotEncoderScale = 360;

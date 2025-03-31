@@ -86,10 +86,27 @@ public class Superstructure {
             //elevatorSubsystem.setMotor(2).until(() -> elevatorSubsystem.getElevatorEncoder() >50),
 
             elevatorSubsystem.setHeight(55.5),
-            Commands.waitUntil(() -> (elevatorSubsystem.getElevatorEncoder() > 42)),//EDIT VALUE IRL
-            algaeSubsystem.setAngle(90),
-            algaeSubsystem.intakeForward()
+            Commands.waitUntil(() -> (elevatorSubsystem.getElevatorEncoder() > 42.5)),//42//EDIT VALUE IRL
+            //algaeSubsystem.setAngle(-20),
+            algaeSubsystem.setVoltage(-1.5).withTimeout(0.05),//-0.5, 0.5, -1.5//-3.5,0.3
+           // Commands.waitSeconds(0.3),//.54
+           // algaeSubsystem.intakeStop(),
+           algaeSubsystem.setVoltage(5.0).until(() -> algaeSubsystem.getPivotEncoder() > 50),
+           algaeSubsystem.intakeSkibaglagae(),
+           algaeSubsystem.setAngle(90)//sigma
+
+
+           
+
             );
+    }
+
+
+    public Command regurgitateAlgae(){
+        return Commands.sequence(
+        algaeSubsystem.intakeSkibaglagae().withTimeout(0.3),
+        algaeSubsystem.intakeStop()
+        );
     }
 
     public Command takeCover(){
@@ -246,7 +263,7 @@ public class Superstructure {
 
         public Command autoDriveForward(){
             return Commands.sequence(
-                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.3, 0.0, 0.0))).until(() ->(drivetrainSubsystem.seesLeftSensor())),
+                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(1, 0.0, 0.0))).until(() ->(drivetrainSubsystem.seesLeftSensor() | drivetrainSubsystem.seesRightSensor())),
                  drivetrainSubsystem.stop()
                  // Commands.none()
             );

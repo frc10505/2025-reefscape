@@ -104,7 +104,8 @@ public class RobotContainer {
                 NamedCommands.registerCommand("autoDriveForward", superStructure.autoDriveForward());
 
                 NamedCommands.registerCommand("raisinPivot", algaeSubsys.setAngle(10));
-                NamedCommands.registerCommand("setAlgaeIntake", (algaeSubsys.intakeForward()));
+                NamedCommands.registerCommand("setAlgaeIntake", (algaeSubsys.intakeForward())); 
+                NamedCommands.registerCommand("stopAlgaeIntake", (algaeSubsys.intakeStop())); 
 
                 NamedCommands.registerCommand("newAutoAlignLeft", superStructure.autoAlignLeft());
                 NamedCommands.registerCommand("newAutoAlignRight",
@@ -265,6 +266,7 @@ public class RobotContainer {
                 xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
 
                 // noo
+                xboxController2.leftBumper().onTrue(superStructure.regurgitateAlgae());
                 xboxController2.rightTrigger().onTrue(superStructure.bombsAway());
                 xboxController2.leftTrigger().onTrue(superStructure.takeCover());
 

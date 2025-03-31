@@ -65,6 +65,12 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
     }
 
+    public Command setVoltage(double voltage) {
+        return run(() ->{
+            pivotMotor.setVoltage(voltage);
+        });
+    }
+
     //command we set to as the default command
         /*NOTE that defaul command has been problematic in past years -
             if it becomes an issue, set the pivot motor to pid effort periodically*/
@@ -102,6 +108,12 @@ public class AlgaeSubsystem extends SubsystemBase {
     public Command intakeForward() {
         return runOnce(() -> {
             intakeMotor.set(intakeSpeed);
+        });
+    }
+
+    public Command intakeSkibaglagae() {
+        return runOnce(() -> {
+            intakeMotor.set(skibidiSpead);
         });
     }
 

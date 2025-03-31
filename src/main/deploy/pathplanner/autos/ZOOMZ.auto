@@ -7,79 +7,85 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cheuch Go To Reef (middle)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoDriveForward"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "setElevTo48/5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "newAutoAlignRight"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoScoreCoralL4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.4
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoL4Bump"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoElevDown"
+            "pathName": "FIguor ate"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Cheuch TOO go middel"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "raisinPivot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "setAlgaeIntake"
+            "pathName": "FIguor ate"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Rueteern ref midle"
+            "pathName": "FIguor ate"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "stopAlgaeIntake"
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FIguor ate"
           }
         }
       ]
