@@ -17,10 +17,13 @@ import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team10505.robot.generated.TunerConstants;
@@ -29,6 +32,8 @@ import frc.team10505.robot.subsystems.ElevatorSubsystem;
 import frc.team10505.robot.subsystems.AlgaeSubsystem;
 import frc.team10505.robot.subsystems.CoralSubsystem;
 import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.wpilibj2.command.Commands.runEnd;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
 
 import org.opencv.core.Mat;
@@ -53,7 +58,7 @@ public class RobotContainer {
                         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
                         .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
                                                                                  // motors
-       
+
         private final Telemetry logger = new Telemetry(MaxSpeed);
 
         /* Operator interfaces */
@@ -104,8 +109,8 @@ public class RobotContainer {
                 NamedCommands.registerCommand("autoDriveForward", superStructure.autoDriveForward());
 
                 NamedCommands.registerCommand("raisinPivot", algaeSubsys.setAngle(10));
-                NamedCommands.registerCommand("setAlgaeIntake", (algaeSubsys.intakeForward())); 
-                NamedCommands.registerCommand("stopAlgaeIntake", (algaeSubsys.intakeStop())); 
+                NamedCommands.registerCommand("setAlgaeIntake", (algaeSubsys.intakeForward()));
+                NamedCommands.registerCommand("stopAlgaeIntake", (algaeSubsys.intakeStop()));
 
                 NamedCommands.registerCommand("newAutoAlignLeft", superStructure.autoAlignLeft());
                 NamedCommands.registerCommand("newAutoAlignRight",
@@ -119,7 +124,7 @@ public class RobotContainer {
                 polarityChooser.addOption("positive", 1.0);
                 polarityChooser.addOption("Negative", -1.0);
 
-                //literally just use for testing/tuning alignment speed
+                // literally just use for testing/tuning alignment speed
                 SmartDashboard.putData("auto align speed chooser", autoAlignSpeedChooser);
                 autoAlignSpeedChooser.setDefaultOption("0.3", 0.3);
                 autoAlignSpeedChooser.addOption("0.4", 0.4);
@@ -132,7 +137,6 @@ public class RobotContainer {
                 autoAlignSpeedChooser.addOption("0.75", 0.75);
                 autoAlignSpeedChooser.addOption("0.8", 0.8);
                 autoAlignSpeedChooser.addOption("0.85", 0.85);
-
 
                 configDefaultCommands();
                 configButtonBindings();
@@ -147,7 +151,8 @@ public class RobotContainer {
                 drivetrainSubsys.setDefaultCommand(drivetrainSubsys.applyRequest(() -> drive
                                 .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
                                                 * 0.8 * MaxSpeed) // Drive
-                                .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() *//was negative
+                                .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() * // was
+                                                                                                            // negative
                                                 0.8 * MaxSpeed) // Drive left with negative X (left)
                                 .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate))); // 2.5
 
@@ -204,26 +209,35 @@ public class RobotContainer {
                                                                 -xboxController.getRightX() * 3.2 * MaxAngularRate)));
 
                 xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-                xboxController.b().onTrue(resetPose());// onTrue(algaeSubsys.stopPivot());
+                xboxController.b().onTrue(algaeSubsys.intakeSigmaglagae()).onFalse(algaeSubsys.intakeStop());
+                // setLights());
+                // resetPose());// onTrue(algaeSubsys.stopPivot());
                 xboxController.x().onTrue(algaeSubsys.setAngle(-90));
                 xboxController.y().onTrue(algaeSubsys.setAngle(10)); // 5
 
                 xboxController.start().onTrue(resetGyro());
-                xboxController.back().onTrue(resetGyro180());//check which bindings
+                xboxController.back().onTrue(resetGyro180());// check which bindings
 
                 // xboxController.l().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
-                xboxController.povLeft().whileTrue(// superStructure.autoAlignLeft());
+                xboxController.povLeft().whileTrue(
                                 drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
                                                 .withVelocityY(0.6)
                                                 .withRotationalRate(0.0))
-                                                .until(() -> !drivetrainSubsys.seesLeftSensor()));
+                                                .until(() -> !drivetrainSubsys.seesLeftSensor())
+                // .andThen(
+                // setLeftRumbles())
+                );
 
-                xboxController.povRight().whileTrue(// superStructure.autoAlignRight());
+                xboxController.povRight().whileTrue(
+                                // rumblyRightAlign()
                                 drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
                                                 .withVelocityY(-0.75)
                                                 .withRotationalRate(0.0))
-                                                .until(() -> !drivetrainSubsys.seesRightSensor()));
+                                                .until(() -> !drivetrainSubsys.seesRightSensor())
+                // .andThen(
+                // setRightRumbles())
+                );
 
                 // NEW joystick bindings
 
@@ -260,14 +274,14 @@ public class RobotContainer {
                 xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());
 
                 xboxController2.a().onTrue(elevatorSubsys.setHeight(8.0));
-                xboxController2.b().onTrue(elevatorSubsys.setHeight(23.0));
+                xboxController2.b().onTrue(elevatorSubsys.setHeight(23.5));// maybe change?//$$24
                 xboxController2.x().onTrue(elevatorSubsys.setHeight(0.0));
                 xboxController2.y().onTrue(elevatorSubsys.setHeight(48.5));
                 xboxController2.rightBumper().onTrue(superStructure.manualL4Bump());
 
-                // noo
-                xboxController2.leftBumper().onTrue(superStructure.regurgitateAlgae());
+                // nootont
                 xboxController2.rightTrigger().onTrue(superStructure.bombsAway());
+                xboxController2.leftBumper().onTrue(superStructure.detonate());
                 xboxController2.leftTrigger().onTrue(superStructure.takeCover());
 
                 // automoatically added from the CTRE generated swerve drive
@@ -278,7 +292,7 @@ public class RobotContainer {
         private Command resetGyro() {
                 return Commands.runOnce(() -> {
                         drivetrainSubsys.getPigeon2().reset();
-                        ;
+
                 });
         }
 

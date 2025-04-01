@@ -37,6 +37,9 @@ public final class Constants {
 
     public final static double rightDriveLaserDistance = 200.0;//210//$190
     public final static double leftDriveLaserDistance = 190.0;//180
+    public final static double closeRightDriveLaserDistance = 180.0;
+    public final static double closeLeftDriveLaserDistance = 180.0;
+
 
   }
 
@@ -78,8 +81,9 @@ public final class Constants {
     public final static int kIntakeMotorCurrentLimit = 25;
 
     // Intake speed
-    public final static double intakeSpeed = 0.5;
-    public final static double skibidiSpead = 0.3;
+    public final static double intakeSpeed = 0.5;//0.5
+    public final static double skibidiSpead = 0.3; //0.3
+    public final static double sigmaSpead = 0.2;
 
     public final static double pivotEncoderOffset = 0;
     public final static double pivotEncoderScale = 360;
@@ -113,9 +117,9 @@ public final class Constants {
     public final static int kRightMotorCurrentLimit = 15;
     public final static int kIntakeInId = 60;
     public final static int kIntakeOutId = 61;
-    public final static double kIntakeSpeed = 0.4;//0.3
-    public final static double kLeftL1Speed = 0.15;//.2
-    public final static double kRightL1Speed = 0.35;//.4
+    public final static double kIntakeSpeed = 0.37;//.4  donny is not sigma
+    public final static double kLeftL1Speed = 0.5;//.2
+    public final static double kRightL1Speed = 0.25;//.4
     public final static double kOutakeSpeed = 0.25;
     public final static double kOutakeTopSpeed = 0.2;//.1
     public final static double kTroughSpeed = 0.30;

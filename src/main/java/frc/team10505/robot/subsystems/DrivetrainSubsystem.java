@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -171,6 +172,7 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    
     public Command stop() {
         return runOnce(() -> this.setControl(robotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0))));
     }
@@ -224,6 +226,29 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     }
     }
 
+    public boolean seesLeftSensorClose() {
+        try {
+            LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
+            return (leftMeas.distance_mm < closeLeftDriveLaserDistance
+                    && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        } catch (NullPointerException l) {
+            DriverStation.reportError("left sensor is null", l.getStackTrace());
+            return false;
+        }
+
+    }
+
+    public boolean seesRightSensorClose(){
+    try{
+    LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+    return (RightMeas.distance_mm < closeRightDriveLaserDistance); //&& RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+
+    } catch(NullPointerException r){
+    DriverStation.reportError("right sensor is null", r.getStackTrace());
+    return false;
+    }
+    }
+
     @Override
     public void periodic() {
         /*
@@ -248,15 +273,30 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
 
         }
 
-        if (seesLeftSensor() && seesRightSensor() ) {
-            blinkyLight.set(0.65);//roughly green?
+        if (seesLeftSensorClose() && seesRightSensorClose() ) {
+            blinkyLight.set(0.35);//flashy color 2(blue)
+        } else if (seesLeftSensor() && seesRightSensor()) {
+            blinkyLight.set(-0.11);//strobe red
         } else if (!seesLeftSensor() && !seesRightSensor()) {
-            blinkyLight.set(0.61);//roughly red?
+            blinkyLight.set(0.61);//red
         } else if (seesLeftSensor() | seesRightSensor()) {
-            blinkyLight.set(0.77);//purple?
-       
+            blinkyLight.set(0.77);//green
         }
 
+
+        try{
+        SmartDashboard.putNumber("left Laser Distance", leftLaser.getMeasurement().distance_mm);
+    }
+        catch(NullPointerException r){
+            DriverStation.reportError("left sensor is null", r.getStackTrace());
+            }
+
+            try{
+                SmartDashboard.putNumber("right Laser Distance", rightLaser.getMeasurement().distance_mm);
+            }
+                catch(NullPointerException r){
+                    DriverStation.reportError("right sensor is null", r.getStackTrace());
+                    }
     }
 
     private void startSimThread() {
@@ -287,8 +327,8 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
                                     .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
-                            new PIDConstants(10, 0, 0),
-                            new PIDConstants(7, 0, 0)),
+                            new PIDConstants(10, 0, 0),//drive
+                            new PIDConstants(7, 0, 0)),//Rotation
                     config,
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                     this);

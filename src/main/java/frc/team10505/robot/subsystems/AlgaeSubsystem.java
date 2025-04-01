@@ -117,6 +117,12 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
     }
 
+    public Command intakeSigmaglagae() {
+        return runOnce(() -> {
+            intakeMotor.set(sigmaSpead);
+        });
+    }
+
     public Command intakeReverse() {
         return runOnce(() -> {
             intakeMotor.set(-intakeSpeed);

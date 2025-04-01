@@ -109,6 +109,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         return getElevatorEncoder() > 30;
     }
 
+    public boolean isAbove(double heightOfChoice){
+        return getElevatorEncoder() > heightOfChoice;
+    }
+
     public double getEffort() {
         return totalEffort = ((elevatorFeedforward.calculate(0, 0))
                 + (elevatorController.calculate(getElevatorEncoder(), height)));

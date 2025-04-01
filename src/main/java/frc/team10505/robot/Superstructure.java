@@ -64,8 +64,9 @@ public class Superstructure {
       // if (elevatorSubsystem.issGigh()) {
             return Commands.sequence(
                 coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
-                elevatorSubsystem.setHeight(54.5), //was 53.0
-                Commands.waitUntil(() -> (elevatorSubsystem.isNearGoal())),
+                elevatorSubsystem.setHeight(55.0), //was 53.0
+                Commands.waitUntil(() -> (elevatorSubsystem.isAbove(52.0))),//elevatorSubsystem.isNearGoal())),
+                Commands.waitSeconds(0.2),
                 elevatorSubsystem.setHeight(0.00));
         // } else{
         //     return Commands.print("Cooper struggles with driving due to a lack of focus, poor decision-making, and inability to judge distances. His reaction times are slow, leading to frequent mistakes. He is a very bad BAD BOY. and maybe slow w  \r\n" +
@@ -81,19 +82,28 @@ public class Superstructure {
 
     public Command bombsAway(){
         return Commands.sequence(
-            //TODO test the set motor cmd, if we have time are we're feeling gutsy
-                //NOTE- we'd have to add in the if/else statement in the elev periodic
-            //elevatorSubsystem.setMotor(2).until(() -> elevatorSubsystem.getElevatorEncoder() >50),
 
             elevatorSubsystem.setHeight(55.5),
-            Commands.waitUntil(() -> (elevatorSubsystem.getElevatorEncoder() > 42.5)),//42//EDIT VALUE IRL
-            //algaeSubsystem.setAngle(-20),
-            algaeSubsystem.setVoltage(-1.5).withTimeout(0.05),//-0.5, 0.5, -1.5//-3.5,0.3
-           // Commands.waitSeconds(0.3),//.54
-           // algaeSubsystem.intakeStop(),
+            Commands.waitUntil(() -> (elevatorSubsystem.getElevatorEncoder() > 42.5))//,//42//EDIT VALUE IRL
+        //     algaeSubsystem.setVoltage(-1.5).withTimeout(0.05),//-0.5, 0.5, -1.5//-3.5,0.3
+  
+        //    algaeSubsystem.setVoltage(5.0).until(() -> algaeSubsystem.getPivotEncoder() > 50),
+        //    algaeSubsystem.intakeSkibaglagae(),
+        //    algaeSubsystem.setAngle(90)
+
+
+           
+
+            );
+    }
+
+    public Command detonate(){
+        return Commands.sequence(
+          
+            algaeSubsystem.setVoltage(-1.5).withTimeout(0.05),
            algaeSubsystem.setVoltage(5.0).until(() -> algaeSubsystem.getPivotEncoder() > 50),
            algaeSubsystem.intakeSkibaglagae(),
-           algaeSubsystem.setAngle(90)//sigma
+           algaeSubsystem.setAngle(90)
 
 
            
@@ -102,12 +112,12 @@ public class Superstructure {
     }
 
 
-    public Command regurgitateAlgae(){
-        return Commands.sequence(
-        algaeSubsystem.intakeSkibaglagae().withTimeout(0.3),
-        algaeSubsystem.intakeStop()
-        );
-    }
+    // public Command regurgitateAlgae(){
+    //     return Commands.sequence(
+    //     algaeSubsystem.intakeSkibaglagae().withTimeout(0.6),
+    //     algaeSubsystem.intakeStop()
+    //     );
+    // }
 
     public Command takeCover(){
         return Commands.sequence(
@@ -133,8 +143,10 @@ public class Superstructure {
 
     public Command manualL4Bump() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(54.0),// 54.5
-                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                elevatorSubsystem.setHeight(55.0),// 54.5 //54 BADISH
+               // Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+               Commands.waitUntil(() -> (elevatorSubsystem.isAbove(52.0))),
+               Commands.waitSeconds(0.2),
                 coralSubsystem.setStop(), 
                 elevatorSubsystem.setHeight(0.0)
                 );
@@ -200,14 +212,14 @@ public class Superstructure {
         return Commands.sequence(
                 elevatorSubsystem.setHeight(8.0),
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
-                Commands.waitSeconds(0.5),
-                coralSubsystem.output().until(() -> (!coralSubsystem.outSensor()))//,
-                // coralSubsystem.setOutput(),
-                // Commands.race(
-                //     Commands.waitUntil(()->(!coralSubsystem.outSensor())),
-                //     Commands.waitSeconds(4)
-                // ),
-                // coralSubsystem.setStop()
+                //Commands.waitSeconds(0.5),
+                // coralSubsystem.output().until(() -> (!coralSubsystem.outSensor()))//,
+                coralSubsystem.setOutput(),
+                Commands.race(
+                    Commands.waitUntil(()->(!coralSubsystem.outSensor())),
+                    Commands.waitSeconds(2.5)
+                ),
+                coralSubsystem.setStop()
                 );
     }
 
@@ -225,8 +237,10 @@ public class Superstructure {
 
     public Command autoL4Bump() {
         return Commands.sequence(
-                elevatorSubsystem.setHeight(54.0),// 54.5
-                Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+                elevatorSubsystem.setHeight(55.0),// 54.5 //54 BADISH //55 okish
+              //  Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
+              Commands.waitUntil(() -> (elevatorSubsystem.isAbove(52.0))),//elevatorSubsystem.isNearGoal())),
+              Commands.waitSeconds(0.2),
                 coralSubsystem.setStop());
     }
 
