@@ -82,7 +82,7 @@ public final class Constants {
 
     // Intake speed
     public final static double intakeSpeed = 0.5;//0.5
-    public final static double skibidiSpead = 0.3; //0.3
+    public final static double intakeSlowSpead = 0.3; //0.3
     public final static double sigmaSpead = 0.2;
 
     public final static double pivotEncoderOffset = 0;
@@ -117,7 +117,7 @@ public final class Constants {
     public final static int kRightMotorCurrentLimit = 15;
     public final static int kIntakeInId = 60;
     public final static int kIntakeOutId = 61;
-    public final static double kIntakeSpeed = 0.37;//.4  donny is not sigma
+    public final static double kIntakeSpeed = 0.37;//.4  Donny is sigma walter is no buns
     public final static double kLeftL1Speed = 0.5;//.2
     public final static double kRightL1Speed = 0.25;//.4
     public final static double kOutakeSpeed = 0.25;

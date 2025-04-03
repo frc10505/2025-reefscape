@@ -1,0 +1,177 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cheuch Go To Reef (middle)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoDriveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevTo48/5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "newAutoAlignRight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScoreCoralL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoL4Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cheuch TOO go middel"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "raisinPivot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setAlgaeIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Rueteern ref midle"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopAlgaeIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Barge Middle"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autoElevDown"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoBombsAway"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonDetonateFirst"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonDetonateSecond"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonDetonateThird"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonRegurgitateAlgaeFirst"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonRegurgitateAlgaeSecond"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonTakeCover"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -79,7 +79,9 @@ public class RobotContainer {
                         drivetrainSubsys);
 
         /* Autonomous */
-        private final SendableChooser<Command> autoChooser;
+        // private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> svsuAutoChooser;
+
         private final SendableChooser<Double> polarityChooser = new SendableChooser<>();
         private final SendableChooser<Double> autoAlignSpeedChooser = new SendableChooser<>();
 
@@ -115,9 +117,19 @@ public class RobotContainer {
                 NamedCommands.registerCommand("newAutoAlignLeft", superStructure.autoAlignLeft());
                 NamedCommands.registerCommand("newAutoAlignRight",
                                 superStructure.autoAlignRight());
+
+                NamedCommands.registerCommand("autoBombsAway", superStructure.autonBombsAway());
+                NamedCommands.registerCommand("autonDetonateFirst", superStructure.autonDetonateFirst());
+                NamedCommands.registerCommand("autonDetonateSecond", superStructure.autonDetonateSecond());
+                NamedCommands.registerCommand("autonDetonateThird", superStructure.autonDetonateThird());
+                NamedCommands.registerCommand("autonRegurgitateAlgaeFirst", superStructure.autonRegurgitateAlgaeFirst());
+                NamedCommands.registerCommand("autonRegurgitateAlgaeSecond", superStructure.autonRegurgitateAlgaeSecond());
+                NamedCommands.registerCommand("autonTakeCover", superStructure.autonTakeCover());
+
                 drivetrainSubsys.configPathplanner();
 
-                autoChooser = AutoBuilder.buildAutoChooser();
+                // autoChooser = AutoBuilder.buildAutoChooser();
+                svsuAutoChooser = AutoBuilder.buildAutoChooser();
 
                 SmartDashboard.putData("Polarity Chooser", polarityChooser);
                 polarityChooser.setDefaultOption("Default", 1.0);
@@ -209,7 +221,7 @@ public class RobotContainer {
                                                                 -xboxController.getRightX() * 3.2 * MaxAngularRate)));
 
                 xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-                xboxController.b().onTrue(algaeSubsys.intakeSigmaglagae()).onFalse(algaeSubsys.intakeStop());
+                xboxController.b().onTrue(algaeSubsys.intakeForwardSlowest()).onFalse(algaeSubsys.intakeStop());
                 // setLights());
                 // resetPose());// onTrue(algaeSubsys.stopPivot());
                 xboxController.x().onTrue(algaeSubsys.setAngle(-90));
@@ -310,11 +322,11 @@ public class RobotContainer {
 
         // methods that allow us to select and use our auton selected in our dashboards
         private void configAutonomous() {
-                SmartDashboard.putData(autoChooser);
+                SmartDashboard.putData(svsuAutoChooser);// autoChooser);
         }
 
         public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
+                return svsuAutoChooser.getSelected();// autoChooser.getSelected();
         }
 
         public void updateDriveSensors() {

@@ -17,7 +17,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer robotContainer = new RobotContainer();
 
-  private Command autonomousCommand;//skibidi
+  private Command autonomousCommand;
 
   public Robot() {
     CanBridge.runTCP();
