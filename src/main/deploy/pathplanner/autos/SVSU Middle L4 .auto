@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test path(drive forward a smidgeon)"
+            "pathName": "Cheuch Go To Reef (middle)"
           }
         },
         {
@@ -19,19 +19,13 @@
         {
           "type": "named",
           "data": {
-            "name": "setElevToL2"
+            "name": "svsuAutoAlignLeft"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "autoAlignLeft"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoScoreCoralL2"
+            "name": "autoScoreCoralL4"
           }
         },
         {
@@ -43,7 +37,13 @@
         {
           "type": "named",
           "data": {
-            "name": "autoElevDown"
+            "name": "autoL4Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
           }
         }
       ]

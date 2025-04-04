@@ -35,11 +35,15 @@ public final class Constants {
     public final static double kRightDistanceSetpoint = 2.0;
     public final static double kRightYawSetpoint = 2.0;
 
-    public final static double rightDriveLaserDistance = 200.0;//210//$190
-    public final static double leftDriveLaserDistance = 190.0;//180
-    public final static double closeRightDriveLaserDistance = 180.0;
-    public final static double closeLeftDriveLaserDistance = 180.0;
+    public final static double rightDriveLaserDistance = 235.0;//210//$190
+    public final static double leftDriveLaserDistance = 260;//180
 
+    public final static double autonRightDriveLaserDistance = 320.0;//210//$190
+    public final static double autonLeftDriveLaserDistance = 280;//$280 before laser can fall
+
+    public final static double closeRightDriveLaserDistance = 235.0; //180
+    public final static double closeLeftDriveLaserDistance = 250.0; //180
+ 
 
   }
 

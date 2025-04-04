@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "setElevTo48/5"
+            "pathName": "Test path(drive forward a smidgeon)"
           }
         },
         {
@@ -25,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoAlignLeft"
+            "name": "svsuAutoAlignLeft"
           }
         },
         {

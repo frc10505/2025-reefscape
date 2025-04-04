@@ -34,6 +34,7 @@ import frc.team10505.robot.subsystems.CoralSubsystem;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.wpilibj2.command.Commands.runEnd;
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static frc.team10505.robot.Constants.DrivetrainConstants.leftDriveLaserDistance;
 import static frc.team10505.robot.Constants.OperatorInterfaceConstants.*;
 
 import org.opencv.core.Mat;
@@ -83,7 +84,8 @@ public class RobotContainer {
         private final SendableChooser<Command> svsuAutoChooser;
 
         private final SendableChooser<Double> polarityChooser = new SendableChooser<>();
-        private final SendableChooser<Double> autoAlignSpeedChooser = new SendableChooser<>();
+        // private final SendableChooser<Double> rightAutoAlignSpeedMULTIPLIER = new SendableChooser<>();
+        // private final SendableChooser<Double> leftAutoAlignSpeedMULTIPLIER = new SendableChooser<>();
 
         public RobotContainer() {
 
@@ -114,16 +116,18 @@ public class RobotContainer {
                 NamedCommands.registerCommand("setAlgaeIntake", (algaeSubsys.intakeForward()));
                 NamedCommands.registerCommand("stopAlgaeIntake", (algaeSubsys.intakeStop()));
 
-                NamedCommands.registerCommand("newAutoAlignLeft", superStructure.autoAlignLeft());
-                NamedCommands.registerCommand("newAutoAlignRight",
+                NamedCommands.registerCommand("svsuAutoAlignLeft", superStructure.autoAlignLeft());
+                NamedCommands.registerCommand("svsuAutoAlignRight",
                                 superStructure.autoAlignRight());
 
                 NamedCommands.registerCommand("autoBombsAway", superStructure.autonBombsAway());
                 NamedCommands.registerCommand("autonDetonateFirst", superStructure.autonDetonateFirst());
                 NamedCommands.registerCommand("autonDetonateSecond", superStructure.autonDetonateSecond());
                 NamedCommands.registerCommand("autonDetonateThird", superStructure.autonDetonateThird());
-                NamedCommands.registerCommand("autonRegurgitateAlgaeFirst", superStructure.autonRegurgitateAlgaeFirst());
-                NamedCommands.registerCommand("autonRegurgitateAlgaeSecond", superStructure.autonRegurgitateAlgaeSecond());
+                NamedCommands.registerCommand("autonRegurgitateAlgaeFirst",
+                                superStructure.autonRegurgitateAlgaeFirst());
+                NamedCommands.registerCommand("autonRegurgitateAlgaeSecond",
+                                superStructure.autonRegurgitateAlgaeSecond());
                 NamedCommands.registerCommand("autonTakeCover", superStructure.autonTakeCover());
 
                 drivetrainSubsys.configPathplanner();
@@ -136,19 +140,26 @@ public class RobotContainer {
                 polarityChooser.addOption("positive", 1.0);
                 polarityChooser.addOption("Negative", -1.0);
 
-                // literally just use for testing/tuning alignment speed
-                SmartDashboard.putData("auto align speed chooser", autoAlignSpeedChooser);
-                autoAlignSpeedChooser.setDefaultOption("0.3", 0.3);
-                autoAlignSpeedChooser.addOption("0.4", 0.4);
-                autoAlignSpeedChooser.addOption("0.45", 0.45);
-                autoAlignSpeedChooser.addOption("0.5", 0.5);
-                autoAlignSpeedChooser.addOption("0.55", 0.55);
-                autoAlignSpeedChooser.addOption("0.6", 0.6);
-                autoAlignSpeedChooser.addOption("0.65", 0.65);
-                autoAlignSpeedChooser.addOption("0.7", 0.7);
-                autoAlignSpeedChooser.addOption("0.75", 0.75);
-                autoAlignSpeedChooser.addOption("0.8", 0.8);
-                autoAlignSpeedChooser.addOption("0.85", 0.85);
+                // // literally just use for testing/tuning alignment speed
+                // SmartDashboard.putData("right auto align speed multiplier", rightAutoAlignSpeedMULTIPLIER);
+                // rightAutoAlignSpeedMULTIPLIER.setDefaultOption("1", 1.0);
+
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.95", 0.95);
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.9", 0.9);
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.7", 0.7);
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.75", 0.75);
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.8", 0.8);
+                // rightAutoAlignSpeedMULTIPLIER.addOption("0.85", 0.85);
+
+                // SmartDashboard.putData("left auto align speed chooser", leftAutoAlignSpeedMULTIPLIER);
+                // rightAutoAlignSpeedMULTIPLIER.setDefaultOption("1", 1.0);
+
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.95", 0.95);
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.9", 0.9);
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.7", 0.7);
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.75", 0.75);
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.8", 0.8);
+                // leftAutoAlignSpeedMULTIPLIER.addOption("0.85", 0.85);
 
                 configDefaultCommands();
                 configButtonBindings();
@@ -232,9 +243,21 @@ public class RobotContainer {
 
                 // xboxController.l().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
+                xboxController.povUp().whileTrue(
+                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(-0.4)
+                                                .withVelocityY(0.0)
+                                                .withRotationalRate(0.0)))
+                                .onFalse(drivetrainSubsys.stop());
+
+                xboxController.povDown().whileTrue(
+                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.4)
+                                                .withVelocityY(0.0)
+                                                .withRotationalRate(0.0)))
+                                .onFalse(drivetrainSubsys.stop());
+
                 xboxController.povLeft().whileTrue(
                                 drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
-                                                .withVelocityY(0.6)
+                                                .withVelocityY(0.6 )//* leftAutoAlignSpeedMULTIPLIER.getSelected())
                                                 .withRotationalRate(0.0))
                                                 .until(() -> !drivetrainSubsys.seesLeftSensor())
                 // .andThen(
@@ -244,7 +267,7 @@ public class RobotContainer {
                 xboxController.povRight().whileTrue(
                                 // rumblyRightAlign()
                                 drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
-                                                .withVelocityY(-0.75)
+                                                .withVelocityY(-0.75)// * rightAutoAlignSpeedMULTIPLIER.getSelected())
                                                 .withRotationalRate(0.0))
                                                 .until(() -> !drivetrainSubsys.seesRightSensor())
                 // .andThen(

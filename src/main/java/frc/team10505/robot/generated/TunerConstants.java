@@ -87,7 +87,7 @@ public class TunerConstants {
 
     private static final double kDriveGearRatio = 5.357142857142857;
     private static final double kSteerGearRatio = 21.428571428571427;
-    private static final Distance kWheelRadius = Inches.of(1.705);//2 = default //ESKY = 1.633 && LSSU PRACTICE = 1.78
+    private static final Distance kWheelRadius = Inches.of(1.68);//lateset church pre svsu 1.705 //svsu test 1.6 badish so splistzies//2 = default //ESKY = 1.633 && LSSU PRACTICE = 1.78
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;

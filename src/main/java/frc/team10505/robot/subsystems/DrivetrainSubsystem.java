@@ -226,6 +226,29 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     }
     }
 
+    public boolean autonSeesLeftSensor() {
+        try {
+            LaserCan.Measurement leftMeas = leftLaser.getMeasurement();
+            return (leftMeas.distance_mm < autonLeftDriveLaserDistance
+                                && leftMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+        } catch (NullPointerException l) {
+            DriverStation.reportError("left sensor is null", l.getStackTrace());
+            return false;
+        }
+
+    }
+
+    public boolean autonSeesRightSensor(){
+    try{
+    LaserCan.Measurement RightMeas = rightLaser.getMeasurement();
+    return (RightMeas.distance_mm < autonRightDriveLaserDistance); //&& RightMeas.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+
+    } catch(NullPointerException r){
+    DriverStation.reportError("right sensor is null", r.getStackTrace());
+    return false;
+    }
+    }
+
     public boolean seesLeftSensorClose() {
         try {
             LaserCan.Measurement leftMeas = leftLaser.getMeasurement();

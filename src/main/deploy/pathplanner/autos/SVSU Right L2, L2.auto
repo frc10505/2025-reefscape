@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cheuch Go To Reef (middle)"
+            "pathName": "Cheuch New Go To Reef (Right)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "setElevToL2"
           }
         },
         {
@@ -19,31 +25,13 @@
         {
           "type": "named",
           "data": {
-            "name": "setElevTo48/5"
+            "name": "svsuAutoAlignLeft"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "newAutoAlignRight"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoScoreCoralL4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.4
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoL4Bump"
+            "name": "autoScoreCoralL2"
           }
         },
         {
@@ -55,31 +43,61 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cheuch TOO go middel"
+            "pathName": "Cheuch Reload Coral Right"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "raisinPivot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "setAlgaeIntake"
+            "name": "intakeCoral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Rueteern ref midle"
+            "pathName": "Cheuch Go To Reef (Right) 2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "stopAlgaeIntake"
+            "name": "setElevToL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoDriveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "svsuAutoAlignLeft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScoreCoralL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoElevDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cheuch Second coral reload"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeCoral"
           }
         }
       ]

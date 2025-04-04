@@ -13,37 +13,43 @@
         {
           "type": "named",
           "data": {
-            "name": "autoDriveForward"
+            "name": "autoBombsAway"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "setElevToL2"
+            "name": "autonDetonateFirst"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "autoAlignLeft"
+            "name": "autonDetonateSecond"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "autoScoreCoralL2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.4
+            "name": "autonDetonateThird"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "autoElevDown"
+            "name": "autonRegurgitateAlgaeFirst"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonRegurgitateAlgaeSecond"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autonTakeCover"
           }
         }
       ]

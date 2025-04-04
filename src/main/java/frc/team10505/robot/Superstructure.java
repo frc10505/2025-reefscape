@@ -124,11 +124,11 @@ public class Superstructure {
 
     }
 
-    public Command grabAlgae() {
-        return Commands.sequence(
-                algaeSubsystem.intakeReverse(),
-                algaeSubsystem.coastPivot());
-    }
+    // public Command grabAlgae() {
+    // return Commands.sequence(
+    // algaeSubsystem.intakeReverse(),
+    // algaeSubsystem.coastPivot());
+    // }
 
     public Command holdAlgae() {
         return Commands.sequence(
@@ -145,7 +145,6 @@ public class Superstructure {
                 coralSubsystem.setStop(),
                 elevatorSubsystem.setHeight(0.0));
     }
-
 
     // COMMANDS FOR AUTONS
     public Command autoIntakeCoral() {
@@ -165,11 +164,11 @@ public class Superstructure {
         return coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor()));
     }
 
-    public Command autoGrabAlgae() {
-        return Commands.sequence(
-                algaeSubsystem.intakeReverse(),
-                algaeSubsystem.coastPivot());
-    }
+    // public Command autoGrabAlgae() {
+    // return Commands.sequence(
+    // algaeSubsystem.intakeReverse());
+    // // algaeSubsystem.coastPivot());
+    // }
 
     public Command autoHoldAlgae() {
         return algaeSubsystem.intakeStop();
@@ -180,7 +179,9 @@ public class Superstructure {
                 elevatorSubsystem.setHeight(48.5), // 49.5 -> shoots over top//48.5
                 Commands.waitUntil(() -> elevatorSubsystem.isNearGoal()),
                 coralSubsystem.autoSetIntake(),
-                Commands.waitUntil(() -> (!coralSubsystem.outSensor())));
+                Commands.race(
+                        Commands.waitUntil(() -> !coralSubsystem.outSensor()), 
+                        Commands.waitSeconds(1.5)));
     }
 
     public Command autoScoreCoralL3() {
@@ -233,7 +234,7 @@ public class Superstructure {
     public Command autoAlignLeft() {
         return Commands.sequence(
                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, 0.6, 0.0)))
-                        .until(() -> !drivetrainSubsystem.seesLeftSensor()),
+                        .until(() -> !drivetrainSubsystem.autonSeesLeftSensor()),
                 drivetrainSubsystem.stop()
         // Commands.none()
         );
@@ -242,7 +243,7 @@ public class Superstructure {
     public Command autoAlignRight() {
         return Commands.sequence(
                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.0, -0.75, 0.0)))
-                        .until(() -> !drivetrainSubsystem.seesRightSensor()), // 0.3
+                        .until(() -> !drivetrainSubsystem.autonSeesRightSensor()), // 0.3
                 drivetrainSubsystem.stop()
         // drivetrainSubsystem.applyRequest(() -> robotDrive.withSpeeds(new
         // ChassisSpeeds(0.0, 0.0, 0.0))).until(() ->
@@ -264,7 +265,7 @@ public class Superstructure {
 
     public Command autoDriveForward() {
         return Commands.sequence(
-                drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(1, 0.0, 0.0)))
+                drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.6, 0.0, 0.0)))
                         .until(() -> (drivetrainSubsystem.seesLeftSensor() | drivetrainSubsystem.seesRightSensor())),
                 drivetrainSubsystem.stop()
         // Commands.none()
@@ -300,7 +301,6 @@ public class Superstructure {
         return Commands.sequence(
 
                 algaeSubsystem.setVoltage(-1.5).withTimeout(0.05)
-               
 
         );
     }
@@ -309,7 +309,6 @@ public class Superstructure {
         return Commands.sequence(
 
                 algaeSubsystem.setVoltage(5.0).until(() -> algaeSubsystem.getPivotEncoder() > 50)
-               
 
         );
     }
@@ -323,17 +322,15 @@ public class Superstructure {
         );
     }
 
-    public Command autonRegurgitateAlgaeFirst(){
-    return Commands.sequence(
-    algaeSubsystem.intakeForwardSlower().withTimeout(0.6)
-    );
+    public Command autonRegurgitateAlgaeFirst() {
+        return Commands.sequence(
+                algaeSubsystem.intakeForwardSlower().withTimeout(0.6));
     }
 
-    public Command autonRegurgitateAlgaeSecond(){
+    public Command autonRegurgitateAlgaeSecond() {
         return Commands.sequence(
-        algaeSubsystem.intakeStop()
-        );
-        }
+                algaeSubsystem.intakeStop());
+    }
 
     public Command autonTakeCover() {
         return Commands.sequence(
@@ -345,6 +342,4 @@ public class Superstructure {
 
     }
 
-   
 }
-
