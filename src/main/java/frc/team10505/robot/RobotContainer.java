@@ -267,7 +267,7 @@ public class RobotContainer {
                 xboxController.povRight().whileTrue(
                                 // rumblyRightAlign()
                                 drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.0)
-                                                .withVelocityY(-0.75)// * rightAutoAlignSpeedMULTIPLIER.getSelected())
+                                                .withVelocityY(-0.6)//75)// * rightAutoAlignSpeedMULTIPLIER.getSelected())
                                                 .withRotationalRate(0.0))
                                                 .until(() -> !drivetrainSubsys.seesRightSensor())
                 // .andThen(
@@ -303,7 +303,7 @@ public class RobotContainer {
                 // joystick.povLeft().whileTrue(drivetrainSubsys.alignLeft());
 
                 // operator bindings
-                xboxController2.povUp().whileTrue(superStructure.outputTopCoral());
+                xboxController2.povUp().onTrue(superStructure.outputTopCoral());
                 xboxController2.povDown().onTrue(superStructure.intakeCoral());// .onFalse(coralSubsys.stop());
                 xboxController2.povLeft().whileTrue(superStructure.outputCoral());
                 xboxController2.povRight().whileTrue(superStructure.outputCoralTrough());

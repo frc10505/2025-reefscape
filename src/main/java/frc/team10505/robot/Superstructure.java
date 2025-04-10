@@ -61,10 +61,12 @@ public class Superstructure {
     public Command outputTopCoral() {
         // if (elevatorSubsystem.issGigh()) {
         return Commands.sequence(
-                coralSubsystem.outputTop().until(() -> (!coralSubsystem.outSensor())),
+                coralSubsystem.setOutputTop(), //.until(() -> (!coralSubsystem.outSensor())),
+                Commands.waitSeconds(0.5),
                 elevatorSubsystem.setHeight(55.0), // was 53.0
                 Commands.waitUntil(() -> (elevatorSubsystem.isAbove(52.0))), // elevatorSubsystem.isNearGoal())),
                 Commands.waitSeconds(0.2),
+                coralSubsystem.setStop(),
                 elevatorSubsystem.setHeight(0.00));
         // } else{
         // return Commands.print("Cooper struggles with driving due to a lack of focus,
@@ -181,7 +183,7 @@ public class Superstructure {
                 coralSubsystem.autoSetIntake(),
                 Commands.race(
                         Commands.waitUntil(() -> !coralSubsystem.outSensor()), 
-                        Commands.waitSeconds(1.5)));
+                        Commands.waitSeconds(1.2)));
     }
 
     public Command autoScoreCoralL3() {
@@ -266,7 +268,7 @@ public class Superstructure {
     public Command autoDriveForward() {
         return Commands.sequence(
                 drivetrainSubsystem.applyRequest(() -> autoRobotDrive.withSpeeds(new ChassisSpeeds(0.6, 0.0, 0.0)))
-                        .until(() -> (drivetrainSubsystem.seesLeftSensor() | drivetrainSubsystem.seesRightSensor())),
+                        .until(() -> (drivetrainSubsystem.seesLeftSensorClose() | drivetrainSubsystem.seesRightSensorClose())),
                 drivetrainSubsystem.stop()
         // Commands.none()
         );
