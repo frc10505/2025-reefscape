@@ -207,7 +207,6 @@ public class RobotContainer {
         private void configButtonBindings() {
                 // bindings for the xbox controller
                 xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-                xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
                 // xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
                 xboxController.leftTrigger()

@@ -16,14 +16,13 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
     // motor controllers
-    public final static SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
+    public final SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax pivotMotor = new SparkMax(kAlgaePivotMotorId, MotorType.kBrushless);
     private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
@@ -132,6 +131,38 @@ public class AlgaeSubsystem extends SubsystemBase {
     public Command intakeStop() {
         return runOnce(() -> {
             intakeMotor.set(0);
+        });
+    }
+
+     public Boolean hasAlgae() {
+        return pivotMotor.getOutputCurrent() > 1.75;
+    }
+
+    public Command algaeRunReef() {
+        return runEnd(() -> {
+            if (hasAlgae()) {
+                // run to pickup from Reef
+                intakeMotor.setVoltage(0);
+            } else {
+                intakeMotor.set(-sigmaSpead);
+            }
+        }, () -> {
+            // end
+            intakeMotor.setVoltage(0);
+        });
+    }
+
+    public Command algaeRunGround() {
+        return runEnd(() -> {
+            if (hasAlgae()) {
+                // runs to pickup off ground
+                intakeMotor.setVoltage(0);
+            } else {
+                intakeMotor.set(sigmaSpead);
+            }
+        }, () -> {
+            // end
+            intakeMotor.setVoltage(0);
         });
     }
 
