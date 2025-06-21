@@ -8,6 +8,10 @@ package frc.team10505.robot;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runEnd;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
+import static frc.team10505.robot.Constants.AlgaeConstants.sigmaSpead;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
@@ -343,5 +347,24 @@ public class Superstructure {
         );
 
     }
-
+    public Command algaeGobble() {
+        return runEnd(() -> {
+            if (elevatorSubsystem.getElevatorEncoder() > 20) {
+                if (algaeSubsystem.hasAlgae()) {
+                    algaeSubsystem.intakeMotor.setVoltage(0.0);
+                } else {
+                    algaeSubsystem.intakeMotor.set(-sigmaSpead);
+                }
+            } else {
+                if (algaeSubsystem.hasAlgae()) {
+                    algaeSubsystem.intakeMotor.setVoltage(0.0);
+                } else {
+                    algaeSubsystem.intakeMotor.set(sigmaSpead);
+                }
+            }
+        }, () -> {
+            algaeSubsystem.intakeMotor.setVoltage(0);
+        });
+    }
 }
+
