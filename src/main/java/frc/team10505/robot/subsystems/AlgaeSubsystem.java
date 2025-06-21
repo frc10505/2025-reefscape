@@ -135,7 +135,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     }
 
      public Boolean hasAlgae() {
-        return pivotMotor.getOutputCurrent() > 1.75;
+        return pivotMotor.getOutputCurrent() > 0.65;
     }
 
     public Command algaeRunReef() {
