@@ -49,7 +49,7 @@ public final class Constants {
 
   public final class ElevatorConstants {
     // PID Constants
-    public final static double KP = 0.32;
+    public final static double KP = 0.467;
     public final static double KI = 0.0;
     public final static double KD = 0.0;
 
