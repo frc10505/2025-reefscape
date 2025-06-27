@@ -8,6 +8,8 @@ package frc.team10505.robot;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import javax.sound.midi.Sequence;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
@@ -36,6 +38,38 @@ public class Superstructure {
         this.algaeSubsystem = algaeSubsys;
         this.elevatorSubsystem = elevatorSubsys;
         this.drivetrainSubsystem = drivetrainSubsys;
+    }
+
+    public boolean hasAlgae() {
+        return algaeSubsystem.intakeMotor.getOutputCurrent() > 20;
+    }
+
+    public Command takeAlgaeOffReefL3() {
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(23.5),
+            algaeSubsystem.setAngle(10),
+            algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
+            elevatorSubsystem.setHeight(0.0)
+        );
+    }
+
+    public Command takeAlgaeOffReefL2() {
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(8.0),
+            algaeSubsystem.setAngle(10),
+            algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
+            elevatorSubsystem.setHeight(0.0)
+        );
+    }
+
+    public Command takeAlgaeOffGround() {
+        return Commands.sequence(
+            elevatorSubsystem.setHeight(0.0),
+            algaeSubsystem.setAngle(-23),
+            algaeSubsystem.runIntakeForward().until(() -> hasAlgae()),
+            algaeSubsystem.intakeStop()
+            
+        );
     }
 
     public Command intakeCoral() {
@@ -82,6 +116,8 @@ public class Superstructure {
         // }
 
     }
+
+   
 
     public Command bombsAway() {
         return Commands.sequence(

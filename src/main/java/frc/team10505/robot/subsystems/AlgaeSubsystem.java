@@ -23,7 +23,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 public class AlgaeSubsystem extends SubsystemBase {
 
     // motor controllers
-    public final static SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
+    public final SparkMax intakeMotor = new SparkMax(kAlgaeIntakeMotorID, MotorType.kBrushless);
     private SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax pivotMotor = new SparkMax(kAlgaePivotMotorId, MotorType.kBrushless);
     private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
@@ -109,6 +109,14 @@ public class AlgaeSubsystem extends SubsystemBase {
         return runOnce(() -> {
             intakeMotor.set(intakeSpeed);
         });
+    } 
+
+    public Command runIntakeForward() {
+        return runEnd(() -> {
+            intakeMotor.set(intakeSpeed);
+        }, () -> {
+            intakeMotor.set(0);
+        });
     }
 
     public Command intakeForwardSlower() {
@@ -126,6 +134,14 @@ public class AlgaeSubsystem extends SubsystemBase {
     public Command intakeReverse() {
         return runOnce(() -> {
             intakeMotor.set(-intakeSpeed);
+        });
+    }
+
+    public Command runIntakeReverse() {
+        return runEnd(() -> {
+            intakeMotor.set(-intakeSpeed);
+        }, () -> {
+            intakeMotor.set(0);
         });
     }
 

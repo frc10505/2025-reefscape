@@ -206,8 +206,8 @@ public class RobotContainer {
          */
         private void configButtonBindings() {
                 // bindings for the xbox controller
-                xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
-                xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(superStructure.holdAlgae());
+                xboxController.leftBumper().onTrue(superStructure.takeAlgaeOffReefL2());
+                xboxController.rightBumper().onTrue(superStructure.takeAlgaeOffReefL3());
                 // xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
                 xboxController.leftTrigger()
@@ -231,8 +231,8 @@ public class RobotContainer {
                                                 .withRotationalRate(
                                                                 -xboxController.getRightX() * 3.2 * MaxAngularRate)));
 
-                xboxController.a().onTrue(algaeSubsys.setAngle(-18));
-                xboxController.b().onTrue(algaeSubsys.intakeForwardSlowest()).onFalse(algaeSubsys.intakeStop());
+                xboxController.a().onTrue(superStructure.takeAlgaeOffGround());
+                xboxController.b().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
                 // setLights());
                 // resetPose());// onTrue(algaeSubsys.stopPivot());
                 xboxController.x().onTrue(algaeSubsys.setAngle(-90));
@@ -408,6 +408,13 @@ public class RobotContainer {
                                 });
                 m_visionThread.setDaemon(true);
                 m_visionThread.start();
+        }
+        /** If robot s almost about to tip then this will put down the elevator to stop it. It also needs to be called periodicly **/
+        public void almostTippedOver() {
+                if (drivetrainSubsys.getPigeon2().getRoll().getValueAsDouble() > 30 | drivetrainSubsys.getPigeon2().getPitch().getValueAsDouble() > 30) {
+                        elevatorSubsys.setHeight(0.0);
+                }
+               
         }
 
 }

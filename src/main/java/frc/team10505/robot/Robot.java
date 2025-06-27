@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     robotContainer.updatePose();
     robotContainer.updateDriveSensors();
+    robotContainer.almostTippedOver();
   }
 
   @Override
