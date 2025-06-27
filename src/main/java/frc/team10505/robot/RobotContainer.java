@@ -61,6 +61,7 @@ public class RobotContainer {
                                                                                  // motors
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
+        private double driverMultiplyer;
 
         /* Operator interfaces */
         private final CommandXboxController xboxController = new CommandXboxController(0);
@@ -193,6 +194,16 @@ public class RobotContainer {
          * Function that is called in the constructor where we configure default
          * commands for the subsytems.
          */
+        public void Drivermultiplyer() {
+                if (driverChooser.getSelected() == Driver.David | driverChooser.getSelected() == Driver.Cooper | driverChooser.getSelected() == Driver.Mentors) {
+                        driverMultiplyer = 0.3;
+                }else if (driverChooser.getSelected() == Driver.Others | driverChooser.getSelected() == Driver.Robert) {
+                        driverMultiplyer = 0.5;
+                }else if (driverChooser.getSelected() == Driver.Karter | driverChooser.getSelected() == Driver.Riely) {
+                        driverMultiplyer = 1;
+                }
+        }
+
         private void configDefaultCommands() {
                 drivetrainSubsys.setDefaultCommand(drivetrainSubsys.applyRequest(() -> drive
                                 .withVelocityX(-xboxController.getLeftY() * polarityChooser.getSelected()
@@ -200,7 +211,7 @@ public class RobotContainer {
                                 .withVelocityY(-xboxController.getLeftX() * polarityChooser.getSelected() * // was
                                                                                                             // negative
                                                 0.8 * MaxSpeed) // Drive left with negative X (left)
-                                .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate))); // 2.5
+                                .withRotationalRate(-xboxController.getRightX() * 3.2 * MaxAngularRate *driverMultiplyer))); // 2.5
 
                 /* OLD joystick bindings */
                 // drivetrainSubsys.applyRequest(
@@ -242,7 +253,7 @@ public class RobotContainer {
                                                                 * polarityChooser.getSelected() *
                                                                 0.3 * MaxSpeed) // Drive left with negative X (left)
                                                 .withRotationalRate(
-                                                                -xboxController.getRightX() * 0.7 * MaxAngularRate)));
+                                                                -xboxController.getRightX() * 0.7 * MaxAngularRate *driverMultiplyer)));
                 xboxController.rightTrigger()
                                 .whileTrue(drivetrainSubsys.applyRequest(() -> drive
                                                 .withVelocityX(-xboxController.getLeftY()
@@ -252,7 +263,7 @@ public class RobotContainer {
                                                                 * polarityChooser.getSelected() *
                                                                 1.2 * MaxSpeed) // Drive left with negative X (left)
                                                 .withRotationalRate(
-                                                                -xboxController.getRightX() * 3.2 * MaxAngularRate)));
+                                                                -xboxController.getRightX() * 3.2 * MaxAngularRate *driverMultiplyer)));
 
                 xboxController.a().onTrue(superStructure.takeAlgaeOffGround());
                 xboxController.b().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
