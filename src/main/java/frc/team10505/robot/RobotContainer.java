@@ -87,7 +87,21 @@ public class RobotContainer {
         // private final SendableChooser<Double> rightAutoAlignSpeedMULTIPLIER = new SendableChooser<>();
         // private final SendableChooser<Double> leftAutoAlignSpeedMULTIPLIER = new SendableChooser<>();
 
-        public RobotContainer() {
+        private enum Driver {
+                Karter,
+                Riely,
+                Cooper,
+                David,
+                Robert,
+                Mentors,
+                Others,
+
+        }
+
+        private final SendableChooser<Driver> driverChooser = new SendableChooser<>();
+
+
+        public RobotContainer() {       
 
                 NamedCommands.registerCommand("Test", Commands.print("auto command stuff is working"));
 
@@ -135,6 +149,15 @@ public class RobotContainer {
                 // autoChooser = AutoBuilder.buildAutoChooser();
                 svsuAutoChooser = AutoBuilder.buildAutoChooser();
 
+                SmartDashboard.putData("Driver Chooser", driverChooser);
+                driverChooser.setDefaultOption("Defalt", Driver.Others);
+                driverChooser.addOption("Robert", Driver.Robert);
+                driverChooser.addOption("Mentors", Driver.Mentors);
+                driverChooser.addOption("Other", Driver.Others);
+                driverChooser.addOption("Karter",Driver.Karter);
+                driverChooser.addOption("Riely", Driver.Riely);
+                driverChooser.addOption("Cooper", Driver.Cooper);
+                driverChooser.addOption("David", Driver.David);
                 SmartDashboard.putData("Polarity Chooser", polarityChooser);
                 polarityChooser.setDefaultOption("Default", 1.0);
                 polarityChooser.addOption("positive", 1.0);
@@ -165,7 +188,7 @@ public class RobotContainer {
                 configButtonBindings();
                 configAutonomous();
         }
-
+       
         /**
          * Function that is called in the constructor where we configure default
          * commands for the subsytems.
