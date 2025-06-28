@@ -196,9 +196,9 @@ public class RobotContainer {
          */
         public void Drivermultiplyer() {
                 if (driverChooser.getSelected() == Driver.David | driverChooser.getSelected() == Driver.Cooper | driverChooser.getSelected() == Driver.Mentors) {
-                        driverMultiplyer = 0.3;
-                }else if (driverChooser.getSelected() == Driver.Others | driverChooser.getSelected() == Driver.Robert) {
                         driverMultiplyer = 0.5;
+                }else if (driverChooser.getSelected() == Driver.Others | driverChooser.getSelected() == Driver.Robert) {
+                        driverMultiplyer = 0.3;
                 }else if (driverChooser.getSelected() == Driver.Karter | driverChooser.getSelected() == Driver.Riely) {
                         driverMultiplyer = 1;
                 }
@@ -278,13 +278,13 @@ public class RobotContainer {
                 // xboxController.l().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
                 xboxController.povUp().whileTrue(
-                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(-0.4)
+                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.4)
                                                 .withVelocityY(0.0)
                                                 .withRotationalRate(0.0)))
                                 .onFalse(drivetrainSubsys.stop());
 
                 xboxController.povDown().whileTrue(
-                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(0.4)
+                                drivetrainSubsys.applyRequest(() -> robotDrive.withVelocityX(-0.4)
                                                 .withVelocityY(0.0)
                                                 .withRotationalRate(0.0)))
                                 .onFalse(drivetrainSubsys.stop());

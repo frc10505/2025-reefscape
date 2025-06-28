@@ -6,6 +6,7 @@
 
 package frc.team10505.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +52,10 @@ public class AlgaeSubsystem extends SubsystemBase {
     // Get encoder
     public double getPivotEncoder() {
         return (-pivotEncoder.getPosition() + absoluteOffset);
+    }
+
+    public boolean isNearGoal(){
+        return MathUtil.isNear(getPivotEncoder(), pivotSetpoint, 4);
     }
 
     // Calc PID

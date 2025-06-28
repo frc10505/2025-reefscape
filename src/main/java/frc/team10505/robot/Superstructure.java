@@ -8,6 +8,9 @@ package frc.team10505.robot;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
+import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
+
 import javax.sound.midi.Sequence;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -41,13 +44,15 @@ public class Superstructure {
     }
 
     public boolean hasAlgae() {
-        return algaeSubsystem.intakeMotor.getOutputCurrent() > 20;
+        return algaeSubsystem.intakeMotor.getOutputCurrent() > 40;
     }
 
     public Command takeAlgaeOffReefL3() {
         return Commands.sequence(
             elevatorSubsystem.setHeight(23.5),
+            waitUntil(() -> elevatorSubsystem.isNearGoal()),
             algaeSubsystem.setAngle(10),
+            waitUntil(() -> algaeSubsystem.isNearGoal()),//.getPivotEncoder() == 10),
             algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
             elevatorSubsystem.setHeight(0.0)
         );
@@ -56,7 +61,9 @@ public class Superstructure {
     public Command takeAlgaeOffReefL2() {
         return Commands.sequence(
             elevatorSubsystem.setHeight(8.0),
+            waitUntil(() -> elevatorSubsystem.isNearGoal()),
             algaeSubsystem.setAngle(10),
+            waitUntil(() -> algaeSubsystem.isNearGoal()),
             algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
             elevatorSubsystem.setHeight(0.0)
         );
@@ -64,9 +71,10 @@ public class Superstructure {
 
     public Command takeAlgaeOffGround() {
         return Commands.sequence(
-            elevatorSubsystem.setHeight(0.0),
             algaeSubsystem.setAngle(-23),
+            waitUntil(() -> algaeSubsystem.isNearGoal()),
             algaeSubsystem.runIntakeForward().until(() -> hasAlgae()),
+            waitSeconds(0.2),
             algaeSubsystem.intakeStop()
             
         );
