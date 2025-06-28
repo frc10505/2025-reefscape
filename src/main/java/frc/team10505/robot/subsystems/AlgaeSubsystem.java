@@ -38,7 +38,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     private final PIDController pivotController = new PIDController(KP, KI,
             KD);
 
-    private double pivotSetpoint = -90; // 90
+    private double pivotSetpoint = -85; // 90//-90
 
     public boolean coasting = false;
 
@@ -55,7 +55,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     }
 
     public boolean isNearGoal(){
-        return MathUtil.isNear(getPivotEncoder(), pivotSetpoint, 4);
+        return MathUtil.isNear(getPivotEncoder(), pivotSetpoint, 1);
     }
 
     // Calc PID

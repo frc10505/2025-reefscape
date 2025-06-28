@@ -43,42 +43,42 @@ public class Superstructure {
         this.drivetrainSubsystem = drivetrainSubsys;
     }
 
-    public boolean hasAlgae() {
-        return algaeSubsystem.intakeMotor.getOutputCurrent() > 40;
-    }
+    // public boolean hasAlgae() {
+    //     return algaeSubsystem.intakeMotor.getOutputCurrent() > 40;
+    // }
 
-    public Command takeAlgaeOffReefL3() {
-        return Commands.sequence(
-            elevatorSubsystem.setHeight(23.5),
-            waitUntil(() -> elevatorSubsystem.isNearGoal()),
-            algaeSubsystem.setAngle(10),
-            waitUntil(() -> algaeSubsystem.isNearGoal()),//.getPivotEncoder() == 10),
-            algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
-            elevatorSubsystem.setHeight(0.0)
-        );
-    }
+    // public Command takeAlgaeOffReefL3() {
+    //     return Commands.sequence(
+    //         elevatorSubsystem.setHeight(23.5),
+    //         waitUntil(() -> elevatorSubsystem.isNearGoal()),
+    //         algaeSubsystem.setAngle(10),
+    //         waitUntil(() -> algaeSubsystem.isNearGoal()),//.getPivotEncoder() == 10),
+    //         algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
+    //         elevatorSubsystem.setHeight(0.0)
+    //     );
+    // }
 
-    public Command takeAlgaeOffReefL2() {
-        return Commands.sequence(
-            elevatorSubsystem.setHeight(8.0),
-            waitUntil(() -> elevatorSubsystem.isNearGoal()),
-            algaeSubsystem.setAngle(10),
-            waitUntil(() -> algaeSubsystem.isNearGoal()),
-            algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
-            elevatorSubsystem.setHeight(0.0)
-        );
-    }
+    // public Command takeAlgaeOffReefL2() {
+    //     return Commands.sequence(
+    //         elevatorSubsystem.setHeight(8.0),
+    //         waitUntil(() -> elevatorSubsystem.isNearGoal()),
+    //         algaeSubsystem.setAngle(10),
+    //         waitUntil(() -> algaeSubsystem.isNearGoal()),
+    //         algaeSubsystem.runIntakeReverse().until(() -> hasAlgae()),
+    //         elevatorSubsystem.setHeight(0.0)
+    //     );
+    // }
 
-    public Command takeAlgaeOffGround() {
-        return Commands.sequence(
-            algaeSubsystem.setAngle(-23),
-            waitUntil(() -> algaeSubsystem.isNearGoal()),
-            algaeSubsystem.runIntakeForward().until(() -> hasAlgae()),
-            waitSeconds(0.2),
-            algaeSubsystem.intakeStop()
+    // public Command takeAlgaeOffGround() {
+    //     return Commands.sequence(
+    //         algaeSubsystem.setAngle(-23),
+    //         waitUntil(() -> algaeSubsystem.isNearGoal()),
+    //         algaeSubsystem.runIntakeForward().until(() -> hasAlgae()),
+    //         waitSeconds(0.2),
+    //         algaeSubsystem.intakeStop()
             
-        );
-    }
+    //     );
+    // }
 
     public Command intakeCoral() {
         return Commands.sequence(

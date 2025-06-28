@@ -240,8 +240,8 @@ public class RobotContainer {
          */
         private void configButtonBindings() {
                 // bindings for the xbox controller
-                xboxController.leftBumper().onTrue(superStructure.takeAlgaeOffReefL2());
-                xboxController.rightBumper().onTrue(superStructure.takeAlgaeOffReefL3());
+                xboxController.leftBumper().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+                xboxController.rightBumper().onTrue(algaeSubsys.intakeForward()).onFalse(algaeSubsys.intakeStop());
                 // xboxController.povDown().onTrue(superStructure.grabAlgae()).onFalse(superStructure.holdAlgae());
 
                 xboxController.leftTrigger()
@@ -265,11 +265,11 @@ public class RobotContainer {
                                                 .withRotationalRate(
                                                                 -xboxController.getRightX() * 3.2 * MaxAngularRate *driverMultiplyer)));
 
-                xboxController.a().onTrue(superStructure.takeAlgaeOffGround());
-                xboxController.b().onTrue(algaeSubsys.intakeReverse()).onFalse(algaeSubsys.intakeStop());
+                 xboxController.a().onTrue(algaeSubsys.setAngle(-32));
+                xboxController.b().onTrue(algaeSubsys.intakeStop());
                 // setLights());
                 // resetPose());// onTrue(algaeSubsys.stopPivot());
-                xboxController.x().onTrue(algaeSubsys.setAngle(-90));
+                xboxController.x().onTrue(algaeSubsys.setAngle(-85));//-90
                 xboxController.y().onTrue(algaeSubsys.setAngle(10)); // 5
 
                 xboxController.start().onTrue(resetGyro());

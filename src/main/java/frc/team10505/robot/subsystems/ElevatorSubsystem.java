@@ -102,7 +102,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean isNearGoal() {
-        return MathUtil.isNear(height, getElevatorEncoder(), 2);
+        return MathUtil.isNear(height, getElevatorEncoder(), 5.0);//2//0.5
     }
 
     public boolean issGigh () {
